@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erafone and more ruko roxy - Dashboard</title>
+    <!-- Menggunakan font modern dari Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons untuk estetika tombol -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* --- TEMA & WARNA UTAMA --- */
+        :root {
+            --bg-dark: #6a0000; 
+            --bg-primary: #8b0000; 
+            --bg-gradient: linear-gradient(135deg, #8b0000 0%, #5d0000 100%); /* Dikembalikan ke gradient versi sebelumnya */
+            --card-bg: #ffffff; 
+            --card-hover: #f8fafc;
+            --text-main: #1e293b; 
+            --text-white: #ffffff;
+            --text-muted: #64748b;
+            --accent-primary: #ffcc00; 
+            --accent-hover: #eab308;
+            --success: #10b981;
+            --danger: #ef4444;
+            --border-color: #000000; /* Border hitam tipis untuk semua elemen */
+            --border-radius-lg: 16px;
+            --border-radius-md: 10px;
+            --shadow-sm: 0 4px 0 #000000; /* Efek tombol 3D versi sebelumnya (opsional, disesuaikan) */
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2.5rem 1rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- LOGIN OVERLAY --- */
+        #login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-gradient);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999; padding: 1rem;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            padding: 3rem 2.5rem;
+            border-radius: var(--border-radius-lg);
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            display: flex; flex-direction: column;
+            border: 1.5px solid var(--border-color) !important; /* Border hitam tipis */
+        }
+
+        .login-card .logo-container { margin: 0 auto 2rem; width: 160px; }
+        
+        .input-group { text-align: left; margin-bottom: 1.25rem; }
+        .input-group label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--bg-primary); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .login-input {
+            width: 100%; padding: 0.875rem 1.25rem; border-radius: var(--border-radius-md); font-size: 0.95rem; 
+            border: 1.5px solid var(--border-color) !important; outline: none; transition: var(--transition);
+            background: #ffffff; color: var(--text-main);
+        }
+        .login-input:focus { border-color: var(--accent-primary) !important; box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.3); }
+
+        .btn-login {
+            width: 100%; padding: 1rem; background: var(--accent-primary); color: var(--text-main); 
+            border-radius: var(--border-radius-md); font-weight: 800; font-size: 1rem; cursor: pointer; 
+            border: 2px solid var(--accent-primary) !important; /* Border Emas */
+            box-shadow: 0 4px 0 #000000; transition: var(--transition); margin-top: 1rem;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+        }
+        .btn-login:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 0 #000000; }
+        .btn-login:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 #000000; }
+        .btn-login:disabled { background: #cbd5e1; border-color: #94a3b8 !important; color: #64748b; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .login-error-box {
+            background: #fef2f2; color: #b91c1c; padding: 0.875rem; border-radius: var(--border-radius-md);
+            border: 1.5px solid #fecaca; font-size: 0.85rem; font-weight: 600; margin-bottom: 1.5rem;
+            display: none; align-items: center; justify-content: center; gap: 0.5rem; text-align: center;
+        }
+
+        /* --- DASHBOARD LAYOUT --- */
+        .container { width: 100%; max-width: 1100px; display: none; position: relative; }
+        
+        .header-wrapper { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 3rem; gap: 1.5rem; }
+        header { text-align: left; flex: 1; color: var(--text-white); }
+        header h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 0.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        header p { color: rgba(255, 255, 255, 0.85); font-size: 1.1rem; font-weight: 400; }
+        
+        /* Logo dikembalikan transparan */
+        .logo-container { width: 160px; flex-shrink: 0; }
+        .logo-container img { width: 100%; height: auto; display: block; }
+
+        .logout-container { position: absolute; top: -10px; right: 0; z-index: 100; }
+        .btn-logout {
+            padding: 0.5rem 1rem; background: var(--bg-primary); color: white; border-radius: var(--border-radius-md); 
+            font-weight: 700; font-size: 0.8rem; cursor: pointer; border: 1.5px solid var(--accent-primary) !important; /* Border Emas */
+            display: flex; align-items: center; gap: 0.5rem; transition: var(--transition);
+        }
+        .btn-logout:hover { background: var(--bg-dark); }
+
+        /* --- VIEW CONTROLLERS --- */
+        .view { display: none; animation: slideUp 0.4s ease-out forwards; opacity: 0; transform: translateY(15px); }
+        .view.active { display: block; }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* --- MAIN MENU GRID --- */
+        .grid-automation { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        
+        .control-card {
+            background: var(--card-bg); border-radius: var(--border-radius-lg); padding: 2rem; cursor: pointer; 
+            transition: var(--transition); display: flex; flex-direction: column; align-items: flex-start; 
+            gap: 1.25rem; width: 100%; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
+            border: 1.5px solid var(--border-color) !important; /* Border hitam tipis */
+        }
+        .control-card:hover { transform: translateY(-5px); background: #f8fafc; }
+
+        /* Ikon dikembalikan seperti versi lama (Background Merah, Icon & Border Emas) */
+        .icon-box { 
+            background: var(--bg-primary); color: var(--accent-primary); padding: 1rem; border-radius: 14px; 
+            display: flex; align-items: center; justify-content: center; transition: var(--transition);
+            border: 1.5px solid var(--accent-primary);
+        }
+        
+        .card-info { text-align: left; }
+        .card-info h3 { font-size: 1.15rem; font-weight: 700; color: var(--bg-primary); margin-bottom: 0.5rem; }
+        .card-info p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+
+        /* --- DETAIL VIEWS (INNER PAGES) --- */
+        .detail-view { 
+            background: var(--card-bg); border-radius: var(--border-radius-lg); padding: 2.5rem; 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); border: 1.5px solid var(--border-color) !important; /* Border hitam tipis */
+            position: relative; /* Ditambahkan untuk penempatan badge absolutely */
+        }
+        
+        .back-btn { 
+            display: inline-flex; align-items: center; gap: 0.5rem; background: transparent; border: none; 
+            color: var(--bg-primary); font-weight: 700; font-size: 0.85rem; padding: 0.5rem 0; 
+            cursor: pointer; margin-bottom: 2rem; transition: var(--transition); 
+        }
+        .back-btn:hover { opacity: 0.7; transform: translateX(-5px); }
+
+        .detail-view h2 { color: var(--bg-primary); margin-bottom: 1.5rem; font-size: 1.5rem; font-weight: 800; }
+
+        /* --- COMING SOON BADGE (Untuk Dashboard Sales) --- */
+        .coming-soon-badge {
+            position: absolute;
+            top: 2.5rem;
+            right: 2.5rem;
+            background: #fef2f2;
+            border: 1.5px dashed var(--accent-primary);
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .coming-soon-badge i { color: var(--accent-primary); }
+        .coming-soon-badge div h4 { color: var(--bg-primary); font-size: 0.85rem; font-weight: 800; margin-bottom: 0.15rem; text-transform: uppercase; }
+        .coming-soon-badge div p { color: var(--text-muted); font-size: 0.75rem; margin: 0; font-weight: 500; }
+
+        /* --- FORM ELEMENTS & INPUTS --- */
+        .column-card { display: flex; flex-direction: column; gap: 1rem; width: 100%; }
+        .column-title { font-weight: 800; font-size: 0.85rem; color: var(--bg-primary); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Area Upload */
+        .upload-area { 
+            border: 1.5px dashed var(--border-color) !important; border-radius: var(--border-radius-md); padding: 2rem 1rem; 
+            text-align: center; background: #f8fafc; transition: var(--transition); min-height: 140px; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; 
+        }
+        .upload-area:hover { border-color: var(--accent-primary) !important; background: #f1f5f9; }
+        .upload-area i { width: 32px; height: 32px; color: var(--bg-primary); margin-bottom: 0.75rem; }
+        .upload-area p { color: var(--text-main); font-size: 0.9rem; font-weight: 500; }
+
+        /* Textareas */
+        .result-textarea { 
+            width: 100%; background: #f8fafc; border-radius: var(--border-radius-md); padding: 1.25rem; 
+            font-size: 0.95rem; color: var(--text-main); resize: vertical; border: 1.5px solid var(--border-color) !important; /* Border hitam tipis */
+            transition: var(--transition); line-height: 1.5;
+        }
+        .result-textarea:focus { border-color: var(--accent-primary) !important; background: #ffffff; outline: none; }
+        .result-textarea[readonly] { background: #f1f5f9; color: var(--text-main); }
+
+        /* Buttons */
+        .btn-base {
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+            border-radius: var(--border-radius-md); font-weight: 800; cursor: pointer; 
+            transition: var(--transition); 
+            border: 2px solid var(--accent-primary) !important; /* Border Emas */
+        }
+        .btn-process { background: var(--bg-primary); color: white; }
+        .btn-process:hover { background: var(--bg-dark); transform: translateY(-1px); }
+        .btn-process:disabled { background: #cbd5e1; border-color: #94a3b8 !important; color: #64748b; cursor: not-allowed; transform: none; }
+        
+        .btn-send { background: var(--accent-primary); color: var(--text-main); }
+        .btn-send:hover { background: var(--accent-hover); transform: translateY(-1px); }
+        .btn-send:disabled { background: #cbd5e1; border-color: #94a3b8 !important; color: #64748b; cursor: not-allowed; transform: none; }
+
+        .btn-large { width: 100%; padding: 1rem; font-size: 1rem; }
+        .btn-send.ready { background: var(--bg-primary) !important; color: white !important; }
+        .btn-send.ready:hover { background: var(--bg-dark) !important; }
+
+        /* --- SPESIFIK: CEK STOK AREA --- */
+        .section-divider { border-bottom: 1.5px solid var(--border-color); padding-bottom: 2rem; margin-bottom: 2rem; }
+        
+        .flex-row-align { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .last-update-box { background: #f1f5f9; border: 1.5px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 0.4rem 0.75rem; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 0.8rem; }
+        
+        .action-row { display: flex; gap: 1rem; align-items: stretch; height: 48px; } 
+        
+        .upload-compact { 
+            flex: 1; min-height: unset; padding: 0 1rem; flex-direction: row; justify-content: flex-start; 
+            gap: 0.75rem; border: 1.5px dashed var(--border-color) !important; background: #f8fafc; border-radius: 8px;
+            display: flex; align-items: center; cursor: pointer; transition: var(--transition);
+        }
+        .upload-compact:hover { border-color: var(--accent-primary) !important; background: #ffffff; }
+        .upload-compact i { margin: 0; width: 18px; height: 18px; color: var(--bg-primary); }
+        
+        .search-input { 
+            flex: 1; padding: 0 1.25rem; border-radius: 8px; border: 1.5px solid var(--border-color) !important; /* Border hitam tipis */
+            font-size: 0.95rem; outline: none; transition: var(--transition); background: #ffffff; color: var(--text-main);
+        }
+        .search-input:focus { border-color: var(--accent-primary) !important; }
+
+        .btn-action-compact { 
+            width: 160px; height: 100%; padding: 0; font-size: 0.9rem; flex-shrink: 0; margin: 0; border-radius: 8px;
+        }
+
+        .table-wrapper-large { 
+            border: 1.5px solid var(--border-color) !important; /* Border hitam tipis */
+            max-height: 65vh; min-height: 400px; 
+            overflow-y: auto; border-radius: 8px; margin-top: 1.5rem; background: #ffffff; 
+        }
+        .data-table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; }
+        .data-table th, .data-table td { padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; }
+        .data-table th { background: #f8fafc; font-weight: 700; color: var(--text-main); font-size: 0.8rem; text-transform: uppercase; position: sticky; top: 0; z-index: 10; border-bottom: 1.5px solid var(--border-color); }
+        .table-category-header { background: #f1f5f9 !important; font-weight: 800 !important; color: var(--bg-primary) !important; border: 1.5px solid var(--border-color) !important; }
+
+        /* --- SPESIFIK: INPUT REPORT MANUAL --- */
+        .reconcile-top-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-bottom: 1.5rem; }
+        
+        /* --- STATUS LOKAL --- */
+        .local-status { font-size: 0.85rem; margin-top: 0.75rem; display: none; align-items: center; gap: 0.5rem; font-weight: 600; }
+        .local-status.active { display: flex; }
+        .local-status.loading { color: #d97706; }
+        .local-status.success { color: #059669; }
+        .local-status.error { color: #dc2626; }
+        .spin-icon { animation: rotation 1s linear infinite; }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Iframe */
+        .iframe-container { width: 100%; height: calc(100vh - 180px); border-radius: var(--border-radius-md); overflow: hidden; background: #ffffff; border: 1.5px solid var(--border-color) !important; }
+        .iframe-container iframe { width: 100%; height: 100%; border: none; }
+
+        @media (max-width: 900px) {
+            .header-wrapper { flex-direction: column-reverse; align-items: center; text-align: center; }
+            .logout-container { top: -35px; right: 0; }
+            header { text-align: center; }
+            .reconcile-top-row { grid-template-columns: 1fr; }
+            .action-row { flex-direction: column; height: auto; }
+            .btn-action-compact { width: 100%; height: 48px; }
+            .upload-compact, .search-input { height: 48px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- POPUP LOGIN OVERLAY -->
+    <div id="login-overlay">
+        <div class="login-card">
+            <div class="logo-container">
+                <img src="https://res.cloudinary.com/dilamvetq/image/upload/v1772731767/phgzekbkwlsf4yjoewzl.png" alt="Logo">
+            </div>
+
+            <div id="login-error-box" class="login-error-box">
+                <i data-lucide="alert-circle" style="width: 16px; height: 16px;"></i>
+                <span id="login-error-text">SAP Code atau Password salah!</span>
+            </div>
+
+            <div class="input-group">
+                <label>Sap Code</label>
+                <input type="text" id="sap-code" class="login-input" placeholder="Masukkan SAP Code">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="login-pass" class="login-input" placeholder="Masukkan Password">
+            </div>
+            <button class="btn-login" id="btn-login-submit" onclick="window.handleLogin()">Sign In</button>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <div class="container" id="main-container">
+        <div class="logout-container" id="top-logout">
+            <button class="btn-logout" onclick="window.handleLogout()">
+                <i data-lucide="log-out" style="width: 14px; height: 14px;"></i> Logout
+            </button>
+        </div>
+
+        <div class="header-wrapper" id="top-header">
+            <header>
+                <h1 id="dynamic-title">Erafone and more ruko roxy</h1>
+                <p>Kontrol jobdesk dengan satu Klik</p>
+            </header>
+            <div class="logo-container">
+                <img src="https://res.cloudinary.com/dilamvetq/image/upload/v1772731767/phgzekbkwlsf4yjoewzl.png" alt="Logo Erafone">
+            </div>
+        </div>
+
+        <!-- VIEW UTAMA -->
+        <div id="view-main" class="view active">
+            <div class="grid-automation">
+                <button class="control-card" onclick="window.openView('view-sales-report')">
+                    <div class="icon-box"><i data-lucide="file-up" style="width: 28px; height: 28px;"></i></div>
+                    <div class="card-info"><h3>Sales Report</h3><p>Ekstraksi & olah otomatis PDF laporan penjualan harian store.</p></div>
+                </button>
+                <button class="control-card" onclick="window.openView('view-reconcile')">
+                    <div class="icon-box"><i data-lucide="refresh-cw" style="width: 28px; height: 28px;"></i></div>
+                    <div class="card-info"><h3>Reconcile Data</h3><p>Pencocokan silang antara data PDF POS dengan file Excel.</p></div>
+                </button>
+                <button class="control-card" onclick="window.openView('view-daily-stock')">
+                    <div class="icon-box"><i data-lucide="package" style="width: 28px; height: 28px;"></i></div>
+                    <div class="card-info"><h3>Daily Stock</h3><p>Sinkronisasi cepat template Excel untuk pembaruan stok harian.</p></div>
+                </button>
+                <button class="control-card" onclick="window.openView('view-cek-stok')">
+                    <div class="icon-box"><i data-lucide="search" style="width: 28px; height: 28px;"></i></div>
+                    <div class="card-info"><h3>Cek Stok Area</h3><p>Pencarian cerdas ketersediaan unit barang di seluruh area.</p></div>
+                </button>
+                <button class="control-card" onclick="window.openView('view-input-report')">
+                    <div class="icon-box"><i data-lucide="file-text" style="width: 28px; height: 28px;"></i></div>
+                    <div class="card-info"><h3>Input Report</h3><p>Pengiriman langsung laporan naratif manual ke sistem terpusat.</p></div>
+                </button>
+                <button class="control-card" onclick="window.openView('view-dashboard-sales')">
+                    <div class="icon-box"><i data-lucide="layout-dashboard" style="width: 28px; height: 28px;"></i></div>
+                    <div class="card-info"><h3>Dashboard Sales</h3><p>Visualisasi interaktif pencapaian target toko & produktivitas tim.</p></div>
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW DETAIL: DASHBOARD SALES -->
+        <div id="view-dashboard-sales" class="view">
+            <div class="detail-view">
+                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
+                <h2>Dashboard Sales</h2>
+                
+                <!-- Badge Coming Soon di Kanan Atas -->
+                <div class="coming-soon-badge">
+                    <i data-lucide="hammer" style="width: 24px; height: 24px;"></i>
+                    <div>
+                        <h4>Segera Hadir</h4>
+                        <p>Integrasi Looker Studio</p>
+                    </div>
+                </div>
+
+                <div class="grid-automation" style="grid-template-columns: repeat(2, 1fr); margin-top: 1rem;">
+                    <button class="control-card" onclick="window.loadFullDashboard('store')">
+                        <div class="icon-box"><i data-lucide="store" style="width: 24px;"></i></div>
+                        <div class="card-info"><h3>Report Store</h3><p>Visualisasi pencapaian target toko keseluruhan.</p></div>
+                    </button>
+                    <button class="control-card" onclick="window.loadFullDashboard('ero')">
+                        <div class="icon-box"><i data-lucide="user-check" style="width: 24px;"></i></div>
+                        <div class="card-info"><h3>Report ERO</h3><p>Analisis kinerja dan produktivitas harian tim ERO.</p></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: FULL SCREEN DASHBOARD (Menampilkan Coming Soon sementara) -->
+        <div id="view-dashboard-full" class="view">
+            <div class="detail-view" style="padding: 1.5rem; height: 90vh; display: flex; flex-direction: column;">
+                <button class="back-btn" onclick="window.openView('view-dashboard-sales')" style="align-self: flex-start; margin-bottom: 1rem;"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali</button>
+                <div class="iframe-container" style="flex: 1; display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 1.5rem; background: #f8fafc;">
+                    <!-- Tampilan Coming Soon Menggantikan Iframe -->
+                    <div style="background: var(--bg-primary); padding: 1.5rem; border-radius: 50%; border: 2px solid var(--accent-primary); box-shadow: 0 4px 0 #000;">
+                        <i data-lucide="bar-chart-3" style="width: 48px; height: 48px; color: var(--accent-primary);"></i>
+                    </div>
+                    <div style="text-align: center;">
+                        <h3 style="color: var(--bg-primary); font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: 0.5px;">DASHBOARD COMING SOON</h3>
+                        <p style="color: var(--text-main); font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem;">Visualisasi Data Sedang Dalam Tahap Pengembangan</p>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 450px; margin: 0 auto; line-height: 1.6;">Halaman ini nantinya akan menampilkan grafik interaktif dari Looker Studio untuk memantau performa penjualan secara real-time.</p>
+                    </div>
+                    <!-- Iframe disembunyikan sementara -->
+                    <iframe id="dashboard-iframe" src="" allowfullscreen style="display: none;"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: SALES REPORT -->
+        <div id="view-sales-report" class="view">
+            <div class="detail-view">
+                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
+                <h2>Sales Report PDF</h2>
+                <div class="upload-area" onclick="document.getElementById('sales-file').click()">
+                    <i data-lucide="file-text"></i>
+                    <p id="sales-file-name">Pilih file PDF Laporan harian</p>
+                    <input type="file" id="sales-file" accept=".pdf" style="display:none" onchange="window.updateFileName('sales-file', 'sales-file-name')">
+                </div>
+                <button class="btn-base btn-process btn-large" id="btn-process-sales" onclick="window.processSales()" style="margin-top:1.5rem">Olah Data PDF</button>
+                <div id="status-sales-report" class="local-status"></div>
+                
+                <div class="result-section" id="sales-result-area" style="display:none; margin-top:2rem">
+                    <div class="flex-row-align" style="margin-bottom:0.75rem;">
+                        <span class="column-title">Hasil Ekstraksi Data</span>
+                        <button class="btn-base btn-process" onclick="window.copySalesText()" style="padding:0.5rem 1rem; font-size:0.85rem;"><i data-lucide="copy" style="width:14px;"></i> Salin Teks</button>
+                    </div>
+                    <textarea id="sales-textarea" class="result-textarea" readonly style="height: 200px;"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: RECONCILE DATA -->
+        <div id="view-reconcile" class="view">
+            <div class="detail-view">
+                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
+                <h2>Rekonsiliasi Data</h2>
+                
+                <div class="reconcile-top-row">
+                    <div class="column-card">
+                        <span class="column-title">1. File PDF POS</span>
+                        <div class="upload-area" onclick="document.getElementById('recon-pdf').click()" style="min-height: 120px; padding: 1.5rem;">
+                            <i data-lucide="file-text" style="width: 24px; height: 24px;"></i><p id="pdf-name">Pilih file PDF...</p>
+                            <input type="file" id="recon-pdf" accept=".pdf" style="display:none" onchange="window.updateFileName('recon-pdf', 'pdf-name'); window.resetReconcileState('pdf')">
+                        </div>
+                        <button class="btn-base btn-process btn-large" id="btn-pdf-reconcile" onclick="window.processPdf()">Olah PDF</button>
+                        <div id="status-pdf" class="local-status"></div>
+                    </div>
+                    <div class="column-card">
+                        <span class="column-title">2. File Excel</span>
+                        <div class="upload-area" onclick="document.getElementById('recon-excel').click()" style="min-height: 120px; padding: 1.5rem;">
+                            <i data-lucide="file-spreadsheet" style="width: 24px; height: 24px;"></i><p id="excel-name">Pilih file Excel...</p>
+                            <input type="file" id="recon-excel" accept=".xlsx, .xls" style="display:none" onchange="window.updateFileName('recon-excel', 'excel-name'); window.resetReconcileState('excel')">
+                        </div>
+                        <button class="btn-base btn-process btn-large" id="btn-excel-reconcile" onclick="window.processExcel()">Olah Excel</button>
+                        <div id="status-excel" class="local-status"></div>
+                    </div>
+                </div>
+
+                <div class="section-divider" style="margin-top: 2rem;"></div>
+                
+                <div class="column-card">
+                    <span class="column-title">3. Tindakan Lanjutan</span>
+                    <textarea id="email-body-textarea" class="result-textarea" placeholder="Respon sistem / draft email akan muncul di sini..." style="height: 140px;"></textarea>
+                    <button class="btn-base btn-send btn-large" id="btn-send-email" onclick="window.sendEmail()" disabled style="margin-top: 0.5rem;"><i data-lucide="mail"></i> Kirim Laporan via Email</button>
+                    <div id="status-send-email" class="local-status"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: CEK STOK AREA -->
+        <div id="view-cek-stok" class="view">
+            <div class="detail-view">
+                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
+                <h2>Cek Stok Area</h2>
+                
+                <!-- BAGIAN 1: UPDATE -->
+                <div class="column-card section-divider">
+                    <div class="flex-row-align">
+                        <span class="column-title">1. Update Data Master Stok Area</span>
+                        <div class="last-update-box"><i data-lucide="clock"></i><span id="last-upload-time">Belum ada data</span></div>
+                    </div>
+                    <div class="action-row">
+                        <div class="upload-compact" onclick="document.getElementById('stok-area-file').click()">
+                            <i data-lucide="file-spreadsheet"></i>
+                            <p id="stok-area-file-name" style="margin: 0; font-size: 0.9rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pilih file Excel master stok...</p>
+                            <input type="file" id="stok-area-file" style="display:none" onchange="window.updateFileName('stok-area-file', 'stok-area-file-name')">
+                        </div>
+                        <button class="btn-base btn-process btn-action-compact" id="btn-update-stok" onclick="window.processUpdateStokArea()">Update Master</button>
+                    </div>
+                    <div id="status-update-stok" class="local-status"></div>
+                </div>
+
+                <!-- BAGIAN 2: PENCARIAN -->
+                <div class="column-card">
+                    <span class="column-title">2. Cari Ketersediaan Barang</span>
+                    <div class="action-row">
+                        <!-- Dikembalikan ke fungsi aslinya -->
+                        <input type="text" id="search-stok-input" class="search-input" placeholder="Masukkan nama, tipe, atau kode barang..." onkeypress="if(event.key === 'Enter') window.processSearchStok()">
+                        <button class="btn-base btn-send btn-action-compact" id="btn-search-stok" onclick="window.processSearchStok()">
+                            <i data-lucide="search" style="width:16px;"></i> Cari Data
+                        </button>
+                    </div>
+                    <div id="status-search-stok" class="local-status"></div>
+                    
+                    <div class="table-wrapper-large">
+                        <table class="data-table" id="stok-result-table">
+                            <thead><tr><th>Nama Lokasi / Store</th><th style="width: 120px; text-align: center;">Qty Tersedia</th></tr></thead>
+                            <tbody>
+                                <!-- Tabel dikembalikan kosong untuk siap menerima data -->
+                                <tr><td colspan="2" style="text-align:center; padding:6rem 1rem; color:var(--text-muted); font-style: italic;">Hasil pencarian stok barang akan terlampir di sini...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: DAILY STOCK -->
+        <div id="view-daily-stock" class="view">
+            <div class="detail-view">
+                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
+                <h2>Sinkronisasi Daily Stock</h2>
+                <div class="upload-area" onclick="document.getElementById('daily-stock-file').click()">
+                    <i data-lucide="file-spreadsheet"></i>
+                    <p id="daily-stock-file-name">Pilih file Excel Daily Stock</p>
+                    <input type="file" id="daily-stock-file" style="display:none" onchange="window.updateFileName('daily-stock-file', 'daily-stock-file-name')">
+                </div>
+                <button class="btn-base btn-process btn-large" id="btn-process-daily" onclick="window.processDailyStock()" style="margin-top:1.5rem">Proses Pembaruan Data</button>
+                <div id="status-daily-stock" class="local-status"></div>
+                
+                <div id="success-link-box" style="display: none; background: #ecfdf5; border: 1.5px solid #000000; border-radius: var(--border-radius-md); padding: 1.25rem; margin-top: 1.5rem; align-items: center; justify-content: space-between;">
+                    <span style="color: #065f46; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="check-circle" style="width: 18px;"></i> Sinkronisasi Selesai!</span>
+                    <a href="https://docs.google.com/spreadsheets/d/1hjA1iuzFLQbPpQMrJF26LzImYWFoczyVDXMuNHQpkPQ/edit?gid=1725895797" target="_blank" style="background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 6px; border: 1.5px solid #000000; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: var(--transition);">Buka Spreadsheet</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: INPUT REPORT -->
+        <div id="view-input-report" class="view">
+            <div class="detail-view">
+                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
+                <h2>Input Report Manual</h2>
+                
+                <div class="reconcile-top-row">
+                    <!-- Kolom Kiri: Input -->
+                    <div class="column-card">
+                        <div class="flex-row-align" style="margin-bottom: 0;">
+                            <span class="column-title">1. Data Laporan Baru</span>
+                            <button class="btn-base btn-process" id="btn-submit-report" onclick="window.processInputReport()" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                                <i data-lucide="send" style="width:14px;"></i> Submit Report
+                            </button>
+                        </div>
+                        <textarea id="input-report-textarea" class="result-textarea" placeholder="Paste narasi laporan mentah Anda di sini..." style="height: 400px;"></textarea>
+                    </div>
+
+                    <!-- Kolom Kanan: Hasil Report -->
+                    <div class="column-card">
+                        <div class="flex-row-align" style="margin-bottom: 0;">
+                            <span class="column-title">2. Respon Sistem (Log)</span>
+                            <button class="btn-base btn-process" onclick="window.copyText('output-report-textarea')" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                                <i data-lucide="copy" style="width:14px;"></i> Salin Teks
+                            </button>
+                        </div>
+                        <textarea id="output-report-textarea" class="result-textarea" placeholder="Menunggu proses submit..." style="height: 400px;" readonly></textarea>
+                    </div>
+                </div>
+                <div id="status-input-report" class="local-status" style="justify-content: center;"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // --- CORE CONFIG ---
+        const N8N_WEBHOOK_URL = 'https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/webhook/erafone-roxy-automation';
+        
+        // URL Webhook n8n KHUSUS UNTUK LOGIN. 
+        // Jika belum dibuat, biarkan kosong. Sistem akan otomatis memakai Data Lokal sebagai cadangan.
+        const LOGIN_WEBHOOK_URL = 'https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/webhook/password-login'; 
+
+        // --- DATA LOGIN CADANGAN (Sementara n8n belum siap) ---
+        const fallbackLoginData = [
+            { sap: "E396", pass: "admin123", name: "Erafone and more ruko Roxy" },
+            { sap: "E096", pass: "admin123", name: "Erafone 2 itc Roxy" },
+            { sap: "1001", pass: "1001", name: "User Test 1001" }
+        ];
+
+        window.handleLogin = async function() {
+            const sapInput = document.getElementById('sap-code');
+            const passInput = document.getElementById('login-pass');
+            const errorBox = document.getElementById('login-error-box');
+            const errorText = document.getElementById('login-error-text');
+            const loginBtn = document.getElementById('btn-login-submit');
+            
+            const sap = sapInput.value.trim();
+            const pass = passInput.value.trim();
+
+            if(!sap || !pass){
+                errorText.innerText = "Harap isi SAP Code dan Password!";
+                errorBox.style.display = 'flex';
+                return;
+            }
+
+            // Mulai animasi loading di tombol Sign In
+            const originalBtnText = loginBtn.innerHTML;
+            loginBtn.innerHTML = '<i data-lucide="loader-2" class="spin-icon" style="width:18px; height:18px;"></i> Memverifikasi...';
+            loginBtn.disabled = true;
+            lucide.createIcons();
+            errorBox.style.display = 'none';
+
+            try {
+                // Skenario 1: Jika LOGIN_WEBHOOK_URL diisi, gunakan API n8n
+                if (LOGIN_WEBHOOK_URL) {
+                    const response = await fetch(LOGIN_WEBHOOK_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ sap_code: sap, password: pass })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.status === 'success') {
+                            doLoginSuccess(data.name || "User Erafone");
+                        } else {
+                            throw new Error("SAP Code atau Password salah!");
+                        }
+                    } else {
+                        throw new Error("Gagal terhubung ke server login.");
+                    }
+                } 
+                // Skenario 2: Jika Webhook belum ada, gunakan data lokal sebagai simulasi
+                else {
+                    // Simulasi delay jaringan agar terlihat profesional
+                    await new Promise(r => setTimeout(r, 800)); 
+                    const user = fallbackLoginData.find(u => u.sap === sap && u.pass === pass);
+                    if (user) {
+                        doLoginSuccess(user.name);
+                    } else {
+                        throw new Error("SAP Code atau Password salah!");
+                    }
+                }
+            } catch (err) {
+                // Tampilkan Error
+                errorText.innerText = err.message;
+                errorBox.style.display = 'flex';
+                sapInput.style.borderColor = 'var(--danger)';
+                passInput.style.borderColor = 'var(--danger)';
+            } finally {
+                // Kembalikan tombol seperti semula
+                loginBtn.innerHTML = originalBtnText;
+                loginBtn.disabled = false;
+                lucide.createIcons();
+            }
+        }
+
+        // Fungsi bantuan agar kode lebih rapi
+        function doLoginSuccess(userName) {
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('main-container').style.display = 'block';
+            document.getElementById('dynamic-title').innerText = userName;
+            document.getElementById('sap-code').style.borderColor = 'var(--border-color)';
+            document.getElementById('login-pass').style.borderColor = 'var(--border-color)';
+        }
+
+        window.handleLogout = function() {
+            document.getElementById('main-container').style.display = 'none';
+            document.getElementById('login-overlay').style.display = 'flex';
+            document.getElementById('sap-code').value = '';
+            document.getElementById('login-pass').value = '';
+            document.getElementById('login-error-box').style.display = 'none';
+            window.openView('view-main');
+        }
+
+        window.setLocalStatus = function(elementId, msg, type = 'loading') {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            el.className = `local-status active ${type}`;
+            let icon = type === 'loading' ? 'loader-2' : (type === 'success' ? 'check-circle' : 'alert-circle');
+            el.innerHTML = `<i data-lucide="${icon}" class="${type === 'loading' ? 'spin-icon' : ''}" style="width:16px; height:16px;"></i> <span>${msg}</span>`;
+            lucide.createIcons();
+        }
+
+        window.clearLocalStatus = function(elementId) {
+            const el = document.getElementById(elementId);
+            if (el) { el.className = 'local-status'; el.innerHTML = ''; }
+        }
+
+        let lastStokUpdateDate = "-";
+        let isExcelProcessed = false;
+        let isPdfProcessed = false;
+
+        window.checkReconcileStatus = function() {
+            const btn = document.getElementById('btn-send-email');
+            if (btn) {
+                btn.disabled = !(isExcelProcessed && isPdfProcessed);
+                if (!btn.disabled) btn.classList.add('ready');
+                else btn.classList.remove('ready');
+            }
+        }
+
+        window.resetReconcileState = function(type) {
+            if (type === 'excel') isExcelProcessed = false;
+            if (type === 'pdf') isPdfProcessed = false;
+            window.checkReconcileStatus();
+        }
+
+        window.openView = function(viewId) { 
+            const views = document.querySelectorAll('.view');
+            views.forEach(v => v.classList.remove('active')); 
+            
+            const target = document.getElementById(viewId);
+            let finalViewId = viewId;
+
+            if (target) {
+                target.classList.add('active'); 
+                if(viewId === 'view-cek-stok') {
+                    const timeEl = document.getElementById('last-upload-time');
+                    if(timeEl) timeEl.innerText = lastStokUpdateDate;
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' }); 
+            } else {
+                const mainView = document.getElementById('view-main');
+                if(mainView) mainView.classList.add('active');
+                finalViewId = 'view-main';
+            }
+
+            const topHeader = document.getElementById('top-header');
+            const topLogout = document.getElementById('top-logout');
+            if (topHeader && topLogout) {
+                if (finalViewId === 'view-main') {
+                    topHeader.style.display = 'flex';
+                    topLogout.style.display = 'flex';
+                } else {
+                    topHeader.style.display = 'none';
+                    topLogout.style.display = 'none';
+                }
+            }
+            lucide.createIcons();
+        }
+
+        window.resetAllForms = function() {
+            // Sales Report
+            document.getElementById('sales-file').value = '';
+            document.getElementById('sales-file-name').innerText = 'Pilih file PDF Laporan harian';
+            document.getElementById('sales-textarea').value = '';
+            document.getElementById('sales-result-area').style.display = 'none';
+            window.clearLocalStatus('status-sales-report');
+
+            // Rekonsiliasi
+            document.getElementById('recon-pdf').value = '';
+            document.getElementById('recon-excel').value = '';
+            document.getElementById('pdf-name').innerText = 'Pilih file PDF...';
+            document.getElementById('excel-name').innerText = 'Pilih file Excel...';
+            document.getElementById('email-body-textarea').value = '';
+            isExcelProcessed = false; isPdfProcessed = false;
+            window.checkReconcileStatus(); 
+            window.clearLocalStatus('status-pdf'); window.clearLocalStatus('status-excel'); window.clearLocalStatus('status-send-email');
+
+            // Cek Stok (Dikembalikan ke fungsi reset semula)
+            document.getElementById('stok-area-file').value = '';
+            document.getElementById('stok-area-file-name').innerText = 'Pilih file Excel master stok...';
+            document.getElementById('search-stok-input').value = '';
+            document.querySelector('#stok-result-table tbody').innerHTML = '<tr><td colspan="2" style="text-align:center; padding:6rem 1rem; color:var(--text-muted); font-style: italic;">Hasil pencarian stok barang akan terlampir di sini...</td></tr>';
+            window.clearLocalStatus('status-update-stok'); window.clearLocalStatus('status-search-stok');
+
+            // Daily Stock
+            document.getElementById('daily-stock-file').value = '';
+            document.getElementById('daily-stock-file-name').innerText = 'Pilih file Excel Daily Stock';
+            document.getElementById('success-link-box').style.display = 'none';
+            window.clearLocalStatus('status-daily-stock');
+
+            // Input Report
+            document.getElementById('input-report-textarea').value = '';
+            document.getElementById('output-report-textarea').value = '';
+            window.clearLocalStatus('status-input-report');
+
+            // Dashboard Sales
+            const iframe = document.getElementById('dashboard-iframe');
+            if (iframe) iframe.src = '';
+        }
+
+        window.backToMain = function() { 
+            window.resetAllForms(); 
+            window.openView('view-main'); 
+        }
+
+        window.loadFullDashboard = function(type) {
+            const iframe = document.getElementById('dashboard-iframe');
+            if (type === 'store') iframe.src = "https://lookerstudio.google.com/embed/reporting/GANTI_DENGAN_ID_REPORT_STORE_ANDA/page/1M"; 
+            else iframe.src = "https://lookerstudio.google.com/embed/reporting/GANTI_DENGAN_ID_REPORT_ERO_ANDA/page/1M";
+            window.openView('view-dashboard-full');
+        }
+
+        window.updateFileName = function(inputId, displayId) { const file = document.getElementById(inputId).files[0]; if (file) document.getElementById(displayId).innerText = file.name; }
+        window.safeJsonParse = async function(response) { const text = await response.text(); try { return JSON.parse(text); } catch (e) { return { message: text }; } }
+        window.formatJakartaDateOnly = function() { return new Intl.DateTimeFormat('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short', year: 'numeric' }).format(new Date()); }
+
+        // --- API FUNCTIONS ---
+        window.processUpdateStokArea = async function() {
+            const file = document.getElementById('stok-area-file').files[0];
+            if (!file) { window.setLocalStatus('status-update-stok', 'Silakan pilih file master stok terlebih dahulu.', 'error'); return; }
+            window.setLocalStatus('status-update-stok', 'Mengunggah & memperbarui data master ke server...');
+            try {
+                const formData = new FormData(); formData.append('file', file); formData.append('command', 'update_stok_area');
+                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
+                if (response.ok) { 
+                    window.setLocalStatus('status-update-stok', 'Update Master Stok Berhasil!', 'success');
+                    lastStokUpdateDate = window.formatJakartaDateOnly(); 
+                    document.getElementById('last-upload-time').innerText = lastStokUpdateDate;
+                    document.getElementById('stok-area-file').value = '';
+                    document.getElementById('stok-area-file-name').innerText = 'Pilih file Excel master stok...';
+                } else throw new Error(); 
+            } catch (e) { window.setLocalStatus('status-update-stok', 'Koneksi gagal saat memperbarui data.', 'error'); }
+        }
+
+        window.processSearchStok = async function() {
+            const searchInput = document.getElementById('search-stok-input').value;
+            const tbody = document.querySelector('#stok-result-table tbody');
+            if (!searchInput) return;
+            window.setLocalStatus('status-search-stok', 'Mencari data stok secara realtime...');
+            tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:6rem 1rem; color:var(--text-muted);">Memuat data...</td></tr>';
+            try {
+                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ command: 'search_stok_area', search_query: searchInput }) });
+                if (response.ok) {
+                    const data = await window.safeJsonParse(response);
+                    let raw = data.message || ""; let lines = raw.split('\n');
+                    if (lines.length > 0 && raw !== "") {
+                        tbody.innerHTML = '';
+                        lines.forEach(line => {
+                            if (line.includes('📦')) tbody.innerHTML += `<tr><td colspan="2" class="table-category-header">${line.replace('📦','').trim()}</td></tr>`;
+                            else if (line.includes(':')) {
+                                let p = line.split(':');
+                                tbody.innerHTML += `<tr><td>${p[0].trim()}</td><td style="font-weight:600; text-align:center;">${p[1].trim()}</td></tr>`;
+                            }
+                        });
+                        window.setLocalStatus('status-search-stok', 'Data ditemukan.', 'success');
+                    } else { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:6rem 1rem; color:#ef4444;">Barang tidak ditemukan dalam database.</td></tr>'; window.setLocalStatus('status-search-stok', 'Pencarian selesai tanpa hasil.', 'error'); }
+                }
+            } catch (e) { window.setLocalStatus('status-search-stok', 'Terjadi gangguan koneksi ke server.', 'error'); }
+        }
+
+        window.processSales = async function() {
+            const fileInput = document.getElementById('sales-file'); const file = fileInput.files[0]; 
+            if (!file) { window.setLocalStatus('status-sales-report', 'Silakan pilih file PDF dahulu.', 'error'); return; }
+            window.setLocalStatus('status-sales-report', 'Mengekstrak dan memproses data PDF...');
+            try {
+                const formData = new FormData(); formData.append('file', file); formData.append('command', 'sales_report_pdf');
+                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
+                if (response.ok) { 
+                    const data = await window.safeJsonParse(response); 
+                    document.getElementById('sales-result-area').style.display = 'block'; 
+                    document.getElementById('sales-textarea').value = data.message; 
+                    window.setLocalStatus('status-sales-report', 'Ekstraksi PDF Berhasil!', 'success');
+                    fileInput.value = ''; document.getElementById('sales-file-name').innerText = 'Pilih file PDF Laporan harian';
+                } else throw new Error(); 
+            } catch (e) { window.setLocalStatus('status-sales-report', 'Gagal memproses file PDF.', 'error'); }
+        }
+
+        window.processExcel = async function() {
+            const file = document.getElementById('recon-excel').files[0]; if (!file) return;
+            window.setLocalStatus('status-excel', 'Memproses sinkronisasi Excel...');
+            try {
+                const formData = new FormData(); formData.append('excel_file', file); formData.append('command', 'reconcile_excel');
+                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
+                if (response.ok) { const data = await window.safeJsonParse(response); document.getElementById('email-body-textarea').value = data.message; isExcelProcessed = true; window.checkReconcileStatus(); window.setLocalStatus('status-excel', 'Data Excel tervalidasi!', 'success'); }
+            } catch (e) { window.setLocalStatus('status-excel', 'Gagal memproses file.', 'error'); }
+        }
+
+        window.processPdf = async function() {
+            const file = document.getElementById('recon-pdf').files[0]; if (!file) return;
+            window.setLocalStatus('status-pdf', 'Menganalisis PDF POS...');
+            try {
+                const formData = new FormData(); formData.append('pdf_file', file); formData.append('command', 'reconcile_pdf');
+                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
+                if (response.ok) { isPdfProcessed = true; window.checkReconcileStatus(); window.setLocalStatus('status-pdf', 'Data PDF tervalidasi!', 'success'); }
+            } catch (e) { window.setLocalStatus('status-pdf', 'Gagal menganalisis file.', 'error'); }
+        }
+
+        window.sendEmail = async function() {
+            const body = document.getElementById('email-body-textarea').value;
+            window.setLocalStatus('status-send-email', 'Mendistribusikan email laporan...');
+            try { 
+                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ command: 'send_reconcile_email', email_content: body }) }); 
+                if(response.ok) {
+                    window.setLocalStatus('status-send-email', 'Laporan berhasil didistribusikan!', 'success'); 
+                    setTimeout(() => { window.resetAllForms(); }, 2500);
+                } else throw new Error(); 
+            } catch (e) { window.setLocalStatus('status-send-email', 'Koneksi gagal saat mengirim.', 'error'); }
+        }
+
+        window.processDailyStock = async function() {
+            const file = document.getElementById('daily-stock-file').files[0]; if (!file) return;
+            window.setLocalStatus('status-daily-stock', 'Melakukan sinkronisasi data...');
+            try {
+                const formData = new FormData(); formData.append('file', file); formData.append('command', 'daily_stock');
+                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
+                if (response.ok) { document.getElementById('success-link-box').style.display = 'flex'; window.setLocalStatus('status-daily-stock', 'Data terunggah ke Spreadsheet!', 'success'); }
+            } catch (e) { window.setLocalStatus('status-daily-stock', 'Gagal menyinkronkan data.', 'error'); }
+        }
+
+        window.processInputReport = async function() {
+            const text = document.getElementById('input-report-textarea').value; 
+            if (!text) { window.setLocalStatus('status-input-report', 'Format narasi belum diisi.', 'error'); return; }
+            window.setLocalStatus('status-input-report', 'Mengirim data operasional...');
+            document.getElementById('output-report-textarea').value = 'Memproses transmisi data ke server...';
+            try {
+                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ command: 'input_report', report_text: text }) });
+                if (response.ok) {
+                    const data = await window.safeJsonParse(response);
+                    let responseMessage = data.message || data.data || data.text || JSON.stringify(data, null, 2);
+                    document.getElementById('output-report-textarea').value = responseMessage;
+                    window.setLocalStatus('status-input-report', 'Data diterima server.', 'success');
+                } else throw new Error(); 
+            } catch (e) { 
+                window.setLocalStatus('status-input-report', 'Gagal mengirim data.', 'error'); 
+                document.getElementById('output-report-textarea').value = 'Sistem mendeteksi adanya kegagalan koneksi.';
+            }
+        }
+
+        window.copyText = function(id) { const el = document.getElementById(id); el.select(); document.execCommand('copy'); }
+        window.copySalesText = function() {
+            const el = document.getElementById('sales-textarea'); if (!el.value) return;
+            el.select(); document.execCommand('copy'); el.value = '';
+            window.setLocalStatus('status-sales-report', 'Teks telah disalin ke papan klip!', 'success');
+        }
+    </script>
+</body>
+</html>
