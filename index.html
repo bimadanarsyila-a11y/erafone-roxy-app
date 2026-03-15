@@ -13,7 +13,7 @@
         :root {
             --bg-dark: #6a0000; 
             --bg-primary: #8b0000; 
-            --bg-gradient: linear-gradient(135deg, #8b0000 0%, #5d0000 100%); /* Dikembalikan ke gradient versi sebelumnya */
+            --bg-gradient: linear-gradient(135deg, #8b0000 0%, #5d0000 100%);
             --card-bg: #ffffff; 
             --card-hover: #f8fafc;
             --text-main: #1e293b; 
@@ -23,10 +23,10 @@
             --accent-hover: #eab308;
             --success: #10b981;
             --danger: #ef4444;
-            --border-color: #000000; /* Border hitam tipis untuk semua elemen */
+            --border-color: #000000;
             --border-radius-lg: 16px;
             --border-radius-md: 10px;
-            --shadow-sm: 0 4px 0 #000000; /* Efek tombol 3D versi sebelumnya (opsional, disesuaikan) */
+            --shadow-sm: 0 4px 0 #000000;
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -60,7 +60,7 @@
             max-width: 420px;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
             display: flex; flex-direction: column;
-            border: 1.5px solid var(--border-color) !important; /* Border hitam tipis */
+            border: 1.5px solid var(--border-color) !important;
         }
 
         .login-card .logo-container { margin: 0 auto 2rem; width: 160px; }
@@ -78,7 +78,7 @@
         .btn-login {
             width: 100%; padding: 1rem; background: var(--accent-primary); color: var(--text-main); 
             border-radius: var(--border-radius-md); font-weight: 800; font-size: 1rem; cursor: pointer; 
-            border: 2px solid var(--accent-primary) !important; /* Border Emas */
+            border: 2px solid var(--accent-primary) !important; 
             box-shadow: 0 4px 0 #000000; transition: var(--transition); margin-top: 1rem;
             display: flex; align-items: center; justify-content: center; gap: 0.5rem;
         }
@@ -100,14 +100,13 @@
         header h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 0.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
         header p { color: rgba(255, 255, 255, 0.85); font-size: 1.1rem; font-weight: 400; }
         
-        /* Logo dikembalikan transparan */
         .logo-container { width: 160px; flex-shrink: 0; }
         .logo-container img { width: 100%; height: auto; display: block; }
 
         .logout-container { position: absolute; top: -10px; right: 0; z-index: 100; }
         .btn-logout {
             padding: 0.5rem 1rem; background: var(--bg-primary); color: white; border-radius: var(--border-radius-md); 
-            font-weight: 700; font-size: 0.8rem; cursor: pointer; border: 1.5px solid var(--accent-primary) !important; /* Border Emas */
+            font-weight: 700; font-size: 0.8rem; cursor: pointer; border: 1.5px solid var(--accent-primary) !important; 
             display: flex; align-items: center; gap: 0.5rem; transition: var(--transition);
         }
         .btn-logout:hover { background: var(--bg-dark); }
@@ -124,11 +123,10 @@
             background: var(--card-bg); border-radius: var(--border-radius-lg); padding: 2rem; cursor: pointer; 
             transition: var(--transition); display: flex; flex-direction: column; align-items: flex-start; 
             gap: 1.25rem; width: 100%; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
-            border: 1.5px solid var(--border-color) !important; /* Border hitam tipis */
+            border: 1.5px solid var(--border-color) !important; 
         }
         .control-card:hover { transform: translateY(-5px); background: #f8fafc; }
 
-        /* Ikon dikembalikan seperti versi lama (Background Merah, Icon & Border Emas) */
         .icon-box { 
             background: var(--bg-primary); color: var(--accent-primary); padding: 1rem; border-radius: 14px; 
             display: flex; align-items: center; justify-content: center; transition: var(--transition);
@@ -142,8 +140,8 @@
         /* --- DETAIL VIEWS (INNER PAGES) --- */
         .detail-view { 
             background: var(--card-bg); border-radius: var(--border-radius-lg); padding: 2.5rem; 
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); border: 1.5px solid var(--border-color) !important; /* Border hitam tipis */
-            position: relative; /* Ditambahkan untuk penempatan badge absolutely */
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); border: 1.5px solid var(--border-color) !important; 
+            position: relative; 
         }
         
         .back-btn { 
@@ -190,7 +188,7 @@
         /* Textareas */
         .result-textarea { 
             width: 100%; background: #f8fafc; border-radius: var(--border-radius-md); padding: 1.25rem; 
-            font-size: 0.95rem; color: var(--text-main); resize: vertical; border: 1.5px solid var(--border-color) !important; /* Border hitam tipis */
+            font-size: 0.95rem; color: var(--text-main); resize: vertical; border: 1.5px solid var(--border-color) !important; 
             transition: var(--transition); line-height: 1.5;
         }
         .result-textarea:focus { border-color: var(--accent-primary) !important; background: #ffffff; outline: none; }
@@ -201,7 +199,7 @@
             display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
             border-radius: var(--border-radius-md); font-weight: 800; cursor: pointer; 
             transition: var(--transition); 
-            border: 2px solid var(--accent-primary) !important; /* Border Emas */
+            border: 2px solid var(--accent-primary) !important; 
         }
         .btn-process { background: var(--bg-primary); color: white; }
         .btn-process:hover { background: var(--bg-dark); transform: translateY(-1px); }
@@ -232,7 +230,7 @@
         .upload-compact i { margin: 0; width: 18px; height: 18px; color: var(--bg-primary); }
         
         .search-input { 
-            flex: 1; padding: 0 1.25rem; border-radius: 8px; border: 1.5px solid var(--border-color) !important; /* Border hitam tipis */
+            flex: 1; padding: 0 1.25rem; border-radius: 8px; border: 1.5px solid var(--border-color) !important; 
             font-size: 0.95rem; outline: none; transition: var(--transition); background: #ffffff; color: var(--text-main);
         }
         .search-input:focus { border-color: var(--accent-primary) !important; }
@@ -242,7 +240,7 @@
         }
 
         .table-wrapper-large { 
-            border: 1.5px solid var(--border-color) !important; /* Border hitam tipis */
+            border: 1.5px solid var(--border-color) !important; 
             max-height: 65vh; min-height: 400px; 
             overflow-y: auto; border-radius: 8px; margin-top: 1.5rem; background: #ffffff; 
         }
@@ -380,7 +378,7 @@
             </div>
         </div>
 
-        <!-- VIEW: FULL SCREEN DASHBOARD (Menampilkan Coming Soon sementara) -->
+        <!-- VIEW: FULL SCREEN DASHBOARD -->
         <div id="view-dashboard-full" class="view">
             <div class="detail-view" style="padding: 1.5rem; height: 90vh; display: flex; flex-direction: column;">
                 <button class="back-btn" onclick="window.openView('view-dashboard-sales')" style="align-self: flex-start; margin-bottom: 1rem;"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali</button>
@@ -524,7 +522,10 @@
                 
                 <div id="success-link-box" style="display: none; background: #ecfdf5; border: 1.5px solid #000000; border-radius: var(--border-radius-md); padding: 1.25rem; margin-top: 1.5rem; align-items: center; justify-content: space-between;">
                     <span style="color: #065f46; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="check-circle" style="width: 18px;"></i> Sinkronisasi Selesai!</span>
-                    <a href="https://docs.google.com/spreadsheets/d/1hjA1iuzFLQbPpQMrJF26LzImYWFoczyVDXMuNHQpkPQ/edit?gid=1725895797" target="_blank" style="background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 6px; border: 1.5px solid #000000; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: var(--transition);">Buka Spreadsheet</a>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <a href="https://docs.google.com/spreadsheets/d/1hjA1iuzFLQbPpQMrJF26LzImYWFoczyVDXMuNHQpkPQ/export?format=xlsx&gid=1725895797" target="_blank" style="background: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 6px; border: 1.5px solid #000000; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 0.4rem;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"><i data-lucide="download" style="width: 14px; height: 14px;"></i> Download</a>
+                        <a href="https://docs.google.com/spreadsheets/d/1hjA1iuzFLQbPpQMrJF26LzImYWFoczyVDXMuNHQpkPQ/edit?gid=1725895797" target="_blank" style="background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 6px; border: 1.5px solid #000000; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 0.4rem;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"><i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Buka</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -551,7 +552,7 @@
                     <div class="column-card">
                         <div class="flex-row-align" style="margin-bottom: 0;">
                             <span class="column-title">2. Respon Sistem (Log)</span>
-                            <button class="btn-base btn-process" onclick="window.copyText('output-report-textarea')" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                            <button class="btn-base btn-process" onclick="window.copyText('output-report-textarea')" style="padding: 0.5rem 1rem; font-size: 0.85rem; background: #f1f5f9; color: var(--text-main); border: 1.5px solid var(--border-color) !important;">
                                 <i data-lucide="copy" style="width:14px;"></i> Salin Teks
                             </button>
                         </div>
@@ -571,8 +572,11 @@
         const N8N_WEBHOOK_URL = 'https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/webhook/erafone-roxy-automation';
         
         // URL Webhook n8n KHUSUS UNTUK LOGIN. 
-        // Jika belum dibuat, biarkan kosong. Sistem akan otomatis memakai Data Lokal sebagai cadangan.
         const LOGIN_WEBHOOK_URL = 'https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/webhook/password-login'; 
+
+        // Konfigurasi Supabase untuk mengambil tanggal update stok terakhir
+        const SUPABASE_URL = 'https://hgjyzhgpwcxwiqhaldhv.supabase.co'; // GANTI DENGAN URL SUPABASE ANDA
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhnanl6aGdwd2N4d2lxaGFsZGh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMDI5OTEsImV4cCI6MjA4NzY3ODk5MX0.ZVNOHbiuvs83QK-v8-XufA9QQ6cTTZ1rEWy2iy0_55g'; // GANTI DENGAN ANON KEY SUPABASE ANDA
 
         // --- DATA LOGIN CADANGAN (Sementara n8n belum siap) ---
         const fallbackLoginData = [
@@ -656,6 +660,9 @@
             document.getElementById('dynamic-title').innerText = userName;
             document.getElementById('sap-code').style.borderColor = 'var(--border-color)';
             document.getElementById('login-pass').style.borderColor = 'var(--border-color)';
+            
+            // Mengambil tanggal terakhir stok dari database saat login
+            window.fetchLatestStockDate();
         }
 
         window.handleLogout = function() {
@@ -712,6 +719,9 @@
                 if(viewId === 'view-cek-stok') {
                     const timeEl = document.getElementById('last-upload-time');
                     if(timeEl) timeEl.innerText = lastStokUpdateDate;
+                    
+                    // Tarik sinkronisasi tanggal terbaru dari database setiap kali menu dibuka
+                    window.fetchLatestStockDate(); 
                 }
                 window.scrollTo({ top: 0, behavior: 'smooth' }); 
             } else {
@@ -792,6 +802,30 @@
         window.formatJakartaDateOnly = function() { return new Intl.DateTimeFormat('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short', year: 'numeric' }).format(new Date()); }
 
         // --- API FUNCTIONS ---
+        // Fungsi baru untuk mengambil data tanggal Supabase
+        window.fetchLatestStockDate = async function() {
+            if (!SUPABASE_URL || SUPABASE_URL.includes('YOUR_PROJECT_ID')) return; 
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/daily_stock?select=stock_date&order=stock_date.desc&limit=1`, {
+                    method: 'GET',
+                    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.length > 0 && data[0].stock_date) {
+                        const dateObj = new Date(data[0].stock_date);
+                        lastStokUpdateDate = new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(dateObj);
+                        const timeEl = document.getElementById('last-upload-time');
+                        if(timeEl) timeEl.innerText = lastStokUpdateDate;
+                    } else {
+                        console.warn("Supabase merespon, tapi datanya kosong. Kemungkinan diblokir oleh RLS (Row Level Security).");
+                    }
+                } else {
+                    console.error("Error dari Supabase:", await response.text());
+                }
+            } catch (e) { console.error('Gagal mengambil data dari Supabase:', e); }
+        };
+
         window.processUpdateStokArea = async function() {
             const file = document.getElementById('stok-area-file').files[0];
             if (!file) { window.setLocalStatus('status-update-stok', 'Silakan pilih file master stok terlebih dahulu.', 'error'); return; }
@@ -801,8 +835,10 @@
                 const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
                 if (response.ok) { 
                     window.setLocalStatus('status-update-stok', 'Update Master Stok Berhasil!', 'success');
-                    lastStokUpdateDate = window.formatJakartaDateOnly(); 
-                    document.getElementById('last-upload-time').innerText = lastStokUpdateDate;
+                    
+                    // Setelah berhasil upload, update indikator tanggal dari database
+                    window.fetchLatestStockDate();
+                    
                     document.getElementById('stok-area-file').value = '';
                     document.getElementById('stok-area-file-name').innerText = 'Pilih file Excel master stok...';
                 } else throw new Error(); 
