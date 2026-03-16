@@ -203,11 +203,11 @@
         }
         .btn-process { background: var(--bg-primary); color: white; }
         .btn-process:hover { background: var(--bg-dark); transform: translateY(-1px); }
-        .btn-process:disabled { background: #cbd5e1; border-color: #94a3b8 !important; color: #64748b; cursor: not-allowed; transform: none; }
+        .btn-process:disabled { background: #cbd5e1; border-color: #94a3b8 !important; color: #64748b; cursor: not-allowed; transform: none; box-shadow: none; }
         
         .btn-send { background: var(--accent-primary); color: var(--text-main); }
         .btn-send:hover { background: var(--accent-hover); transform: translateY(-1px); }
-        .btn-send:disabled { background: #cbd5e1; border-color: #94a3b8 !important; color: #64748b; cursor: not-allowed; transform: none; }
+        .btn-send:disabled { background: #cbd5e1; border-color: #94a3b8 !important; color: #64748b; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .btn-large { width: 100%; padding: 1rem; font-size: 1rem; }
         .btn-send.ready { background: var(--bg-primary) !important; color: white !important; }
@@ -265,6 +265,30 @@
         .iframe-container { width: 100%; height: calc(100vh - 180px); border-radius: var(--border-radius-md); overflow: hidden; background: #ffffff; border: 1.5px solid var(--border-color) !important; }
         .iframe-container iframe { width: 100%; height: 100%; border: none; }
 
+        /* --- NOTIFICATION MODAL --- */
+        #modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
+            display: none; justify-content: center; align-items: center;
+            z-index: 10000; padding: 1rem;
+        }
+        .modal-card {
+            background: white; padding: 2.5rem; border-radius: var(--border-radius-lg);
+            width: 100%; max-width: 450px; text-align: center;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+            animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes modalPop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .modal-icon { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
+        .modal-icon.success { background: #ecfdf5; color: var(--success); border: 2px solid var(--success); }
+        .modal-icon.error { background: #fef2f2; color: var(--danger); border: 2px solid var(--danger); }
+        .modal-title { font-size: 1.5rem; font-weight: 800; color: var(--bg-primary); margin-bottom: 0.75rem; }
+        .modal-message { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 2rem; }
+        .btn-modal-close { width: 100%; padding: 0.875rem; border-radius: 10px; font-weight: 800; border: 2px solid var(--border-color); cursor: pointer; transition: var(--transition); }
+        .btn-modal-close.success { background: var(--bg-primary); color: white; }
+        .btn-modal-close.error { background: var(--danger); color: white; }
+
         @media (max-width: 900px) {
             .header-wrapper { flex-direction: column-reverse; align-items: center; text-align: center; }
             .logout-container { top: -35px; right: 0; }
@@ -277,6 +301,18 @@
     </style>
 </head>
 <body>
+
+    <!-- MODAL NOTIFIKASI -->
+    <div id="modal-overlay">
+        <div class="modal-card">
+            <div id="modal-icon-container" class="modal-icon success">
+                <i id="modal-icon-lucide" data-lucide="check-circle" style="width: 40px; height: 40px;"></i>
+            </div>
+            <h3 id="modal-title" class="modal-title">Berhasil!</h3>
+            <p id="modal-message" class="modal-message">Email laporan telah berhasil dikirimkan ke server n8n.</p>
+            <button id="btn-modal-close" class="btn-modal-close success" onclick="window.hideModal()">Oke, Mengerti</button>
+        </div>
+    </div>
 
     <!-- POPUP LOGIN OVERLAY -->
     <div id="login-overlay">
@@ -291,7 +327,7 @@
             </div>
 
             <div class="input-group">
-                <label>Sap Code</label>
+                <label>Sap Code / ID Toko</label>
                 <input type="text" id="sap-code" class="login-input" placeholder="Masukkan SAP Code">
             </div>
             <div class="input-group">
@@ -312,7 +348,7 @@
 
         <div class="header-wrapper" id="top-header">
             <header>
-                <h1 id="dynamic-title">Erafone and more ruko roxy</h1>
+                <h1 id="dynamic-title">Erafone</h1>
                 <p>Kontrol jobdesk dengan satu Klik</p>
             </header>
             <div class="logo-container">
@@ -486,7 +522,6 @@
                 <div class="column-card">
                     <span class="column-title">2. Cari Ketersediaan Barang</span>
                     <div class="action-row">
-                        <!-- Dikembalikan ke fungsi aslinya -->
                         <input type="text" id="search-stok-input" class="search-input" placeholder="Masukkan nama, tipe, atau kode barang..." onkeypress="if(event.key === 'Enter') window.processSearchStok()">
                         <button class="btn-base btn-send btn-action-compact" id="btn-search-stok" onclick="window.processSearchStok()">
                             <i data-lucide="search" style="width:16px;"></i> Cari Data
@@ -498,7 +533,6 @@
                         <table class="data-table" id="stok-result-table">
                             <thead><tr><th>Nama Lokasi / Store</th><th style="width: 120px; text-align: center;">Qty Tersedia</th></tr></thead>
                             <tbody>
-                                <!-- Tabel dikembalikan kosong untuk siap menerima data -->
                                 <tr><td colspan="2" style="text-align:center; padding:6rem 1rem; color:var(--text-muted); font-style: italic;">Hasil pencarian stok barang akan terlampir di sini...</td></tr>
                             </tbody>
                         </table>
@@ -523,8 +557,8 @@
                 <div id="success-link-box" style="display: none; background: #ecfdf5; border: 1.5px solid #000000; border-radius: var(--border-radius-md); padding: 1.25rem; margin-top: 1.5rem; align-items: center; justify-content: space-between;">
                     <span style="color: #065f46; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="check-circle" style="width: 18px;"></i> Sinkronisasi Selesai!</span>
                     <div style="display: flex; gap: 0.75rem;">
-                        <a href="https://docs.google.com/spreadsheets/d/1hjA1iuzFLQbPpQMrJF26LzImYWFoczyVDXMuNHQpkPQ/export?format=xlsx&gid=1725895797" target="_blank" style="background: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 6px; border: 1.5px solid #000000; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 0.4rem;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"><i data-lucide="download" style="width: 14px; height: 14px;"></i> Download</a>
-                        <a href="https://docs.google.com/spreadsheets/d/1hjA1iuzFLQbPpQMrJF26LzImYWFoczyVDXMuNHQpkPQ/edit?gid=1725895797" target="_blank" style="background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 6px; border: 1.5px solid #000000; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 0.4rem;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"><i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Buka</a>
+                        <a id="link-download-sheet" href="#" target="_blank" style="background: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 6px; border: 1.5px solid #000000; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 0.4rem;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"><i data-lucide="download" style="width: 14px; height: 14px;"></i> Download</a>
+                        <a id="link-open-sheet" href="#" target="_blank" style="background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 6px; border: 1.5px solid #000000; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 0.4rem;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"><i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Buka</a>
                     </div>
                 </div>
             </div>
@@ -569,21 +603,43 @@
         lucide.createIcons();
 
         // --- CORE CONFIG ---
-        const N8N_WEBHOOK_URL = 'https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/webhook/erafone-roxy-automation';
+        const N8N_WEBHOOK_URL = 'https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/webhook-test/erafone-roxy-automation';
         
-        // URL Webhook n8n KHUSUS UNTUK LOGIN. 
-        const LOGIN_WEBHOOK_URL = 'https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/webhook/password-login'; 
+        // Konfigurasi Supabase Anda
+        const SUPABASE_URL = 'https://hgjyzhgpwcxwiqhaldhv.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhnanl6aGdwd2N4d2lxaGFsZGh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMDI5OTEsImV4cCI6MjA4NzY3ODk5MX0.ZVNOHbiuvs83QK-v8-XufA9QQ6cTTZ1rEWy2iy0_55g';
 
-        // Konfigurasi Supabase untuk mengambil tanggal update stok terakhir
-        const SUPABASE_URL = 'https://hgjyzhgpwcxwiqhaldhv.supabase.co'; // GANTI DENGAN URL SUPABASE ANDA
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhnanl6aGdwd2N4d2lxaGFsZGh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMDI5OTEsImV4cCI6MjA4NzY3ODk5MX0.ZVNOHbiuvs83QK-v8-XufA9QQ6cTTZ1rEWy2iy0_55g'; // GANTI DENGAN ANON KEY SUPABASE ANDA
+        // Variabel Penyimpan Data Cabang yang Sedang Login
+        window.currentStoreConfig = null;
 
-        // --- DATA LOGIN CADANGAN (Sementara n8n belum siap) ---
-        const fallbackLoginData = [
-            { sap: "E396", pass: "admin123", name: "Erafone and more ruko Roxy" },
-            { sap: "E096", pass: "admin123", name: "Erafone 2 itc Roxy" },
-            { sap: "1001", pass: "1001", name: "User Test 1001" }
-        ];
+        // Fungsi Modal Notifikasi
+        window.showModal = function(type, title, msg) {
+            const overlay = document.getElementById('modal-overlay');
+            const iconContainer = document.getElementById('modal-icon-container');
+            const iconLucide = document.getElementById('modal-icon-lucide');
+            const modalTitle = document.getElementById('modal-title');
+            const modalMsg = document.getElementById('modal-message');
+            const closeBtn = document.getElementById('btn-modal-close');
+
+            if (type === 'success') {
+                iconContainer.className = 'modal-icon success';
+                iconLucide.setAttribute('data-lucide', 'check-circle');
+                closeBtn.className = 'btn-modal-close success';
+            } else {
+                iconContainer.className = 'modal-icon error';
+                iconLucide.setAttribute('data-lucide', 'alert-circle');
+                closeBtn.className = 'btn-modal-close error';
+            }
+
+            modalTitle.innerText = title;
+            modalMsg.innerText = msg;
+            overlay.style.display = 'flex';
+            lucide.createIcons();
+        }
+
+        window.hideModal = function() {
+            document.getElementById('modal-overlay').style.display = 'none';
+        }
 
         window.handleLogin = async function() {
             const sapInput = document.getElementById('sap-code');
@@ -601,7 +657,7 @@
                 return;
             }
 
-            // Mulai animasi loading di tombol Sign In
+            // Animasi Loading
             const originalBtnText = loginBtn.innerHTML;
             loginBtn.innerHTML = '<i data-lucide="loader-2" class="spin-icon" style="width:18px; height:18px;"></i> Memverifikasi...';
             loginBtn.disabled = true;
@@ -609,51 +665,37 @@
             errorBox.style.display = 'none';
 
             try {
-                // Skenario 1: Jika LOGIN_WEBHOOK_URL diisi, gunakan API n8n
-                if (LOGIN_WEBHOOK_URL) {
-                    const response = await fetch(LOGIN_WEBHOOK_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ sap_code: sap, password: pass })
-                    });
+                // MENCARI DATA TOKO LANGSUNG KE SUPABASE
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/store_config?sap_code=eq.${sap}&password=eq.${pass}&select=*`, {
+                    method: 'GET',
+                    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }
+                });
 
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.status === 'success') {
-                            doLoginSuccess(data.name || "User Erafone");
-                        } else {
-                            throw new Error("SAP Code atau Password salah!");
-                        }
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.length > 0) {
+                        // BISA LOGIN! Data Toko Ditemukan
+                        window.currentStoreConfig = data[0]; // Simpan data cabang ini di memori web
+                        doLoginSuccess(data[0].store_name);
                     } else {
-                        throw new Error("Gagal terhubung ke server login.");
+                        throw new Error("SAP Code atau Password salah/tidak terdaftar!");
                     }
-                } 
-                // Skenario 2: Jika Webhook belum ada, gunakan data lokal sebagai simulasi
-                else {
-                    // Simulasi delay jaringan agar terlihat profesional
-                    await new Promise(r => setTimeout(r, 800)); 
-                    const user = fallbackLoginData.find(u => u.sap === sap && u.pass === pass);
-                    if (user) {
-                        doLoginSuccess(user.name);
-                    } else {
-                        throw new Error("SAP Code atau Password salah!");
-                    }
+                } else {
+                    throw new Error("Gagal terhubung ke database. Cek pengaturan RLS Supabase.");
                 }
             } catch (err) {
-                // Tampilkan Error
                 errorText.innerText = err.message;
                 errorBox.style.display = 'flex';
                 sapInput.style.borderColor = 'var(--danger)';
                 passInput.style.borderColor = 'var(--danger)';
             } finally {
-                // Kembalikan tombol seperti semula
                 loginBtn.innerHTML = originalBtnText;
                 loginBtn.disabled = false;
                 lucide.createIcons();
             }
         }
 
-        // Fungsi bantuan agar kode lebih rapi
+        // Fungsi setelah berhasil login
         function doLoginSuccess(userName) {
             document.getElementById('login-overlay').style.display = 'none';
             document.getElementById('main-container').style.display = 'block';
@@ -661,7 +703,14 @@
             document.getElementById('sap-code').style.borderColor = 'var(--border-color)';
             document.getElementById('login-pass').style.borderColor = 'var(--border-color)';
             
-            // Mengambil tanggal terakhir stok dari database saat login
+            // Atur LINK Buka & Download Spreadsheet Dinamis Sesuai Database Toko Ini!
+            const sheetId = window.currentStoreConfig.spreadsheet_id;
+            if(sheetId) {
+                document.getElementById('link-download-sheet').href = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=xlsx`;
+                document.getElementById('link-open-sheet').href = `https://docs.google.com/spreadsheets/d/${sheetId}/edit`;
+            }
+
+            // Mengambil tanggal terakhir stok
             window.fetchLatestStockDate();
         }
 
@@ -671,6 +720,7 @@
             document.getElementById('sap-code').value = '';
             document.getElementById('login-pass').value = '';
             document.getElementById('login-error-box').style.display = 'none';
+            window.currentStoreConfig = null; // Hapus memori toko saat logout
             window.openView('view-main');
         }
 
@@ -719,8 +769,6 @@
                 if(viewId === 'view-cek-stok') {
                     const timeEl = document.getElementById('last-upload-time');
                     if(timeEl) timeEl.innerText = lastStokUpdateDate;
-                    
-                    // Tarik sinkronisasi tanggal terbaru dari database setiap kali menu dibuka
                     window.fetchLatestStockDate(); 
                 }
                 window.scrollTo({ top: 0, behavior: 'smooth' }); 
@@ -762,7 +810,7 @@
             window.checkReconcileStatus(); 
             window.clearLocalStatus('status-pdf'); window.clearLocalStatus('status-excel'); window.clearLocalStatus('status-send-email');
 
-            // Cek Stok (Dikembalikan ke fungsi reset semula)
+            // Cek Stok
             document.getElementById('stok-area-file').value = '';
             document.getElementById('stok-area-file-name').innerText = 'Pilih file Excel master stok...';
             document.getElementById('search-stok-input').value = '';
@@ -791,9 +839,6 @@
         }
 
         window.loadFullDashboard = function(type) {
-            const iframe = document.getElementById('dashboard-iframe');
-            if (type === 'store') iframe.src = "https://lookerstudio.google.com/embed/reporting/GANTI_DENGAN_ID_REPORT_STORE_ANDA/page/1M"; 
-            else iframe.src = "https://lookerstudio.google.com/embed/reporting/GANTI_DENGAN_ID_REPORT_ERO_ANDA/page/1M";
             window.openView('view-dashboard-full');
         }
 
@@ -801,10 +846,9 @@
         window.safeJsonParse = async function(response) { const text = await response.text(); try { return JSON.parse(text); } catch (e) { return { message: text }; } }
         window.formatJakartaDateOnly = function() { return new Intl.DateTimeFormat('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short', year: 'numeric' }).format(new Date()); }
 
-        // --- API FUNCTIONS ---
-        // Fungsi baru untuk mengambil data tanggal Supabase
+        // --- API FUNCTIONS (MULTI-STORE READY) ---
         window.fetchLatestStockDate = async function() {
-            if (!SUPABASE_URL || SUPABASE_URL.includes('YOUR_PROJECT_ID')) return; 
+            if (!SUPABASE_URL) return; 
             try {
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/daily_stock?select=stock_date&order=stock_date.desc&limit=1`, {
                     method: 'GET',
@@ -817,11 +861,7 @@
                         lastStokUpdateDate = new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(dateObj);
                         const timeEl = document.getElementById('last-upload-time');
                         if(timeEl) timeEl.innerText = lastStokUpdateDate;
-                    } else {
-                        console.warn("Supabase merespon, tapi datanya kosong. Kemungkinan diblokir oleh RLS (Row Level Security).");
-                    }
-                } else {
-                    console.error("Error dari Supabase:", await response.text());
+                    } 
                 }
             } catch (e) { console.error('Gagal mengambil data dari Supabase:', e); }
         };
@@ -831,14 +871,15 @@
             if (!file) { window.setLocalStatus('status-update-stok', 'Silakan pilih file master stok terlebih dahulu.', 'error'); return; }
             window.setLocalStatus('status-update-stok', 'Mengunggah & memperbarui data master ke server...');
             try {
-                const formData = new FormData(); formData.append('file', file); formData.append('command', 'update_stok_area');
+                const formData = new FormData(); 
+                formData.append('file', file); 
+                formData.append('command', 'update_stok_area');
+                formData.append('sap_code', window.currentStoreConfig.sap_code);
+
                 const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
                 if (response.ok) { 
                     window.setLocalStatus('status-update-stok', 'Update Master Stok Berhasil!', 'success');
-                    
-                    // Setelah berhasil upload, update indikator tanggal dari database
                     window.fetchLatestStockDate();
-                    
                     document.getElementById('stok-area-file').value = '';
                     document.getElementById('stok-area-file-name').innerText = 'Pilih file Excel master stok...';
                 } else throw new Error(); 
@@ -852,7 +893,15 @@
             window.setLocalStatus('status-search-stok', 'Mencari data stok secara realtime...');
             tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:6rem 1rem; color:var(--text-muted);">Memuat data...</td></tr>';
             try {
-                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ command: 'search_stok_area', search_query: searchInput }) });
+                const response = await fetch(N8N_WEBHOOK_URL, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ 
+                        command: 'search_stok_area', 
+                        search_query: searchInput,
+                        sap_code: window.currentStoreConfig.sap_code 
+                    }) 
+                });
                 if (response.ok) {
                     const data = await window.safeJsonParse(response);
                     let raw = data.message || ""; let lines = raw.split('\n');
@@ -876,7 +925,11 @@
             if (!file) { window.setLocalStatus('status-sales-report', 'Silakan pilih file PDF dahulu.', 'error'); return; }
             window.setLocalStatus('status-sales-report', 'Mengekstrak dan memproses data PDF...');
             try {
-                const formData = new FormData(); formData.append('file', file); formData.append('command', 'sales_report_pdf');
+                const formData = new FormData(); 
+                formData.append('file', file); 
+                formData.append('command', 'sales_report_pdf');
+                formData.append('sap_code', window.currentStoreConfig.sap_code);
+
                 const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
                 if (response.ok) { 
                     const data = await window.safeJsonParse(response); 
@@ -892,7 +945,11 @@
             const file = document.getElementById('recon-excel').files[0]; if (!file) return;
             window.setLocalStatus('status-excel', 'Memproses sinkronisasi Excel...');
             try {
-                const formData = new FormData(); formData.append('excel_file', file); formData.append('command', 'reconcile_excel');
+                const formData = new FormData(); 
+                formData.append('excel_file', file); 
+                formData.append('command', 'reconcile_excel');
+                formData.append('sap_code', window.currentStoreConfig.sap_code);
+                
                 const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
                 if (response.ok) { const data = await window.safeJsonParse(response); document.getElementById('email-body-textarea').value = data.message; isExcelProcessed = true; window.checkReconcileStatus(); window.setLocalStatus('status-excel', 'Data Excel tervalidasi!', 'success'); }
             } catch (e) { window.setLocalStatus('status-excel', 'Gagal memproses file.', 'error'); }
@@ -902,7 +959,11 @@
             const file = document.getElementById('recon-pdf').files[0]; if (!file) return;
             window.setLocalStatus('status-pdf', 'Menganalisis PDF POS...');
             try {
-                const formData = new FormData(); formData.append('pdf_file', file); formData.append('command', 'reconcile_pdf');
+                const formData = new FormData(); 
+                formData.append('pdf_file', file); 
+                formData.append('command', 'reconcile_pdf');
+                formData.append('sap_code', window.currentStoreConfig.sap_code);
+
                 const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
                 if (response.ok) { isPdfProcessed = true; window.checkReconcileStatus(); window.setLocalStatus('status-pdf', 'Data PDF tervalidasi!', 'success'); }
             } catch (e) { window.setLocalStatus('status-pdf', 'Gagal menganalisis file.', 'error'); }
@@ -912,19 +973,44 @@
             const body = document.getElementById('email-body-textarea').value;
             window.setLocalStatus('status-send-email', 'Mendistribusikan email laporan...');
             try { 
-                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ command: 'send_reconcile_email', email_content: body }) }); 
+                const response = await fetch(N8N_WEBHOOK_URL, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ 
+                        command: 'send_reconcile_email', 
+                        email_content: body,
+                        sap_code: window.currentStoreConfig.sap_code
+                    }) 
+                }); 
+                
+                const result = await window.safeJsonParse(response);
+                
                 if(response.ok) {
                     window.setLocalStatus('status-send-email', 'Laporan berhasil didistribusikan!', 'success'); 
-                    setTimeout(() => { window.resetAllForms(); }, 2500);
-                } else throw new Error(); 
-            } catch (e) { window.setLocalStatus('status-send-email', 'Koneksi gagal saat mengirim.', 'error'); }
+                    // Menampilkan Pop-up Sukses yang Besar
+                    window.showModal('success', 'Email Terkirim!', result.message || 'Laporan rekonsiliasi telah berhasil dikirimkan ke pihak terkait.');
+                    
+                    setTimeout(() => { window.resetAllForms(); }, 3000);
+                } else {
+                    throw new Error(result.message || 'Gagal mengirim email.');
+                }
+            } catch (e) { 
+                window.setLocalStatus('status-send-email', 'Koneksi gagal saat mengirim.', 'error'); 
+                // Menampilkan Pop-up Gagal yang Besar
+                window.showModal('error', 'Gagal Mengirim!', e.message || 'Terjadi gangguan saat proses pengiriman laporan ke server n8n.');
+            }
         }
 
         window.processDailyStock = async function() {
             const file = document.getElementById('daily-stock-file').files[0]; if (!file) return;
             window.setLocalStatus('status-daily-stock', 'Melakukan sinkronisasi data...');
             try {
-                const formData = new FormData(); formData.append('file', file); formData.append('command', 'daily_stock');
+                const formData = new FormData(); 
+                formData.append('file', file); 
+                formData.append('command', 'daily_stock');
+                formData.append('sap_code', window.currentStoreConfig.sap_code);
+                formData.append('spreadsheet_id', window.currentStoreConfig.spreadsheet_id || '');
+
                 const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
                 if (response.ok) { document.getElementById('success-link-box').style.display = 'flex'; window.setLocalStatus('status-daily-stock', 'Data terunggah ke Spreadsheet!', 'success'); }
             } catch (e) { window.setLocalStatus('status-daily-stock', 'Gagal menyinkronkan data.', 'error'); }
@@ -936,7 +1022,15 @@
             window.setLocalStatus('status-input-report', 'Mengirim data operasional...');
             document.getElementById('output-report-textarea').value = 'Memproses transmisi data ke server...';
             try {
-                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ command: 'input_report', report_text: text }) });
+                const response = await fetch(N8N_WEBHOOK_URL, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ 
+                        command: 'input_report', 
+                        report_text: text,
+                        sap_code: window.currentStoreConfig.sap_code
+                    }) 
+                });
                 if (response.ok) {
                     const data = await window.safeJsonParse(response);
                     let responseMessage = data.message || data.data || data.text || JSON.stringify(data, null, 2);
