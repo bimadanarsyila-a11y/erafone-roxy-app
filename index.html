@@ -103,13 +103,16 @@
         .logo-container { width: 160px; flex-shrink: 0; }
         .logo-container img { width: 100%; height: auto; display: block; }
 
-        .logout-container { position: absolute; top: -10px; right: 0; z-index: 100; }
+        .logout-container { position: absolute; top: -10px; right: 0; z-index: 100; display: flex; gap: 0.5rem; }
         .btn-logout {
             padding: 0.5rem 1rem; background: var(--bg-primary); color: white; border-radius: var(--border-radius-md); 
             font-weight: 700; font-size: 0.8rem; cursor: pointer; border: 1.5px solid var(--accent-primary) !important; 
             display: flex; align-items: center; gap: 0.5rem; transition: var(--transition);
         }
         .btn-logout:hover { background: var(--bg-dark); }
+
+        .btn-master { background: #2563eb; border-color: #1d4ed8 !important; }
+        .btn-master:hover { background: #1d4ed8; }
 
         /* --- VIEW CONTROLLERS --- */
         .view { display: none; animation: slideUp 0.4s ease-out forwards; opacity: 0; transform: translateY(15px); }
@@ -185,14 +188,14 @@
         .upload-area i { width: 32px; height: 32px; color: var(--bg-primary); margin-bottom: 0.75rem; }
         .upload-area p { color: var(--text-main); font-size: 0.9rem; font-weight: 500; }
 
-        /* Textareas */
-        .result-textarea { 
-            width: 100%; background: #f8fafc; border-radius: var(--border-radius-md); padding: 1.25rem; 
-            font-size: 0.95rem; color: var(--text-main); resize: vertical; border: 1.5px solid var(--border-color) !important; 
-            transition: var(--transition); line-height: 1.5;
+        /* Textareas & Form Inputs */
+        .result-textarea, .form-input { 
+            width: 100%; background: #ffffff; border-radius: var(--border-radius-md); padding: 0.875rem 1.25rem; 
+            font-size: 0.95rem; color: var(--text-main); border: 1.5px solid var(--border-color) !important; 
+            transition: var(--transition); outline: none;
         }
-        .result-textarea:focus { border-color: var(--accent-primary) !important; background: #ffffff; outline: none; }
-        .result-textarea[readonly] { background: #f1f5f9; color: var(--text-main); }
+        .result-textarea:focus, .form-input:focus { border-color: var(--accent-primary) !important; box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.3); }
+        .result-textarea[readonly] { background: #f1f5f9; cursor: default; }
 
         /* Buttons */
         .btn-base {
@@ -249,7 +252,7 @@
         .data-table th { background: #f8fafc; font-weight: 700; color: var(--text-main); font-size: 0.8rem; text-transform: uppercase; position: sticky; top: 0; z-index: 10; border-bottom: 1.5px solid var(--border-color); }
         .table-category-header { background: #f1f5f9 !important; font-weight: 800 !important; color: var(--bg-primary) !important; border: 1.5px solid var(--border-color) !important; }
 
-        /* --- SPESIFIK: INPUT REPORT MANUAL --- */
+        /* --- SPESIFIK: INPUT REPORT by ERO --- */
         .reconcile-top-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-bottom: 1.5rem; }
         
         .report-form-container { 
@@ -267,13 +270,6 @@
         .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
         .form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem; }
         
-        .form-input { 
-            width: 100%; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.9rem; 
-            border: 1.5px solid var(--border-color) !important; outline: none; 
-            transition: var(--transition); background: #ffffff; color: var(--text-main);
-        }
-        .form-input:focus { border-color: var(--accent-primary) !important; }
-
         /* --- NOTIFICATION MODAL --- */
         #modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -364,6 +360,9 @@
     <!-- MAIN DASHBOARD CONTENT -->
     <div class="container" id="main-container">
         <div class="logout-container" id="top-logout">
+            <button class="btn-logout btn-master" onclick="window.openMasterSheet()">
+                <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Master Spreadsheet Store
+            </button>
             <button class="btn-logout" onclick="window.handleLogout()">
                 <i data-lucide="log-out" style="width: 14px; height: 14px;"></i> Logout
             </button>
@@ -392,7 +391,7 @@
                 </button>
                 <button class="control-card" onclick="window.openView('view-daily-stock')">
                     <div class="icon-box"><i data-lucide="package" style="width: 28px; height: 28px;"></i></div>
-                    <div class="card-info"><h3>Daily Stock</h3><p>Sinkronisasi cepat template Excel untuk pembaruan stok harian.</p></div>
+                    <div class="card-info"><h3>Template Stok Daily</h3><p>Sinkronisasi cepat template Excel untuk pembaruan stok harian.</p></div>
                 </button>
                 <button class="control-card" onclick="window.openView('view-cek-stok')">
                     <div class="icon-box"><i data-lucide="search" style="width: 28px; height: 28px;"></i></div>
@@ -569,7 +568,7 @@
         <div id="view-daily-stock" class="view">
             <div class="detail-view">
                 <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                <h2>Sinkronisasi Daily Stock</h2>
+                <h2>Template Stok Daily</h2>
                 <div class="upload-area" onclick="document.getElementById('daily-stock-file').click()">
                     <i data-lucide="file-spreadsheet"></i>
                     <p id="daily-stock-file-name">Pilih file Excel Daily Stock</p>
@@ -592,7 +591,7 @@
         <div id="view-input-report" class="view">
             <div class="detail-view">
                 <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                <h2>Input Report Manual</h2>
+                <h2>Input Report by ERO</h2>
                 
                 <div class="reconcile-top-row">
                     <!-- Kolom Kiri: Form Input -->
@@ -612,7 +611,10 @@
                             </div>
                             <div class="input-group">
                                 <label>Nama ERO</label>
-                                <input type="text" id="rep-nama" class="form-input" placeholder="Masukkan nama Anda...">
+                                <!-- DROPDOWN NAMA ERO -->
+                                <select id="rep-nama" class="form-input">
+                                    <option value="">Pilih Nama ERO...</option>
+                                </select>
                             </div>
                             <div class="input-group">
                                 <label>Total All Bisnis (Rp)</label>
@@ -667,7 +669,7 @@
                     <!-- Kolom Kanan: Hasil Report -->
                     <div class="column-card">
                         <div class="flex-row-align" style="margin-bottom: 0.5rem;">
-                            <span class="column-title">2. Respon Sistem (Log)</span>
+                            <span class="column-title">2. Summary Report (Log)</span>
                             <button class="btn-base btn-process" onclick="window.copyText('output-report-textarea')" style="padding: 0.5rem 1rem; font-size: 0.85rem; background: #f1f5f9; color: var(--text-main); border: 1.5px solid var(--border-color) !important;">
                                 <i data-lucide="copy" style="width:14px;"></i> Salin Teks
                             </button>
@@ -685,7 +687,7 @@
         lucide.createIcons();
 
         // --- CORE CONFIG ---
-        const N8N_WEBHOOK_URL = 'https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/webhook/erafone-roxy-automation';
+        const N8N_WEBHOOK_URL = 'https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/webhook-test/erafone-roxy-automation';
         
         const SUPABASE_URL = 'https://hgjyzhgpwcxwiqhaldhv.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhnanl6aGdwd2N4d2lxaGFsZGh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMDI5OTEsImV4cCI6MjA4NzY3ODk5MX0.ZVNOHbiuvs83QK-v8-XufA9QQ6cTTZ1rEWy2iy0_55g';
@@ -769,12 +771,39 @@
             document.getElementById('login-overlay').style.display = 'none';
             document.getElementById('main-container').style.display = 'block';
             document.getElementById('dynamic-title').innerText = userName;
+
+            // POPULATE ERO DROPDOWN
+            const eroSelect = document.getElementById('rep-nama');
+            if (window.currentStoreConfig.ero_list && eroSelect) {
+                // Bersihkan list lama (sisakan option default)
+                eroSelect.innerHTML = '<option value="">Pilih Nama ERO...</option>';
+                // Pecah string koma menjadi array
+                const eros = window.currentStoreConfig.ero_list.split(',');
+                eros.forEach(name => {
+                    const trimmedName = name.trim();
+                    if(trimmedName) {
+                        const opt = document.createElement('option');
+                        opt.value = trimmedName;
+                        opt.innerText = trimmedName;
+                        eroSelect.appendChild(opt);
+                    }
+                });
+            }
+
             window.fetchLatestStockDate();
         }
 
         window.handleLogout = function() {
             window.currentStoreConfig = null;
             location.reload();
+        }
+
+        window.openMasterSheet = function() {
+            if (window.currentStoreConfig && window.currentStoreConfig.link_master) {
+                window.open(window.currentStoreConfig.link_master, '_blank');
+            } else {
+                window.showModal('error', 'Tautan Tidak Ditemukan', 'Link Master Spreadsheet untuk toko ini belum ditambahkan pada database Supabase (kolom link_master).');
+            }
         }
 
         window.setLocalStatus = function(elementId, msg, type = 'loading') {
@@ -966,7 +995,6 @@
                     window.checkReconcileStatus(); 
                     window.setLocalStatus('status-excel', 'Data Excel tervalidasi!', 'success');
                     
-                    // Reset field setelah sukses
                     document.getElementById('recon-excel').value = '';
                     const excelNameEl = document.getElementById('excel-name');
                     if (excelNameEl) excelNameEl.innerText = 'Pilih file Excel...';
@@ -993,7 +1021,6 @@
                     window.checkReconcileStatus(); 
                     window.setLocalStatus('status-pdf', 'Data PDF tervalidasi!', 'success'); 
                     
-                    // Reset field setelah sukses
                     document.getElementById('recon-pdf').value = '';
                     const pdfNameEl = document.getElementById('pdf-name');
                     if (pdfNameEl) pdfNameEl.innerText = 'Pilih file PDF...';
@@ -1016,7 +1043,7 @@
             } catch (e) { window.setLocalStatus('status-daily-stock', 'Gagal.', 'error'); }
         }
 
-        // --- INPUT REPORT MANUAL LOGIC ---
+        // --- INPUT REPORT by ERO LOGIC ---
         const getVal = (id) => document.getElementById(id).value.trim() || "0";
         const formatBulanIndo = (dStr) => {
             if(!dStr) return "";
@@ -1028,7 +1055,7 @@
         window.processInputReport = async function() {
             const tgl = document.getElementById('rep-tanggal').value;
             const nama = document.getElementById('rep-nama').value.trim();
-            if (!tgl || !nama) { window.setLocalStatus('status-input-report', 'Wajib isi Tanggal & Nama!', 'error'); return; }
+            if (!tgl || !nama) { window.setLocalStatus('status-input-report', 'Wajib isi Tanggal & Pilih Nama ERO!', 'error'); return; }
 
             const templateText = `Update Sales daily by Ero
 Tanggal : ${formatBulanIndo(tgl)}
@@ -1074,10 +1101,10 @@ G.Riview : ${getVal('rep-grev')}`;
         window.resetAllForms = function() {
             document.querySelectorAll('input:not([type=button]):not([type=submit])').forEach(i => { if(i.type!=='date') i.value=''; });
             document.querySelectorAll('textarea').forEach(t => t.value='');
+            document.querySelectorAll('select').forEach(s => s.selectedIndex = 0); // Reset dropdown
             document.querySelectorAll('.local-status').forEach(s => { s.className='local-status'; s.innerHTML=''; });
             document.querySelectorAll('.upload-area p, .upload-compact p').forEach(p => { if(p.id.includes('file-name')) p.innerText='Pilih file...'; });
             
-            // Tambahan eksplisit agar reset berfungsi untuk form rekonsiliasi
             const pdfNameEl = document.getElementById('pdf-name');
             if (pdfNameEl) pdfNameEl.innerText = 'Pilih file PDF...';
             
