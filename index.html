@@ -65,7 +65,7 @@
 
         .login-card .logo-container { margin: 0 auto 2rem; width: 160px; }
         
-        .input-group { text-align: left; margin-bottom: 1.25rem; }
+        .input-group { text-align: left; margin-bottom: 1.25rem; width: 100%; }
         .input-group label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--bg-primary); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
         
         .login-input {
@@ -252,18 +252,27 @@
         /* --- SPESIFIK: INPUT REPORT MANUAL --- */
         .reconcile-top-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-bottom: 1.5rem; }
         
-        /* --- STATUS LOKAL --- */
-        .local-status { font-size: 0.85rem; margin-top: 0.75rem; display: none; align-items: center; gap: 0.5rem; font-weight: 600; }
-        .local-status.active { display: flex; }
-        .local-status.loading { color: #d97706; }
-        .local-status.success { color: #059669; }
-        .local-status.error { color: #dc2626; }
-        .spin-icon { animation: rotation 1s linear infinite; }
-        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .report-form-container { 
+            background: #f8fafc; border: 1.5px solid var(--border-color); border-radius: var(--border-radius-md); 
+            padding: 1.5rem 1rem 1.5rem 1.5rem; max-height: 500px; overflow-y: auto; 
+        }
+        /* Custom Scrollbar */
+        .report-form-container::-webkit-scrollbar { width: 6px; }
+        .report-form-container::-webkit-scrollbar-track { background: transparent; }
+        .report-form-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 
-        /* Iframe */
-        .iframe-container { width: 100%; height: calc(100vh - 180px); border-radius: var(--border-radius-md); overflow: hidden; background: #ffffff; border: 1.5px solid var(--border-color) !important; }
-        .iframe-container iframe { width: 100%; height: 100%; border: none; }
+        .section-title { font-size: 0.85rem; font-weight: 800; color: var(--bg-primary); margin: 1.5rem 0 0.75rem 0; border-bottom: 1px solid #cbd5e1; padding-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .section-title:first-child { margin-top: 0; }
+        
+        .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+        .form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem; }
+        
+        .form-input { 
+            width: 100%; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.9rem; 
+            border: 1.5px solid var(--border-color) !important; outline: none; 
+            transition: var(--transition); background: #ffffff; color: var(--text-main);
+        }
+        .form-input:focus { border-color: var(--accent-primary) !important; }
 
         /* --- NOTIFICATION MODAL --- */
         #modal-overlay {
@@ -289,6 +298,19 @@
         .btn-modal-close.success { background: var(--bg-primary); color: white; }
         .btn-modal-close.error { background: var(--danger); color: white; }
 
+        /* --- STATUS LOKAL --- */
+        .local-status { font-size: 0.85rem; margin-top: 0.75rem; display: none; align-items: center; gap: 0.5rem; font-weight: 600; }
+        .local-status.active { display: flex; }
+        .local-status.loading { color: #d97706; }
+        .local-status.success { color: #059669; }
+        .local-status.error { color: #dc2626; }
+        .spin-icon { animation: rotation 1s linear infinite; }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Iframe */
+        .iframe-container { width: 100%; height: calc(100vh - 180px); border-radius: var(--border-radius-md); overflow: hidden; background: #ffffff; border: 1.5px solid var(--border-color) !important; }
+        .iframe-container iframe { width: 100%; height: 100%; border: none; }
+
         @media (max-width: 900px) {
             .header-wrapper { flex-direction: column-reverse; align-items: center; text-align: center; }
             .logout-container { top: -35px; right: 0; }
@@ -297,6 +319,7 @@
             .action-row { flex-direction: column; height: auto; }
             .btn-action-compact { width: 100%; height: 48px; }
             .upload-compact, .search-input { height: 48px; }
+            .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; gap: 0.5rem; }
         }
     </style>
 </head>
@@ -309,7 +332,7 @@
                 <i id="modal-icon-lucide" data-lucide="check-circle" style="width: 40px; height: 40px;"></i>
             </div>
             <h3 id="modal-title" class="modal-title">Berhasil!</h3>
-            <p id="modal-message" class="modal-message">Email laporan telah berhasil dikirimkan ke server n8n.</p>
+            <p id="modal-message" class="modal-message">Laporan telah berhasil dikirimkan ke server.</p>
             <button id="btn-modal-close" class="btn-modal-close success" onclick="window.hideModal()">Oke, Mengerti</button>
         </div>
     </div>
@@ -392,7 +415,6 @@
                 <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
                 <h2>Dashboard Sales</h2>
                 
-                <!-- Badge Coming Soon di Kanan Atas -->
                 <div class="coming-soon-badge">
                     <i data-lucide="hammer" style="width: 24px; height: 24px;"></i>
                     <div>
@@ -419,7 +441,6 @@
             <div class="detail-view" style="padding: 1.5rem; height: 90vh; display: flex; flex-direction: column;">
                 <button class="back-btn" onclick="window.openView('view-dashboard-sales')" style="align-self: flex-start; margin-bottom: 1rem;"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali</button>
                 <div class="iframe-container" style="flex: 1; display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 1.5rem; background: #f8fafc;">
-                    <!-- Tampilan Coming Soon Menggantikan Iframe -->
                     <div style="background: var(--bg-primary); padding: 1.5rem; border-radius: 50%; border: 2px solid var(--accent-primary); box-shadow: 0 4px 0 #000;">
                         <i data-lucide="bar-chart-3" style="width: 48px; height: 48px; color: var(--accent-primary);"></i>
                     </div>
@@ -428,7 +449,6 @@
                         <p style="color: var(--text-main); font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem;">Visualisasi Data Sedang Dalam Tahap Pengembangan</p>
                         <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 450px; margin: 0 auto; line-height: 1.6;">Halaman ini nantinya akan menampilkan grafik interaktif dari Looker Studio untuk memantau performa penjualan secara real-time.</p>
                     </div>
-                    <!-- Iframe disembunyikan sementara -->
                     <iframe id="dashboard-iframe" src="" allowfullscreen style="display: none;"></iframe>
                 </div>
             </div>
@@ -575,26 +595,84 @@
                 <h2>Input Report Manual</h2>
                 
                 <div class="reconcile-top-row">
-                    <!-- Kolom Kiri: Input -->
+                    <!-- Kolom Kiri: Form Input -->
                     <div class="column-card">
-                        <div class="flex-row-align" style="margin-bottom: 0;">
-                            <span class="column-title">1. Data Laporan Baru</span>
+                        <div class="flex-row-align" style="margin-bottom: 0.5rem;">
+                            <span class="column-title">1. Formulir Laporan Harian</span>
                             <button class="btn-base btn-process" id="btn-submit-report" onclick="window.processInputReport()" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
-                                <i data-lucide="send" style="width:14px;"></i> Submit Report
+                                <i data-lucide="send" style="width:14px;"></i> Submit Laporan
                             </button>
                         </div>
-                        <textarea id="input-report-textarea" class="result-textarea" placeholder="Paste narasi laporan mentah Anda di sini..." style="height: 400px;"></textarea>
+                        
+                        <div class="report-form-container" id="manual-report-form">
+                            <h4 class="section-title">Informasi Dasar</h4>
+                            <div class="input-group">
+                                <label>Tanggal Laporan</label>
+                                <input type="date" id="rep-tanggal" class="form-input">
+                            </div>
+                            <div class="input-group">
+                                <label>Nama ERO</label>
+                                <input type="text" id="rep-nama" class="form-input" placeholder="Masukkan nama Anda...">
+                            </div>
+                            <div class="input-group">
+                                <label>Total All Bisnis (Rp)</label>
+                                <input type="text" id="rep-allbisnis" class="form-input" placeholder="Contoh: 24.794.004" inputmode="numeric">
+                            </div>
+
+                            <h4 class="section-title">Device & Accesories</h4>
+                            <div class="form-grid-2">
+                                <div class="input-group"><label>Device Qty</label><input type="number" id="rep-dev-qty" class="form-input" placeholder="0"></div>
+                                <div class="input-group"><label>Device Value</label><input type="text" id="rep-dev-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                            </div>
+                            <div class="form-grid-2">
+                                <div class="input-group"><label>Acc Qty</label><input type="number" id="rep-acc-qty" class="form-input" placeholder="0"></div>
+                                <div class="input-group"><label>Acc Value</label><input type="text" id="rep-acc-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                            </div>
+
+                            <h4 class="section-title">Perlindungan & Layanan</h4>
+                            <div class="form-grid-2">
+                                <div class="input-group"><label>Boltech Qty</label><input type="number" id="rep-bolt-qty" class="form-input" placeholder="0"></div>
+                                <div class="input-group"><label>Boltech Value</label><input type="text" id="rep-bolt-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                            </div>
+
+                            <h4 class="section-title">Kategori Operator</h4>
+                            <div class="form-grid-2">
+                                <div class="input-group"><label>Indosat Qty</label><input type="number" id="rep-isat-qty" class="form-input" placeholder="0"></div>
+                                <div class="input-group"><label>Indosat Value</label><input type="text" id="rep-isat-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                            </div>
+                            <div class="form-grid-2">
+                                <div class="input-group"><label>XL Qty</label><input type="number" id="rep-xl-qty" class="form-input" placeholder="0"></div>
+                                <div class="input-group"><label>XL Value</label><input type="text" id="rep-xl-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                            </div>
+                            <div class="form-grid-2">
+                                <div class="input-group"><label>Telkomsel Qty</label><input type="number" id="rep-tsel-qty" class="form-input" placeholder="0"></div>
+                                <div class="input-group"><label>Telkomsel Value</label><input type="text" id="rep-tsel-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                            </div>
+
+                            <h4 class="section-title">Walk-In Customer (WIC)</h4>
+                            <div class="form-grid-2">
+                                <div class="input-group"><label>WIC Deal</label><input type="number" id="rep-wic-deal" class="form-input" placeholder="0"></div>
+                                <div class="input-group"><label>WIC Loss</label><input type="number" id="rep-wic-loss" class="form-input" placeholder="0"></div>
+                            </div>
+
+                            <h4 class="section-title">Indikator Lainnya</h4>
+                            <div class="form-grid-3">
+                                <div class="input-group"><label>CNP</label><input type="number" id="rep-cnp" class="form-input" placeholder="0"></div>
+                                <div class="input-group"><label>CSI</label><input type="number" id="rep-csi" class="form-input" placeholder="0"></div>
+                                <div class="input-group"><label>G. Review</label><input type="number" id="rep-grev" class="form-input" placeholder="0"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Kolom Kanan: Hasil Report -->
                     <div class="column-card">
-                        <div class="flex-row-align" style="margin-bottom: 0;">
+                        <div class="flex-row-align" style="margin-bottom: 0.5rem;">
                             <span class="column-title">2. Respon Sistem (Log)</span>
                             <button class="btn-base btn-process" onclick="window.copyText('output-report-textarea')" style="padding: 0.5rem 1rem; font-size: 0.85rem; background: #f1f5f9; color: var(--text-main); border: 1.5px solid var(--border-color) !important;">
                                 <i data-lucide="copy" style="width:14px;"></i> Salin Teks
                             </button>
                         </div>
-                        <textarea id="output-report-textarea" class="result-textarea" placeholder="Menunggu proses submit..." style="height: 400px;" readonly></textarea>
+                        <textarea id="output-report-textarea" class="result-textarea" placeholder="Menunggu proses submit..." style="height: 500px;" readonly></textarea>
                     </div>
                 </div>
                 <div id="status-input-report" class="local-status" style="justify-content: center;"></div>
@@ -609,14 +687,12 @@
         // --- CORE CONFIG ---
         const N8N_WEBHOOK_URL = 'https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/webhook/erafone-roxy-automation';
         
-        // Konfigurasi Supabase Anda
         const SUPABASE_URL = 'https://hgjyzhgpwcxwiqhaldhv.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhnanl6aGdwd2N4d2lxaGFsZGh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMDI5OTEsImV4cCI6MjA4NzY3ODk5MX0.ZVNOHbiuvs83QK-v8-XufA9QQ6cTTZ1rEWy2iy0_55g';
 
-        // Variabel Penyimpan Data Cabang yang Sedang Login
         window.currentStoreConfig = null;
 
-        // Fungsi Modal Notifikasi
+        // Modal Function
         window.showModal = function(type, title, msg) {
             const overlay = document.getElementById('modal-overlay');
             const iconContainer = document.getElementById('modal-icon-container');
@@ -641,10 +717,9 @@
             lucide.createIcons();
         }
 
-        window.hideModal = function() {
-            document.getElementById('modal-overlay').style.display = 'none';
-        }
+        window.hideModal = function() { document.getElementById('modal-overlay').style.display = 'none'; }
 
+        // Login Handler
         window.handleLogin = async function() {
             const sapInput = document.getElementById('sap-code');
             const passInput = document.getElementById('login-pass');
@@ -661,7 +736,6 @@
                 return;
             }
 
-            // Animasi Loading
             const originalBtnText = loginBtn.innerHTML;
             loginBtn.innerHTML = '<i data-lucide="loader-2" class="spin-icon" style="width:18px; height:18px;"></i> Memverifikasi...';
             loginBtn.disabled = true;
@@ -669,7 +743,6 @@
             errorBox.style.display = 'none';
 
             try {
-                // MENCARI DATA TOKO LANGSUNG KE SUPABASE
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/store_config?sap_code=eq.${sap}&password=eq.${pass}&select=*`, {
                     method: 'GET',
                     headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }
@@ -678,20 +751,13 @@
                 if (response.ok) {
                     const data = await response.json();
                     if (data && data.length > 0) {
-                        // BISA LOGIN! Data Toko Ditemukan
-                        window.currentStoreConfig = data[0]; // Simpan data cabang ini di memori web
+                        window.currentStoreConfig = data[0]; 
                         doLoginSuccess(data[0].store_name);
-                    } else {
-                        throw new Error("SAP Code atau Password salah/tidak terdaftar!");
-                    }
-                } else {
-                    throw new Error("Gagal terhubung ke database. Cek pengaturan RLS Supabase.");
-                }
+                    } else { throw new Error("SAP Code atau Password salah!"); }
+                } else { throw new Error("Gagal terhubung ke database."); }
             } catch (err) {
                 errorText.innerText = err.message;
                 errorBox.style.display = 'flex';
-                sapInput.style.borderColor = 'var(--danger)';
-                passInput.style.borderColor = 'var(--danger)';
             } finally {
                 loginBtn.innerHTML = originalBtnText;
                 loginBtn.disabled = false;
@@ -699,26 +765,16 @@
             }
         }
 
-        // Fungsi setelah berhasil login
         function doLoginSuccess(userName) {
             document.getElementById('login-overlay').style.display = 'none';
             document.getElementById('main-container').style.display = 'block';
             document.getElementById('dynamic-title').innerText = userName;
-            document.getElementById('sap-code').style.borderColor = 'var(--border-color)';
-            document.getElementById('login-pass').style.borderColor = 'var(--border-color)';
-            
-            // Mengambil tanggal terakhir stok
             window.fetchLatestStockDate();
         }
 
         window.handleLogout = function() {
-            document.getElementById('main-container').style.display = 'none';
-            document.getElementById('login-overlay').style.display = 'flex';
-            document.getElementById('sap-code').value = '';
-            document.getElementById('login-pass').value = '';
-            document.getElementById('login-error-box').style.display = 'none';
-            window.currentStoreConfig = null; // Hapus memori toko saat logout
-            window.openView('view-main');
+            window.currentStoreConfig = null;
+            location.reload();
         }
 
         window.setLocalStatus = function(elementId, msg, type = 'loading') {
@@ -735,6 +791,7 @@
             if (el) { el.className = 'local-status'; el.innerHTML = ''; }
         }
 
+        // View Control
         let lastStokUpdateDate = "-";
         let isExcelProcessed = false;
         let isPdfProcessed = false;
@@ -757,95 +814,34 @@
         window.openView = function(viewId) { 
             const views = document.querySelectorAll('.view');
             views.forEach(v => v.classList.remove('active')); 
-            
             const target = document.getElementById(viewId);
-            let finalViewId = viewId;
-
             if (target) {
                 target.classList.add('active'); 
                 if(viewId === 'view-cek-stok') {
                     const timeEl = document.getElementById('last-upload-time');
                     if(timeEl) timeEl.innerText = lastStokUpdateDate;
                     window.fetchLatestStockDate(); 
+                } else if(viewId === 'view-input-report') {
+                    const tglInput = document.getElementById('rep-tanggal');
+                    if(tglInput && !tglInput.value) tglInput.value = new Date().toISOString().split('T')[0];
                 }
                 window.scrollTo({ top: 0, behavior: 'smooth' }); 
             } else {
-                const mainView = document.getElementById('view-main');
-                if(mainView) mainView.classList.add('active');
-                finalViewId = 'view-main';
+                document.getElementById('view-main').classList.add('active');
             }
-
-            const topHeader = document.getElementById('top-header');
-            const topLogout = document.getElementById('top-logout');
-            if (topHeader && topLogout) {
-                if (finalViewId === 'view-main') {
-                    topHeader.style.display = 'flex';
-                    topLogout.style.display = 'flex';
-                } else {
-                    topHeader.style.display = 'none';
-                    topLogout.style.display = 'none';
-                }
-            }
+            const isMain = viewId === 'view-main' || !viewId;
+            document.getElementById('top-header').style.display = isMain ? 'flex' : 'none';
+            document.getElementById('top-logout').style.display = isMain ? 'flex' : 'none';
             lucide.createIcons();
         }
 
-        window.resetAllForms = function() {
-            // Sales Report
-            document.getElementById('sales-file').value = '';
-            document.getElementById('sales-file-name').innerText = 'Pilih file PDF Laporan harian';
-            document.getElementById('sales-textarea').value = '';
-            document.getElementById('sales-result-area').style.display = 'none';
-            window.clearLocalStatus('status-sales-report');
-
-            // Rekonsiliasi
-            document.getElementById('recon-pdf').value = '';
-            document.getElementById('recon-excel').value = '';
-            document.getElementById('pdf-name').innerText = 'Pilih file PDF...';
-            document.getElementById('excel-name').innerText = 'Pilih file Excel...';
-            document.getElementById('email-body-textarea').value = '';
-            isExcelProcessed = false; isPdfProcessed = false;
-            window.checkReconcileStatus(); 
-            window.clearLocalStatus('status-pdf'); window.clearLocalStatus('status-excel'); window.clearLocalStatus('status-send-email');
-
-            // Cek Stok
-            document.getElementById('stok-area-file').value = '';
-            document.getElementById('stok-area-file-name').innerText = 'Pilih file Excel master stok...';
-            document.getElementById('search-stok-input').value = '';
-            document.querySelector('#stok-result-table tbody').innerHTML = '<tr><td colspan="2" style="text-align:center; padding:6rem 1rem; color:var(--text-muted); font-style: italic;">Hasil pencarian stok barang akan terlampir di sini...</td></tr>';
-            window.clearLocalStatus('status-update-stok'); window.clearLocalStatus('status-search-stok');
-
-            // Daily Stock
-            document.getElementById('daily-stock-file').value = '';
-            document.getElementById('daily-stock-file-name').innerText = 'Pilih file Excel Daily Stock';
-            document.getElementById('success-link-box').style.display = 'none';
-            window.clearLocalStatus('status-daily-stock');
-
-            // Input Report
-            document.getElementById('input-report-textarea').value = '';
-            document.getElementById('output-report-textarea').value = '';
-            window.clearLocalStatus('status-input-report');
-
-            // Dashboard Sales
-            const iframe = document.getElementById('dashboard-iframe');
-            if (iframe) iframe.src = '';
-        }
-
-        window.backToMain = function() { 
-            window.resetAllForms(); 
-            window.openView('view-main'); 
-        }
-
-        window.loadFullDashboard = function(type) {
-            window.openView('view-dashboard-full');
-        }
+        window.backToMain = function() { window.resetAllForms(); window.openView('view-main'); }
 
         window.updateFileName = function(inputId, displayId) { const file = document.getElementById(inputId).files[0]; if (file) document.getElementById(displayId).innerText = file.name; }
         window.safeJsonParse = async function(response) { const text = await response.text(); try { return JSON.parse(text); } catch (e) { return { message: text }; } }
-        window.formatJakartaDateOnly = function() { return new Intl.DateTimeFormat('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short', year: 'numeric' }).format(new Date()); }
 
-        // --- API FUNCTIONS (MULTI-STORE READY) ---
+        // --- API FUNCTIONS ---
         window.fetchLatestStockDate = async function() {
-            if (!SUPABASE_URL) return; 
             try {
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/daily_stock?select=stock_date&order=stock_date.desc&limit=1`, {
                     method: 'GET',
@@ -853,51 +849,43 @@
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    if (data && data.length > 0 && data[0].stock_date) {
+                    if (data && data.length > 0) {
                         const dateObj = new Date(data[0].stock_date);
                         lastStokUpdateDate = new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(dateObj);
                         const timeEl = document.getElementById('last-upload-time');
                         if(timeEl) timeEl.innerText = lastStokUpdateDate;
                     } 
                 }
-            } catch (e) { console.error('Gagal mengambil data dari Supabase:', e); }
+            } catch (e) { console.error(e); }
         };
 
         window.processUpdateStokArea = async function() {
             const file = document.getElementById('stok-area-file').files[0];
-            if (!file) { window.setLocalStatus('status-update-stok', 'Silakan pilih file master stok terlebih dahulu.', 'error'); return; }
-            window.setLocalStatus('status-update-stok', 'Mengunggah & memperbarui data master ke server...');
+            if (!file) return;
+            window.setLocalStatus('status-update-stok', 'Mengunggah data master...');
             try {
                 const formData = new FormData(); 
                 formData.append('file', file); 
                 formData.append('command', 'update_stok_area');
                 formData.append('sap_code', window.currentStoreConfig.sap_code);
-
                 const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
                 if (response.ok) { 
-                    window.setLocalStatus('status-update-stok', 'Update Master Stok Berhasil!', 'success');
+                    window.setLocalStatus('status-update-stok', 'Update Berhasil!', 'success');
                     window.fetchLatestStockDate();
-                    document.getElementById('stok-area-file').value = '';
-                    document.getElementById('stok-area-file-name').innerText = 'Pilih file Excel master stok...';
                 } else throw new Error(); 
-            } catch (e) { window.setLocalStatus('status-update-stok', 'Koneksi gagal saat memperbarui data.', 'error'); }
+            } catch (e) { window.setLocalStatus('status-update-stok', 'Gagal update.', 'error'); }
         }
 
         window.processSearchStok = async function() {
             const searchInput = document.getElementById('search-stok-input').value;
             const tbody = document.querySelector('#stok-result-table tbody');
             if (!searchInput) return;
-            window.setLocalStatus('status-search-stok', 'Mencari data stok secara realtime...');
-            tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:6rem 1rem; color:var(--text-muted);">Memuat data...</td></tr>';
+            window.setLocalStatus('status-search-stok', 'Mencari...');
             try {
                 const response = await fetch(N8N_WEBHOOK_URL, { 
                     method: 'POST', 
                     headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ 
-                        command: 'search_stok_area', 
-                        search_query: searchInput,
-                        sap_code: window.currentStoreConfig.sap_code 
-                    }) 
+                    body: JSON.stringify({ command: 'search_stok_area', search_query: searchInput, sap_code: window.currentStoreConfig.sap_code }) 
                 });
                 if (response.ok) {
                     const data = await window.safeJsonParse(response);
@@ -912,34 +900,57 @@
                             }
                         });
                         window.setLocalStatus('status-search-stok', 'Data ditemukan.', 'success');
-                    } else { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:6rem 1rem; color:#ef4444;">Barang tidak ditemukan dalam database.</td></tr>'; window.setLocalStatus('status-search-stok', 'Pencarian selesai tanpa hasil.', 'error'); }
+                    } else { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:4rem;">Barang tidak ditemukan.</td></tr>'; window.setLocalStatus('status-search-stok', 'Nol hasil.', 'error'); }
                 }
-            } catch (e) { window.setLocalStatus('status-search-stok', 'Terjadi gangguan koneksi ke server.', 'error'); }
+            } catch (e) { window.setLocalStatus('status-search-stok', 'Error koneksi.', 'error'); }
         }
 
         window.processSales = async function() {
-            const fileInput = document.getElementById('sales-file'); const file = fileInput.files[0]; 
-            if (!file) { window.setLocalStatus('status-sales-report', 'Silakan pilih file PDF dahulu.', 'error'); return; }
-            window.setLocalStatus('status-sales-report', 'Mengekstrak dan memproses data PDF...');
+            const file = document.getElementById('sales-file').files[0]; 
+            if (!file) {
+                window.setLocalStatus('status-sales-report', 'Silakan pilih file PDF dahulu.', 'error'); 
+                return; 
+            }
+            window.setLocalStatus('status-sales-report', 'Mengekstrak PDF...');
             try {
                 const formData = new FormData(); 
-                formData.append('file', file); 
-                formData.append('command', 'sales_report_pdf');
-                formData.append('sap_code', window.currentStoreConfig.sap_code);
-
+                formData.append('file', file); formData.append('command', 'sales_report_pdf'); formData.append('sap_code', window.currentStoreConfig.sap_code);
                 const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
                 if (response.ok) { 
                     const data = await window.safeJsonParse(response); 
                     document.getElementById('sales-result-area').style.display = 'block'; 
                     document.getElementById('sales-textarea').value = data.message; 
-                    window.setLocalStatus('status-sales-report', 'Ekstraksi PDF Berhasil!', 'success');
-                    fileInput.value = ''; document.getElementById('sales-file-name').innerText = 'Pilih file PDF Laporan harian';
+                    window.setLocalStatus('status-sales-report', 'Berhasil!', 'success');
                 } else throw new Error(); 
-            } catch (e) { window.setLocalStatus('status-sales-report', 'Gagal memproses file PDF.', 'error'); }
+            } catch (e) { window.setLocalStatus('status-sales-report', 'Gagal.', 'error'); }
+        }
+
+        window.sendEmail = async function() {
+            const body = document.getElementById('email-body-textarea').value;
+            window.setLocalStatus('status-send-email', 'Mengirim email...');
+            try { 
+                const response = await fetch(N8N_WEBHOOK_URL, { 
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ command: 'send_reconcile_email', email_content: body, sap_code: window.currentStoreConfig.sap_code }) 
+                }); 
+                const result = await window.safeJsonParse(response);
+                if(response.ok) {
+                    window.setLocalStatus('status-send-email', 'Terkirim!', 'success'); 
+                    window.showModal('success', 'Email Terkirim!', result.message || 'Laporan rekonsiliasi telah berhasil dikirimkan.');
+                    setTimeout(window.resetAllForms, 3000);
+                } else throw new Error(result.message);
+            } catch (e) { 
+                window.setLocalStatus('status-send-email', 'Gagal.', 'error'); 
+                window.showModal('error', 'Gagal!', e.message);
+            }
         }
 
         window.processExcel = async function() {
-            const file = document.getElementById('recon-excel').files[0]; if (!file) return;
+            const file = document.getElementById('recon-excel').files[0]; 
+            if (!file) {
+                window.setLocalStatus('status-excel', 'Pilih file Excel terlebih dahulu.', 'error');
+                return;
+            }
             window.setLocalStatus('status-excel', 'Memproses sinkronisasi Excel...');
             try {
                 const formData = new FormData(); 
@@ -948,12 +959,27 @@
                 formData.append('sap_code', window.currentStoreConfig.sap_code);
                 
                 const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
-                if (response.ok) { const data = await window.safeJsonParse(response); document.getElementById('email-body-textarea').value = data.message; isExcelProcessed = true; window.checkReconcileStatus(); window.setLocalStatus('status-excel', 'Data Excel tervalidasi!', 'success'); }
+                if (response.ok) { 
+                    const data = await window.safeJsonParse(response); 
+                    document.getElementById('email-body-textarea').value = data.message; 
+                    isExcelProcessed = true; 
+                    window.checkReconcileStatus(); 
+                    window.setLocalStatus('status-excel', 'Data Excel tervalidasi!', 'success');
+                    
+                    // Reset field setelah sukses
+                    document.getElementById('recon-excel').value = '';
+                    const excelNameEl = document.getElementById('excel-name');
+                    if (excelNameEl) excelNameEl.innerText = 'Pilih file Excel...';
+                }
             } catch (e) { window.setLocalStatus('status-excel', 'Gagal memproses file.', 'error'); }
         }
 
         window.processPdf = async function() {
-            const file = document.getElementById('recon-pdf').files[0]; if (!file) return;
+            const file = document.getElementById('recon-pdf').files[0]; 
+            if (!file) {
+                window.setLocalStatus('status-pdf', 'Pilih file PDF terlebih dahulu.', 'error');
+                return;
+            }
             window.setLocalStatus('status-pdf', 'Menganalisis PDF POS...');
             try {
                 const formData = new FormData(); 
@@ -962,90 +988,109 @@
                 formData.append('sap_code', window.currentStoreConfig.sap_code);
 
                 const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
-                if (response.ok) { isPdfProcessed = true; window.checkReconcileStatus(); window.setLocalStatus('status-pdf', 'Data PDF tervalidasi!', 'success'); }
+                if (response.ok) { 
+                    isPdfProcessed = true; 
+                    window.checkReconcileStatus(); 
+                    window.setLocalStatus('status-pdf', 'Data PDF tervalidasi!', 'success'); 
+                    
+                    // Reset field setelah sukses
+                    document.getElementById('recon-pdf').value = '';
+                    const pdfNameEl = document.getElementById('pdf-name');
+                    if (pdfNameEl) pdfNameEl.innerText = 'Pilih file PDF...';
+                }
             } catch (e) { window.setLocalStatus('status-pdf', 'Gagal menganalisis file.', 'error'); }
         }
 
-        window.sendEmail = async function() {
-            const body = document.getElementById('email-body-textarea').value;
-            window.setLocalStatus('status-send-email', 'Mendistribusikan email laporan...');
-            try { 
-                const response = await fetch(N8N_WEBHOOK_URL, { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ 
-                        command: 'send_reconcile_email', 
-                        email_content: body,
-                        sap_code: window.currentStoreConfig.sap_code
-                    }) 
-                }); 
-                
-                const result = await window.safeJsonParse(response);
-                
-                if(response.ok) {
-                    window.setLocalStatus('status-send-email', 'Laporan berhasil didistribusikan!', 'success'); 
-                    // Menampilkan Pop-up Sukses yang Besar
-                    window.showModal('success', 'Email Terkirim!', result.message || 'Laporan rekonsiliasi telah berhasil dikirimkan ke pihak terkait.');
-                    
-                    setTimeout(() => { window.resetAllForms(); }, 3000);
-                } else {
-                    throw new Error(result.message || 'Gagal mengirim email.');
-                }
-            } catch (e) { 
-                window.setLocalStatus('status-send-email', 'Koneksi gagal saat mengirim.', 'error'); 
-                // Menampilkan Pop-up Gagal yang Besar
-                window.showModal('error', 'Gagal Mengirim!', e.message || 'Terjadi gangguan saat proses pengiriman laporan ke server n8n.');
-            }
-        }
-
         window.processDailyStock = async function() {
-            const file = document.getElementById('daily-stock-file').files[0]; if (!file) return;
-            window.setLocalStatus('status-daily-stock', 'Melakukan sinkronisasi data...');
+            const file = document.getElementById('daily-stock-file').files[0]; 
+            if (!file) {
+                window.setLocalStatus('status-daily-stock', 'Pilih file Excel terlebih dahulu.', 'error');
+                return;
+            }
+            window.setLocalStatus('status-daily-stock', 'Sinkronisasi...');
             try {
                 const formData = new FormData(); 
-                formData.append('file', file); 
-                formData.append('command', 'daily_stock');
-                formData.append('sap_code', window.currentStoreConfig.sap_code);
-                formData.append('spreadsheet_id', window.currentStoreConfig.spreadsheet_id || '');
-
+                formData.append('file', file); formData.append('command', 'daily_stock'); formData.append('sap_code', window.currentStoreConfig.sap_code);
                 const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
-                if (response.ok) { document.getElementById('success-link-box').style.display = 'flex'; window.setLocalStatus('status-daily-stock', 'Data terunggah ke Spreadsheet!', 'success'); }
-            } catch (e) { window.setLocalStatus('status-daily-stock', 'Gagal menyinkronkan data.', 'error'); }
+                if (response.ok) { document.getElementById('success-link-box').style.display = 'flex'; window.setLocalStatus('status-daily-stock', 'Selesai!', 'success'); }
+            } catch (e) { window.setLocalStatus('status-daily-stock', 'Gagal.', 'error'); }
+        }
+
+        // --- INPUT REPORT MANUAL LOGIC ---
+        const getVal = (id) => document.getElementById(id).value.trim() || "0";
+        const formatBulanIndo = (dStr) => {
+            if(!dStr) return "";
+            const d = new Date(dStr);
+            const m = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+            return `${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()}`;
         }
 
         window.processInputReport = async function() {
-            const text = document.getElementById('input-report-textarea').value; 
-            if (!text) { window.setLocalStatus('status-input-report', 'Format narasi belum diisi.', 'error'); return; }
-            window.setLocalStatus('status-input-report', 'Mengirim data operasional...');
-            document.getElementById('output-report-textarea').value = 'Memproses transmisi data ke server...';
+            const tgl = document.getElementById('rep-tanggal').value;
+            const nama = document.getElementById('rep-nama').value.trim();
+            if (!tgl || !nama) { window.setLocalStatus('status-input-report', 'Wajib isi Tanggal & Nama!', 'error'); return; }
+
+            const templateText = `Update Sales daily by Ero
+Tanggal : ${formatBulanIndo(tgl)}
+
+Nama : ${nama}
+All bisnis : ${getVal('rep-allbisnis')}
+Device qty : ${getVal('rep-dev-qty')}
+Device value : ${getVal('rep-dev-val')}
+Acc qty : ${getVal('rep-acc-qty')}
+Acc value : ${getVal('rep-acc-val')}
+Boltech qty : ${getVal('rep-bolt-qty')}
+Boltech value : ${getVal('rep-bolt-val')}
+Indosat qty : ${getVal('rep-isat-qty')}
+Indosat value : ${getVal('rep-isat-val')}
+XL qty : ${getVal('rep-xl-qty')}
+XL value : ${getVal('rep-xl-val')}
+Tsel qty : ${getVal('rep-tsel-qty')}
+Tsel value : ${getVal('rep-tsel-val')}
+
+Wic deal : ${getVal('rep-wic-deal')}
+Wic loss : ${getVal('rep-wic-loss')}
+
+Cnp : ${getVal('rep-cnp')}
+Csi : ${getVal('rep-csi')}
+G.Riview : ${getVal('rep-grev')}`;
+
+            window.setLocalStatus('status-input-report', 'Mengirim data...');
+            document.getElementById('output-report-textarea').value = "Mengirim:\n" + templateText;
+
             try {
                 const response = await fetch(N8N_WEBHOOK_URL, { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ 
-                        command: 'input_report', 
-                        report_text: text,
-                        sap_code: window.currentStoreConfig.sap_code
-                    }) 
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ command: 'input_report', report_text: templateText, sap_code: window.currentStoreConfig.sap_code }) 
                 });
                 if (response.ok) {
                     const data = await window.safeJsonParse(response);
-                    let responseMessage = data.message || data.data || data.text || JSON.stringify(data, null, 2);
-                    document.getElementById('output-report-textarea').value = responseMessage;
-                    window.setLocalStatus('status-input-report', 'Data diterima server.', 'success');
+                    document.getElementById('output-report-textarea').value = "RESPOND:\n" + (data.message || JSON.stringify(data));
+                    window.setLocalStatus('status-input-report', 'Diterima!', 'success');
                 } else throw new Error(); 
-            } catch (e) { 
-                window.setLocalStatus('status-input-report', 'Gagal mengirim data.', 'error'); 
-                document.getElementById('output-report-textarea').value = 'Sistem mendeteksi adanya kegagalan koneksi.';
-            }
+            } catch (e) { window.setLocalStatus('status-input-report', 'Gagal.', 'error'); }
+        }
+
+        window.resetAllForms = function() {
+            document.querySelectorAll('input:not([type=button]):not([type=submit])').forEach(i => { if(i.type!=='date') i.value=''; });
+            document.querySelectorAll('textarea').forEach(t => t.value='');
+            document.querySelectorAll('.local-status').forEach(s => { s.className='local-status'; s.innerHTML=''; });
+            document.querySelectorAll('.upload-area p, .upload-compact p').forEach(p => { if(p.id.includes('file-name')) p.innerText='Pilih file...'; });
+            
+            // Tambahan eksplisit agar reset berfungsi untuk form rekonsiliasi
+            const pdfNameEl = document.getElementById('pdf-name');
+            if (pdfNameEl) pdfNameEl.innerText = 'Pilih file PDF...';
+            
+            const excelNameEl = document.getElementById('excel-name');
+            if (excelNameEl) excelNameEl.innerText = 'Pilih file Excel...';
+
+            isExcelProcessed = false;
+            isPdfProcessed = false;
+            if(typeof window.checkReconcileStatus === 'function') window.checkReconcileStatus();
         }
 
         window.copyText = function(id) { const el = document.getElementById(id); el.select(); document.execCommand('copy'); }
-        window.copySalesText = function() {
-            const el = document.getElementById('sales-textarea'); if (!el.value) return;
-            el.select(); document.execCommand('copy'); el.value = '';
-            window.setLocalStatus('status-sales-report', 'Teks telah disalin ke papan klip!', 'success');
-        }
+        window.copySalesText = function() { const el = document.getElementById('sales-textarea'); el.select(); document.execCommand('copy'); }
     </script>
 </body>
 </html>
