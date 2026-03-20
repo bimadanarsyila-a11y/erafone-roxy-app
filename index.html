@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Erafone and more ruko roxy - Dashboard</title>
-    <!-- Menggunakan font modern dari Google Fonts -->
+    <!-- Modern font dari Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Lucide Icons untuk estetika tombol -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         /* --- TEMA & WARNA UTAMA --- */
@@ -140,7 +140,7 @@
         .card-info h3 { font-size: 1.15rem; font-weight: 700; color: var(--bg-primary); margin-bottom: 0.5rem; }
         .card-info p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
 
-        /* --- DETAIL VIEWS (INNER PAGES) --- */
+        /* --- DETAIL VIEWS --- */
         .detail-view { 
             background: var(--card-bg); border-radius: var(--border-radius-lg); padding: 2.5rem; 
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); border: 1.5px solid var(--border-color) !important; 
@@ -156,40 +156,24 @@
 
         .detail-view h2 { color: var(--bg-primary); margin-bottom: 1.5rem; font-size: 1.5rem; font-weight: 800; }
 
-        /* --- COMING SOON BADGE (Untuk Dashboard Sales) --- */
-        .coming-soon-badge {
-            position: absolute;
-            top: 2.5rem;
-            right: 2.5rem;
-            background: #fef2f2;
-            border: 1.5px dashed var(--accent-primary);
-            padding: 0.75rem 1.25rem;
-            border-radius: var(--border-radius-md);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-        .coming-soon-badge i { color: var(--accent-primary); }
-        .coming-soon-badge div h4 { color: var(--bg-primary); font-size: 0.85rem; font-weight: 800; margin-bottom: 0.15rem; text-transform: uppercase; }
-        .coming-soon-badge div p { color: var(--text-muted); font-size: 0.75rem; margin: 0; font-weight: 500; }
+        /* --- TAB NAVIGATION --- */
+        .tab-container { display: flex; gap: 0.5rem; margin-bottom: 1rem; background: #f1f5f9; padding: 0.5rem; border-radius: var(--border-radius-md); border: 1.5px solid var(--border-color); }
+        .tab-btn { flex: 1; padding: 0.75rem; text-align: center; font-weight: 700; border-radius: 8px; cursor: pointer; transition: var(--transition); border: none; background: transparent; color: var(--text-muted); font-size: 0.9rem; }
+        .tab-btn.active { background: var(--bg-primary); color: white; border: 1.5px solid var(--border-color); box-shadow: var(--shadow-sm); }
 
-        /* --- FORM ELEMENTS & INPUTS --- */
+        /* --- FORM ELEMENTS --- */
         .column-card { display: flex; flex-direction: column; gap: 1rem; width: 100%; }
         .column-title { font-weight: 800; font-size: 0.85rem; color: var(--bg-primary); text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* Area Upload */
-        .upload-area { 
-            border: 1.5px dashed var(--border-color) !important; border-radius: var(--border-radius-md); padding: 2rem 1rem; 
-            text-align: center; background: #f8fafc; transition: var(--transition); min-height: 140px; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; 
+        .report-form-container { 
+            background: #f8fafc; border: 1.5px solid var(--border-color); border-radius: var(--border-radius-md); 
+            padding: 1.5rem 1rem 1.5rem 1.5rem; max-height: 500px; overflow-y: auto; 
         }
-        .upload-area:hover { border-color: var(--accent-primary) !important; background: #f1f5f9; }
-        .upload-area i { width: 32px; height: 32px; color: var(--bg-primary); margin-bottom: 0.75rem; }
-        .upload-area p { color: var(--text-main); font-size: 0.9rem; font-weight: 500; }
+        .report-form-container::-webkit-scrollbar { width: 6px; }
+        .report-form-container::-webkit-scrollbar-track { background: transparent; }
+        .report-form-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 
-        /* Textareas & Form Inputs */
-        .result-textarea, .form-input { 
+        .result-textarea, .form-input, .login-input { 
             width: 100%; background: #ffffff; border-radius: var(--border-radius-md); padding: 0.875rem 1.25rem; 
             font-size: 0.95rem; color: var(--text-main); border: 1.5px solid var(--border-color) !important; 
             transition: var(--transition); outline: none;
@@ -197,123 +181,49 @@
         .result-textarea:focus, .form-input:focus { border-color: var(--accent-primary) !important; box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.3); }
         .result-textarea[readonly] { background: #f1f5f9; cursor: default; }
 
-        /* Buttons */
+        /* --- BUTTON STYLES --- */
         .btn-base {
             display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
             border-radius: var(--border-radius-md); font-weight: 800; cursor: pointer; 
-            transition: var(--transition); 
-            border: 2px solid var(--accent-primary) !important; 
+            transition: var(--transition); border: 2px solid var(--accent-primary) !important; 
         }
         .btn-process { background: var(--bg-primary); color: white; }
         .btn-process:hover { background: var(--bg-dark); transform: translateY(-1px); }
-        .btn-process:disabled { background: #cbd5e1; border-color: #94a3b8 !important; color: #64748b; cursor: not-allowed; transform: none; box-shadow: none; }
-        
-        .btn-send { background: var(--accent-primary); color: var(--text-main); }
-        .btn-send:hover { background: var(--accent-hover); transform: translateY(-1px); }
-        .btn-send:disabled { background: #cbd5e1; border-color: #94a3b8 !important; color: #64748b; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-process:disabled { background: #cbd5e1; border-color: #94a3b8 !important; color: #64748b; cursor: not-allowed; }
 
-        .btn-large { width: 100%; padding: 1rem; font-size: 1rem; }
-        .btn-send.ready { background: var(--bg-primary) !important; color: white !important; }
-        .btn-send.ready:hover { background: var(--bg-dark) !important; }
-
-        /* --- SPESIFIK: CEK STOK AREA --- */
-        .section-divider { border-bottom: 1.5px solid var(--border-color); padding-bottom: 2rem; margin-bottom: 2rem; }
-        
-        .flex-row-align { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-        .last-update-box { background: #f1f5f9; border: 1.5px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 0.4rem 0.75rem; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 0.8rem; }
-        
-        .action-row { display: flex; gap: 1rem; align-items: stretch; height: 48px; } 
-        
-        .upload-compact { 
-            flex: 1; min-height: unset; padding: 0 1rem; flex-direction: row; justify-content: flex-start; 
-            gap: 0.75rem; border: 1.5px dashed var(--border-color) !important; background: #f8fafc; border-radius: 8px;
-            display: flex; align-items: center; cursor: pointer; transition: var(--transition);
-        }
-        .upload-compact:hover { border-color: var(--accent-primary) !important; background: #ffffff; }
-        .upload-compact i { margin: 0; width: 18px; height: 18px; color: var(--bg-primary); }
-        
-        .search-input { 
-            flex: 1; padding: 0 1.25rem; border-radius: 8px; border: 1.5px solid var(--border-color) !important; 
-            font-size: 0.95rem; outline: none; transition: var(--transition); background: #ffffff; color: var(--text-main);
-        }
-        .search-input:focus { border-color: var(--accent-primary) !important; }
-
-        .btn-action-compact { 
-            width: 160px; height: 100%; padding: 0; font-size: 0.9rem; flex-shrink: 0; margin: 0; border-radius: 8px;
-        }
-
-        .table-wrapper-large { 
-            border: 1.5px solid var(--border-color) !important; 
-            max-height: 65vh; min-height: 400px; 
-            overflow-y: auto; border-radius: 8px; margin-top: 1.5rem; background: #ffffff; 
-        }
-        .data-table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; }
-        .data-table th, .data-table td { padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; }
-        .data-table th { background: #f8fafc; font-weight: 700; color: var(--text-main); font-size: 0.8rem; text-transform: uppercase; position: sticky; top: 0; z-index: 10; border-bottom: 1.5px solid var(--border-color); }
-        .table-category-header { background: #f1f5f9 !important; font-weight: 800 !important; color: var(--bg-primary) !important; border: 1.5px solid var(--border-color) !important; }
-
-        /* --- SPESIFIK: INPUT REPORT BY ERO & STORE --- */
-        .reconcile-top-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-bottom: 1.5rem; }
-        
-        /* TABS UI */
-        .tab-container { display: flex; gap: 0.5rem; margin-bottom: 1rem; background: #f1f5f9; padding: 0.5rem; border-radius: var(--border-radius-md); border: 1.5px solid var(--border-color); }
-        .tab-btn { flex: 1; padding: 0.75rem; text-align: center; font-weight: 700; border-radius: 8px; cursor: pointer; transition: var(--transition); border: none; background: transparent; color: var(--text-muted); font-size: 0.9rem; }
-        .tab-btn.active { background: var(--bg-primary); color: white; border: 1.5px solid var(--border-color); box-shadow: var(--shadow-sm); }
-
-        .report-form-container { 
-            background: #f8fafc; border: 1.5px solid var(--border-color); border-radius: var(--border-radius-md); 
-            padding: 1.5rem 1rem 1.5rem 1.5rem; max-height: 500px; overflow-y: auto; 
-        }
-        
-        /* Custom Scrollbar */
-        .report-form-container::-webkit-scrollbar { width: 6px; }
-        .report-form-container::-webkit-scrollbar-track { background: transparent; }
-        .report-form-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-
-        /* Table Layout untuk Report Store (NEW WITH TARGET & ESTIMASI) */
+        /* --- REPORT DISPLAY TABLE --- */
         .report-display-card { background: #ffffff; border: 1.5px solid var(--border-color); border-radius: var(--border-radius-md); overflow: hidden; box-shadow: var(--shadow-sm); }
         .report-display-header { background: var(--bg-primary); color: #ffffff; padding: 1.25rem; display: flex; justify-content: space-between; align-items: center; }
         .report-display-header .store-badge { font-size: 1.05rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; }
-        .report-display-header .date-badge { font-size: 0.8rem; background: rgba(255,255,255,0.2); padding: 0.4rem 0.75rem; border-radius: 20px; font-weight: 700; display: flex; align-items: center; gap: 0.4rem; }
+        
+        .month-selector-badge { position: relative; display: flex; align-items: center; background: rgba(255,255,255,0.2); border-radius: 20px; transition: var(--transition); border: 1.5px solid white; }
+        .month-selector-badge:hover { background: rgba(255,255,255,0.3); }
+        .month-select-dropdown {
+            background: transparent; color: white; border: none; padding: 0.4rem 2rem 0.4rem 1rem; border-radius: 20px; 
+            font-weight: 700; font-size: 0.8rem; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none;
+        }
+        .month-select-dropdown option { color: var(--text-main); background: #ffffff; }
+
         .report-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .report-table th, .report-table td { padding: 0.875rem 1.25rem; border-bottom: 1px solid #e2e8f0; font-size: 0.9rem; color: var(--text-main); }
+        .report-table th, .report-table td { padding: 0.875rem 1.25rem; border-bottom: 1px solid #e2e8f0; font-size: 0.85rem; color: var(--text-main); }
         .report-table th { background: #f8fafc; color: var(--text-muted); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        .report-table .row-group td { background: #f1f5f9; font-weight: 800; color: var(--bg-primary); font-size: 0.85rem; padding: 0.6rem 1.25rem; border-top: 2px solid var(--border-color); }
-        .report-table .row-highlight td { background: #fffbeb; font-weight: 800; color: #b45309; border-bottom: 2px solid #fde68a; font-size: 0.95rem; }
+        .report-table .row-group td { background: #f1f5f9; font-weight: 800; color: var(--bg-primary); font-size: 0.8rem; padding: 0.6rem 1.25rem; border-top: 2px solid var(--border-color); }
+        .report-table .row-highlight td { background: #fffbeb; font-weight: 800; color: #b45309; border-bottom: 2px solid #fde68a; font-size: 0.9rem; }
+        .report-table .row-detail td { font-size: 0.8rem; padding: 0.5rem 1.25rem; background: #fafafa; border-bottom: 1px dashed #e2e8f0; color: var(--text-muted); font-weight: 500; }
+        
         .text-center { text-align: center; }
         .text-right { text-align: right; font-weight: 600; }
 
-        .section-title { font-size: 0.85rem; font-weight: 800; color: var(--bg-primary); margin: 1.5rem 0 0.75rem 0; border-bottom: 1px solid #cbd5e1; padding-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        .section-title:first-child { margin-top: 0; }
-        
-        .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-        .form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem; }
-        
         /* --- NOTIFICATION MODAL --- */
-        #modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
-            display: none; justify-content: center; align-items: center;
-            z-index: 10000; padding: 1rem;
-        }
-        .modal-card {
-            background: white; padding: 2.5rem; border-radius: var(--border-radius-lg);
-            width: 100%; max-width: 450px; text-align: center;
-            border: 2px solid var(--border-color);
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
-            animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+        #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); display: none; justify-content: center; align-items: center; z-index: 10000; padding: 1rem; }
+        .modal-card { background: white; padding: 2.5rem; border-radius: var(--border-radius-lg); width: 100%; max-width: 450px; text-align: center; border: 2px solid var(--border-color); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes modalPop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         .modal-icon { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
         .modal-icon.success { background: #ecfdf5; color: var(--success); border: 2px solid var(--success); }
         .modal-icon.error { background: #fef2f2; color: var(--danger); border: 2px solid var(--danger); }
         .modal-title { font-size: 1.5rem; font-weight: 800; color: var(--bg-primary); margin-bottom: 0.75rem; }
-        .modal-message { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 2rem; }
-        .btn-modal-close { width: 100%; padding: 0.875rem; border-radius: 10px; font-weight: 800; border: 2px solid var(--border-color); cursor: pointer; transition: var(--transition); }
-        .btn-modal-close.success { background: var(--bg-primary); color: white; }
-        .btn-modal-close.error { background: var(--danger); color: white; }
+        .btn-modal-close { width: 100%; padding: 0.875rem; border-radius: 10px; font-weight: 800; border: 2px solid var(--border-color); cursor: pointer; }
 
-        /* --- STATUS LOKAL --- */
         .local-status { font-size: 0.85rem; margin-top: 0.75rem; display: none; align-items: center; gap: 0.5rem; font-weight: 600; }
         .local-status.active { display: flex; }
         .local-status.loading { color: #d97706; }
@@ -321,49 +231,32 @@
         .local-status.error { color: #dc2626; }
         .spin-icon { animation: rotation 1s linear infinite; }
         @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* Iframe */
-        .iframe-container { width: 100%; height: calc(100vh - 180px); border-radius: var(--border-radius-md); overflow: hidden; background: #ffffff; border: 1.5px solid var(--border-color) !important; }
-        .iframe-container iframe { width: 100%; height: 100%; border: none; }
-
-        @media (max-width: 900px) {
-            .header-wrapper { flex-direction: column-reverse; align-items: center; text-align: center; }
-            .logout-container { top: -35px; right: 0; }
-            header { text-align: center; }
-            .reconcile-top-row { grid-template-columns: 1fr; }
-            .action-row { flex-direction: column; height: auto; }
-            .btn-action-compact { width: 100%; height: 48px; }
-            .upload-compact, .search-input { height: 48px; }
-            .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; gap: 0.5rem; }
-        }
     </style>
 </head>
 <body>
 
-    <!-- MODAL NOTIFIKASI -->
+    <!-- MODAL -->
     <div id="modal-overlay">
         <div class="modal-card">
             <div id="modal-icon-container" class="modal-icon success">
                 <i id="modal-icon-lucide" data-lucide="check-circle" style="width: 40px; height: 40px;"></i>
             </div>
             <h3 id="modal-title" class="modal-title">Berhasil!</h3>
-            <p id="modal-message" class="modal-message">Laporan telah berhasil dikirimkan ke server.</p>
+            <p id="modal-message" class="modal-message">Laporan telah diproses.</p>
             <button id="btn-modal-close" class="btn-modal-close success" onclick="window.hideModal()">Oke, Mengerti</button>
         </div>
     </div>
 
-    <!-- POPUP LOGIN OVERLAY -->
+    <!-- LOGIN -->
     <div id="login-overlay">
         <div class="login-card">
             <div class="logo-container">
                 <img src="https://res.cloudinary.com/dilamvetq/image/upload/v1772731767/phgzekbkwlsf4yjoewzl.png" alt="Logo">
             </div>
-
             <div id="login-error-box" class="login-error-box">
                 <i data-lucide="alert-circle" style="width: 16px; height: 16px;"></i>
                 <span id="login-error-text">SAP Code atau Password salah!</span>
             </div>
-
             <div class="input-group">
                 <label>Sap Code / ID Toko</label>
                 <input type="text" id="sap-code" class="login-input" placeholder="Masukkan SAP Code">
@@ -376,7 +269,7 @@
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD CONTENT -->
+    <!-- MAIN CONTAINER -->
     <div class="container" id="main-container">
         <div class="logout-container" id="top-logout">
             <button class="btn-logout btn-master" onclick="window.openMasterSheet()">
@@ -397,232 +290,50 @@
             </div>
         </div>
 
-        <!-- VIEW UTAMA -->
+        <!-- MAIN VIEW -->
         <div id="view-main" class="view active">
             <div class="grid-automation">
                 <button class="control-card" onclick="window.openView('view-sales-report')">
                     <div class="icon-box"><i data-lucide="file-up" style="width: 28px; height: 28px;"></i></div>
-                    <div class="card-info"><h3>Sales Report</h3><p>Ekstraksi & olah otomatis PDF laporan penjualan harian store.</p></div>
+                    <div class="card-info"><h3>Sales Report</h3><p>Olah PDF laporan penjualan harian store.</p></div>
                 </button>
                 <button class="control-card" onclick="window.openView('view-reconcile')">
                     <div class="icon-box"><i data-lucide="refresh-cw" style="width: 28px; height: 28px;"></i></div>
-                    <div class="card-info"><h3>Reconcile Data</h3><p>Pencocokan silang antara data PDF POS dengan file Excel.</p></div>
+                    <div class="card-info"><h3>Reconcile Data</h3><p>Pencocokan data POS dengan file Excel.</p></div>
                 </button>
                 <button class="control-card" onclick="window.openView('view-daily-stock')">
                     <div class="icon-box"><i data-lucide="package" style="width: 28px; height: 28px;"></i></div>
-                    <div class="card-info"><h3>Template Stok Daily</h3><p>Sinkronisasi cepat template Excel untuk pembaruan stok harian.</p></div>
+                    <div class="card-info"><h3>Template Stok Daily</h3><p>Sinkronisasi pembaruan stok harian.</p></div>
                 </button>
                 <button class="control-card" onclick="window.openView('view-cek-stok')">
                     <div class="icon-box"><i data-lucide="search" style="width: 28px; height: 28px;"></i></div>
-                    <div class="card-info"><h3>Cek Stok Area</h3><p>Pencarian cerdas ketersediaan unit barang di seluruh area.</p></div>
+                    <div class="card-info"><h3>Cek Stok Area</h3><p>Pencarian cerdas unit barang antar store.</p></div>
                 </button>
                 <button class="control-card" onclick="window.openView('view-input-report')">
                     <div class="icon-box"><i data-lucide="file-text" style="width: 28px; height: 28px;"></i></div>
-                    <div class="card-info"><h3>Input Report</h3><p>Pengiriman langsung laporan naratif manual ke sistem terpusat.</p></div>
+                    <div class="card-info"><h3>Input Report by ERO</h3><p>Pengiriman & penarikan data laporan summary toko.</p></div>
                 </button>
                 <button class="control-card" onclick="window.openView('view-dashboard-sales')">
                     <div class="icon-box"><i data-lucide="layout-dashboard" style="width: 28px; height: 28px;"></i></div>
-                    <div class="card-info"><h3>Dashboard Sales</h3><p>Visualisasi interaktif pencapaian target toko & produktivitas tim.</p></div>
+                    <div class="card-info"><h3>Dashboard Sales</h3><p>Visualisasi pencapaian target toko.</p></div>
                 </button>
             </div>
         </div>
 
-        <!-- VIEW DETAIL: DASHBOARD SALES -->
-        <div id="view-dashboard-sales" class="view">
-            <div class="detail-view">
-                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                <h2>Dashboard Sales</h2>
-                
-                <div class="coming-soon-badge">
-                    <i data-lucide="hammer" style="width: 24px; height: 24px;"></i>
-                    <div>
-                        <h4>Segera Hadir</h4>
-                        <p>Integrasi Looker Studio</p>
-                    </div>
-                </div>
-
-                <div class="grid-automation" style="grid-template-columns: repeat(2, 1fr); margin-top: 1rem;">
-                    <button class="control-card" onclick="window.loadFullDashboard('store')">
-                        <div class="icon-box"><i data-lucide="store" style="width: 24px;"></i></div>
-                        <div class="card-info"><h3>Report Store</h3><p>Visualisasi pencapaian target toko keseluruhan.</p></div>
-                    </button>
-                    <button class="control-card" onclick="window.loadFullDashboard('ero')">
-                        <div class="icon-box"><i data-lucide="user-check" style="width: 24px;"></i></div>
-                        <div class="card-info"><h3>Report ERO</h3><p>Analisis kinerja dan produktivitas harian tim ERO.</p></div>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- VIEW: FULL SCREEN DASHBOARD -->
-        <div id="view-dashboard-full" class="view">
-            <div class="detail-view" style="padding: 1.5rem; height: 90vh; display: flex; flex-direction: column;">
-                <button class="back-btn" onclick="window.openView('view-dashboard-sales')" style="align-self: flex-start; margin-bottom: 1rem;"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali</button>
-                <div class="iframe-container" style="flex: 1; display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 1.5rem; background: #f8fafc;">
-                    <div style="background: var(--bg-primary); padding: 1.5rem; border-radius: 50%; border: 2px solid var(--accent-primary); box-shadow: 0 4px 0 #000;">
-                        <i data-lucide="bar-chart-3" style="width: 48px; height: 48px; color: var(--accent-primary);"></i>
-                    </div>
-                    <div style="text-align: center;">
-                        <h3 style="color: var(--bg-primary); font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: 0.5px;">DASHBOARD COMING SOON</h3>
-                        <p style="color: var(--text-main); font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem;">Visualisasi Data Sedang Dalam Tahap Pengembangan</p>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 450px; margin: 0 auto; line-height: 1.6;">Halaman ini nantinya akan menampilkan grafik interaktif dari Looker Studio untuk memantau performa penjualan secara real-time.</p>
-                    </div>
-                    <iframe id="dashboard-iframe" src="" allowfullscreen style="display: none;"></iframe>
-                </div>
-            </div>
-        </div>
-
-        <!-- VIEW: SALES REPORT -->
-        <div id="view-sales-report" class="view">
-            <div class="detail-view">
-                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                <h2>Sales Report PDF</h2>
-                <div class="upload-area" onclick="document.getElementById('sales-file').click()">
-                    <i data-lucide="file-text"></i>
-                    <p id="sales-file-name">Pilih file PDF Laporan harian</p>
-                    <input type="file" id="sales-file" accept=".pdf" style="display:none" onchange="window.updateFileName('sales-file', 'sales-file-name')">
-                </div>
-                <button class="btn-base btn-process btn-large" id="btn-process-sales" onclick="window.processSales()" style="margin-top:1.5rem">Olah Data PDF</button>
-                <div id="status-sales-report" class="local-status"></div>
-                
-                <div class="result-section" id="sales-result-area" style="display:none; margin-top:2rem">
-                    <div class="flex-row-align" style="margin-bottom:0.75rem;">
-                        <span class="column-title">Hasil Ekstraksi Data</span>
-                        <button class="btn-base btn-process" onclick="window.copySalesText()" style="padding:0.5rem 1rem; font-size:0.85rem;"><i data-lucide="copy" style="width:14px;"></i> Salin Teks</button>
-                    </div>
-                    <textarea id="sales-textarea" class="result-textarea" readonly style="height: 200px;"></textarea>
-                </div>
-            </div>
-        </div>
-
-        <!-- VIEW: RECONCILE DATA -->
-        <div id="view-reconcile" class="view">
-            <div class="detail-view">
-                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                <h2>Rekonsiliasi Data</h2>
-                
-                <div class="reconcile-top-row">
-                    <div class="column-card">
-                        <span class="column-title">1. File PDF POS</span>
-                        <div class="upload-area" onclick="document.getElementById('recon-pdf').click()" style="min-height: 120px; padding: 1.5rem;">
-                            <i data-lucide="file-text" style="width: 24px; height: 24px;"></i><p id="pdf-name">Pilih file PDF...</p>
-                            <input type="file" id="recon-pdf" accept=".pdf" style="display:none" onchange="window.updateFileName('recon-pdf', 'pdf-name'); window.resetReconcileState('pdf')">
-                        </div>
-                        <button class="btn-base btn-process btn-large" id="btn-pdf-reconcile" onclick="window.processPdf()">Olah PDF</button>
-                        <div id="status-pdf" class="local-status"></div>
-                    </div>
-                    <div class="column-card">
-                        <span class="column-title">2. File Excel</span>
-                        <div class="upload-area" onclick="document.getElementById('recon-excel').click()" style="min-height: 120px; padding: 1.5rem;">
-                            <i data-lucide="file-spreadsheet" style="width: 24px; height: 24px;"></i><p id="excel-name">Pilih file Excel...</p>
-                            <input type="file" id="recon-excel" accept=".xlsx, .xls" style="display:none" onchange="window.updateFileName('recon-excel', 'excel-name'); window.resetReconcileState('excel')">
-                        </div>
-                        <button class="btn-base btn-process btn-large" id="btn-excel-reconcile" onclick="window.processExcel()">Olah Excel</button>
-                        <div id="status-excel" class="local-status"></div>
-                    </div>
-                </div>
-
-                <div class="section-divider" style="margin-top: 2rem;"></div>
-                
-                <div class="column-card">
-                    <span class="column-title">3. Tindakan Lanjutan</span>
-                    <textarea id="email-body-textarea" class="result-textarea" placeholder="Respon sistem / draft email akan muncul di sini..." style="height: 140px;"></textarea>
-                    <button class="btn-base btn-send btn-large" id="btn-send-email" onclick="window.sendEmail()" disabled style="margin-top: 0.5rem;"><i data-lucide="mail"></i> Kirim Laporan via Email</button>
-                    <div id="status-send-email" class="local-status"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- VIEW: CEK STOK AREA -->
-        <div id="view-cek-stok" class="view">
-            <div class="detail-view">
-                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                <h2>Cek Stok Area</h2>
-                
-                <!-- BAGIAN 1: UPDATE -->
-                <div class="column-card section-divider">
-                    <div class="flex-row-align">
-                        <span class="column-title">1. Update Data Master Stok Area</span>
-                        <div class="last-update-box">
-                            <span style="font-weight: 700; color: var(--bg-primary); margin-right: 4px;">Last Update:</span>
-                            <i data-lucide="clock" style="width: 14px; height: 14px;"></i>
-                            <span id="last-upload-time">Belum ada data</span>
-                        </div>
-                    </div>
-                    <div class="action-row">
-                        <div class="upload-compact" onclick="document.getElementById('stok-area-file').click()">
-                            <i data-lucide="file-spreadsheet"></i>
-                            <p id="stok-area-file-name" style="margin: 0; font-size: 0.9rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pilih file Excel master stok...</p>
-                            <input type="file" id="stok-area-file" style="display:none" onchange="window.updateFileName('stok-area-file', 'stok-area-file-name')">
-                        </div>
-                        <button class="btn-base btn-process btn-action-compact" id="btn-update-stok" onclick="window.processUpdateStokArea()">Update Master</button>
-                    </div>
-                    <div id="status-update-stok" class="local-status"></div>
-                </div>
-
-                <!-- BAGIAN 2: PENCARIAN -->
-                <div class="column-card">
-                    <span class="column-title">2. Cari Ketersediaan Barang</span>
-                    <div class="action-row">
-                        <input type="text" id="search-stok-input" class="search-input" placeholder="Masukkan nama, tipe, atau kode barang..." onkeypress="if(event.key === 'Enter') window.processSearchStok()">
-                        <button class="btn-base btn-send btn-action-compact" id="btn-search-stok" onclick="window.processSearchStok()">
-                            <i data-lucide="search" style="width:16px;"></i> Cari Data
-                        </button>
-                    </div>
-                    <div id="status-search-stok" class="local-status"></div>
-                    
-                    <div class="table-wrapper-large">
-                        <table class="data-table" id="stok-result-table">
-                            <thead><tr><th>Nama Lokasi / Store</th><th style="width: 120px; text-align: center;">Qty Tersedia</th></tr></thead>
-                            <tbody>
-                                <tr><td colspan="2" style="text-align:center; padding:6rem 1rem; color:var(--text-muted); font-style: italic;">Hasil pencarian stok barang akan terlampir di sini...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- VIEW: DAILY STOCK -->
-        <div id="view-daily-stock" class="view">
-            <div class="detail-view">
-                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                <h2>Template Stok Daily</h2>
-                <div class="upload-area" onclick="document.getElementById('daily-stock-file').click()">
-                    <i data-lucide="file-spreadsheet"></i>
-                    <p id="daily-stock-file-name">Pilih file Excel Daily Stock</p>
-                    <input type="file" id="daily-stock-file" style="display:none" onchange="window.updateFileName('daily-stock-file', 'daily-stock-file-name')">
-                </div>
-                <button class="btn-base btn-process btn-large" id="btn-process-daily" onclick="window.processDailyStock()" style="margin-top:1.5rem">Proses Pembaruan Data</button>
-                <div id="status-daily-stock" class="local-status"></div>
-                
-                <div id="success-link-box" style="display: none; background: #ecfdf5; border: 1.5px solid #000000; border-radius: var(--border-radius-md); padding: 1.25rem; margin-top: 1.5rem; align-items: center; justify-content: space-between;">
-                    <span style="color: #065f46; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="check-circle" style="width: 18px;"></i> Sinkronisasi Selesai!</span>
-                    <div style="display: flex; gap: 0.75rem;">
-                        <a id="link-download-sheet" href="https://docs.google.com/spreadsheets/d/1NA0uUfavKA5XnPKPOvtyxaLp_FJU_I_piC0ZgT-FaeQ/export?format=xlsx" target="_blank" style="background: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 6px; border: 1.5px solid #000000; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 0.4rem;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"><i data-lucide="download" style="width: 14px; height: 14px;"></i> Download</a>
-                        <a id="link-open-sheet" href="https://docs.google.com/spreadsheets/d/1NA0uUfavKA5XnPKPOvtyxaLp_FJU_I_piC0ZgT-FaeQ/edit?usp=sharing" target="_blank" style="background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 6px; border: 1.5px solid #000000; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 0.4rem;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"><i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Buka</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- VIEW: INPUT REPORT BY ERO -->
+        <!-- INPUT REPORT VIEW -->
         <div id="view-input-report" class="view">
             <div class="detail-view">
                 <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
                 <h2>Input Report by ERO</h2>
                 
                 <div class="reconcile-top-row">
-                    <!-- Kolom Kiri: Form Input -->
                     <div class="column-card">
-                        
-                        <!-- TAB NAVIGASI -->
                         <div class="tab-container">
                             <button class="tab-btn active" id="tab-ero" onclick="window.switchReportTab('ero')">Laporan ERO</button>
                             <button class="tab-btn" id="tab-store" onclick="window.switchReportTab('store')">Laporan Store</button>
                         </div>
                         
-                        <!-- FORM SECTION: Laporan ERO -->
+                        <!-- TAB ERO -->
                         <div id="form-section-ero">
                             <div class="flex-row-align" style="margin-bottom: 0.5rem;">
                                 <span class="column-title">1. Formulir Laporan Harian</span>
@@ -630,71 +341,24 @@
                                     <i data-lucide="send" style="width:14px;"></i> Submit Laporan ERO
                                 </button>
                             </div>
-                            
-                            <div class="report-form-container" id="manual-report-form">
+                            <div class="report-form-container">
                                 <h4 class="section-title">Informasi Dasar</h4>
-                                <div class="input-group">
-                                    <label>Tanggal Laporan</label>
-                                    <input type="date" id="rep-tanggal" class="form-input">
-                                </div>
-                                <div class="input-group">
-                                    <label>Nama ERO</label>
-                                    <!-- DROPDOWN NAMA ERO -->
-                                    <select id="rep-nama" class="form-input">
-                                        <option value="">Pilih Nama ERO...</option>
-                                    </select>
-                                </div>
-                                <div class="input-group">
-                                    <label>Total All Bisnis (Rp)</label>
-                                    <input type="text" id="rep-allbisnis" class="form-input" placeholder="Contoh: 24.794.004" inputmode="numeric">
-                                </div>
-
-                                <h4 class="section-title">Device & Accesories</h4>
+                                <div class="input-group"><label>Tanggal</label><input type="date" id="rep-tanggal" class="form-input"></div>
+                                <div class="input-group"><label>Nama ERO</label><select id="rep-nama" class="form-input"><option value="">Pilih Nama ERO...</option></select></div>
+                                <div class="input-group"><label>All Bisnis (Rp)</label><input type="text" id="rep-allbisnis" class="form-input" placeholder="0" inputmode="numeric"></div>
+                                <h4 class="section-title">Device & Accessories</h4>
                                 <div class="form-grid-2">
                                     <div class="input-group"><label>Device Qty</label><input type="number" id="rep-dev-qty" class="form-input" placeholder="0"></div>
-                                    <div class="input-group"><label>Device Value</label><input type="text" id="rep-dev-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                                    <div class="input-group"><label>Device Value</label><input type="text" id="rep-dev-val" class="form-input" placeholder="0"></div>
                                 </div>
                                 <div class="form-grid-2">
                                     <div class="input-group"><label>Acc Qty</label><input type="number" id="rep-acc-qty" class="form-input" placeholder="0"></div>
-                                    <div class="input-group"><label>Acc Value</label><input type="text" id="rep-acc-val" class="form-input" placeholder="0" inputmode="numeric"></div>
-                                </div>
-
-                                <h4 class="section-title">Perlindungan & Layanan</h4>
-                                <div class="form-grid-2">
-                                    <div class="input-group"><label>Boltech Qty</label><input type="number" id="rep-bolt-qty" class="form-input" placeholder="0"></div>
-                                    <div class="input-group"><label>Boltech Value</label><input type="text" id="rep-bolt-val" class="form-input" placeholder="0" inputmode="numeric"></div>
-                                </div>
-
-                                <h4 class="section-title">Kategori Operator</h4>
-                                <div class="form-grid-2">
-                                    <div class="input-group"><label>Indosat Qty</label><input type="number" id="rep-isat-qty" class="form-input" placeholder="0"></div>
-                                    <div class="input-group"><label>Indosat Value</label><input type="text" id="rep-isat-val" class="form-input" placeholder="0" inputmode="numeric"></div>
-                                </div>
-                                <div class="form-grid-2">
-                                    <div class="input-group"><label>XL Qty</label><input type="number" id="rep-xl-qty" class="form-input" placeholder="0"></div>
-                                    <div class="input-group"><label>XL Value</label><input type="text" id="rep-xl-val" class="form-input" placeholder="0" inputmode="numeric"></div>
-                                </div>
-                                <div class="form-grid-2">
-                                    <div class="input-group"><label>Telkomsel Qty</label><input type="number" id="rep-tsel-qty" class="form-input" placeholder="0"></div>
-                                    <div class="input-group"><label>Telkomsel Value</label><input type="text" id="rep-tsel-val" class="form-input" placeholder="0" inputmode="numeric"></div>
-                                </div>
-
-                                <h4 class="section-title">Walk-In Customer (WIC)</h4>
-                                <div class="form-grid-2">
-                                    <div class="input-group"><label>WIC Deal</label><input type="number" id="rep-wic-deal" class="form-input" placeholder="0"></div>
-                                    <div class="input-group"><label>WIC Loss</label><input type="number" id="rep-wic-loss" class="form-input" placeholder="0"></div>
-                                </div>
-
-                                <h4 class="section-title">Indikator Lainnya</h4>
-                                <div class="form-grid-3">
-                                    <div class="input-group"><label>CNP</label><input type="number" id="rep-cnp" class="form-input" placeholder="0"></div>
-                                    <div class="input-group"><label>CSI</label><input type="number" id="rep-csi" class="form-input" placeholder="0"></div>
-                                    <div class="input-group"><label>G. Review</label><input type="number" id="rep-grev" class="form-input" placeholder="0"></div>
+                                    <div class="input-group"><label>Acc Value</label><input type="text" id="rep-acc-val" class="form-input" placeholder="0"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- FORM SECTION: Laporan Store (VIEW ONLY TABLE) -->
+                        <!-- TAB STORE -->
                         <div id="form-section-store" style="display:none;">
                             <div class="flex-row-align" style="margin-bottom: 1rem;">
                                 <span class="column-title">1. Output Final Laporan Store</span>
@@ -706,233 +370,119 @@
                             <div class="report-display-card">
                                 <div class="report-display-header">
                                     <div class="store-badge"><i data-lucide="store" style="width:20px;"></i> <span id="disp-store-name">Menunggu Data...</span></div>
-                                    <div class="date-badge"><i data-lucide="calendar" style="width:14px;"></i> <span id="disp-store-date">-</span></div>
+                                    <div class="month-selector-badge">
+                                        <i data-lucide="calendar" style="width:14px; position: absolute; left: 12px; color: white; pointer-events: none;"></i>
+                                        <select id="store-month-select" class="month-select-dropdown">
+                                            <option value="" disabled selected>Pilih Bulan...</option>
+                                            <option value="Januari">Januari</option><option value="Februari">Februari</option><option value="Maret">Maret</option>
+                                            <option value="April">April</option><option value="Mei">Mei</option><option value="Juni">Juni</option>
+                                            <option value="Juli">Juli</option><option value="Agustus">Agustus</option><option value="September">September</option>
+                                            <option value="Oktober">Oktober</option><option value="November">November</option><option value="Desember">Desember</option>
+                                        </select>
+                                        <i data-lucide="chevron-down" style="width:14px; position: absolute; right: 10px; color: white; pointer-events: none;"></i>
+                                    </div>
                                 </div>
                                 <div style="max-height: 440px; overflow-y: auto; overflow-x: auto;">
                                     <table class="report-table">
                                         <thead>
-                                            <tr>
-                                                <th>KATEGORI</th>
-                                                <th class="text-right">TARGET</th>
-                                                <th class="text-center">QTY</th>
-                                                <th class="text-right">VALUE</th>
-                                                <th class="text-right">ESTIMASI</th>
-                                                <th class="text-center">EST %</th>
-                                            </tr>
+                                            <tr><th>KATEGORI</th><th class="text-right">TARGET</th><th class="text-center">QTY</th><th class="text-right">VALUE</th><th class="text-right">ESTIMASI</th><th class="text-center">EST %</th></tr>
                                         </thead>
                                         <tbody>
-                                            <!-- ALL BISNIS -->
-                                            <tr class="row-highlight">
-                                                <td>Total All Bisnis</td>
-                                                <td class="text-right" id="disp-target-ab">0</td>
-                                                <td class="text-center">-</td>
-                                                <td class="text-right" id="disp-ab">0</td>
-                                                <td class="text-right" id="disp-est-ab">0</td>
-                                                <td class="text-center" id="disp-est-perc-ab">0%</td>
-                                            </tr>
-                                            <!-- DEVICE & ACC -->
+                                            <tr class="row-highlight"><td>Total All Bisnis</td><td class="text-right" id="disp-target-ab">0</td><td class="text-center">-</td><td class="text-right" id="disp-ab">0</td><td class="text-right" id="disp-est-ab">0</td><td class="text-center" id="disp-est-perc-ab">0%</td></tr>
                                             <tr class="row-group"><td colspan="6">Device & Accessories</td></tr>
                                             <tr><td>Device</td><td class="text-right" id="disp-target-dev">0</td><td class="text-center" id="disp-dev-qty">0</td><td class="text-right" id="disp-dev-val">0</td><td class="text-right" id="disp-est-dev">0</td><td class="text-center" id="disp-est-perc-dev">0%</td></tr>
                                             <tr><td>Accessories</td><td class="text-right" id="disp-target-acc">0</td><td class="text-center" id="disp-acc-qty">0</td><td class="text-right" id="disp-acc-val">0</td><td class="text-right" id="disp-est-acc">0</td><td class="text-center" id="disp-est-perc-acc">0%</td></tr>
-                                            <!-- BOLTECH -->
+                                            <tr class="row-detail"><td>└ AR Accessories</td><td colspan="2" class="text-right">Achievement:</td><td class="text-right" id="disp-ar-acc">0%</td><td colspan="2"></td></tr>
+                                            <tr class="row-detail"><td>└ SOB Accessories</td><td colspan="2" class="text-right">Share:</td><td class="text-right" id="disp-sob-acc">0%</td><td colspan="2"></td></tr>
+                                            
                                             <tr class="row-group"><td colspan="6">Perlindungan & Layanan</td></tr>
                                             <tr><td>Boltech</td><td class="text-right" id="disp-target-bolt">0</td><td class="text-center" id="disp-bolt-qty">0</td><td class="text-right" id="disp-bolt-val">0</td><td class="text-right" id="disp-est-bolt">0</td><td class="text-center" id="disp-est-perc-bolt">0%</td></tr>
-                                            <!-- OPERATOR -->
+                                            <tr class="row-detail"><td>└ AR Boltech</td><td colspan="2" class="text-right">Achievement:</td><td class="text-right" id="disp-ar-bolt">0%</td><td colspan="2"></td></tr>
+                                            <tr class="row-detail"><td>└ SOB Boltech</td><td colspan="2" class="text-right">Share:</td><td class="text-right" id="disp-sob-bolt">0%</td><td colspan="2"></td></tr>
+                                            
                                             <tr class="row-group"><td colspan="6">Kategori Operator</td></tr>
                                             <tr><td>Indosat</td><td class="text-right" id="disp-target-isat">0</td><td class="text-center" id="disp-isat-qty">0</td><td class="text-right" id="disp-isat-val">0</td><td class="text-right" id="disp-est-isat">0</td><td class="text-center" id="disp-est-perc-isat">0%</td></tr>
-                                            <tr><td>XL</td><td class="text-right" id="disp-target-xl">0</td><td class="text-center" id="disp-xl-qty">0</td><td class="text-right" id="disp-xl-val">0</td><td class="text-right" id="disp-est-xl">0</td><td class="text-center" id="disp-est-perc-xl">0%</td></tr>
+                                            <tr><td>XL Axiata</td><td class="text-right" id="disp-target-xl">0</td><td class="text-center" id="disp-xl-qty">0</td><td class="text-right" id="disp-xl-val">0</td><td class="text-right" id="disp-est-xl">0</td><td class="text-center" id="disp-est-perc-xl">0%</td></tr>
                                             <tr><td>Telkomsel</td><td class="text-right" id="disp-target-tsel">0</td><td class="text-center" id="disp-tsel-qty">0</td><td class="text-right" id="disp-tsel-val">0</td><td class="text-right" id="disp-est-tsel">0</td><td class="text-center" id="disp-est-perc-tsel">0%</td></tr>
-                                            <!-- WIC -->
-                                            <tr class="row-group"><td colspan="6">Walk-In Customer (WIC)</td></tr>
-                                            <tr><td>WIC Deal</td><td class="text-right">-</td><td class="text-center" id="disp-wic-deal">0</td><td class="text-right">-</td><td class="text-right">-</td><td class="text-center">-</td></tr>
-                                            <tr><td>WIC Loss</td><td class="text-right">-</td><td class="text-center" id="disp-wic-loss">0</td><td class="text-right">-</td><td class="text-right">-</td><td class="text-center">-</td></tr>
-                                            <!-- OTHERS -->
-                                            <tr class="row-group"><td colspan="6">Indikator Lainnya</td></tr>
-                                            <tr><td>CNP</td><td class="text-right">-</td><td class="text-center" id="disp-cnp">0</td><td class="text-right">-</td><td class="text-right">-</td><td class="text-center">-</td></tr>
-                                            <tr><td>CSI</td><td class="text-right">-</td><td class="text-center" id="disp-csi">0</td><td class="text-right">-</td><td class="text-right">-</td><td class="text-center">-</td></tr>
-                                            <tr><td>G. Review</td><td class="text-right">-</td><td class="text-center" id="disp-grev">0</td><td class="text-right">-</td><td class="text-right">-</td><td class="text-center">-</td></tr>
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
-                    <!-- Kolom Kanan: Hasil Report -->
                     <div class="column-card">
                         <div class="flex-row-align" style="margin-bottom: 0.5rem;">
-                            <span class="column-title">2. Summary Report (Log)</span>
-                            <button class="btn-base btn-process" onclick="window.copyText('output-report-textarea')" style="padding: 0.5rem 1rem; font-size: 0.85rem; background: #f1f5f9; color: var(--text-main); border: 1.5px solid var(--border-color) !important;">
-                                <i data-lucide="copy" style="width:14px;"></i> Salin Teks
-                            </button>
+                            <span class="column-title">2. Summary Log</span>
+                            <button class="btn-base btn-process" onclick="window.copyText('output-report-textarea')" style="padding: 0.5rem 1rem; font-size: 0.85rem;"><i data-lucide="copy"></i> Salin</button>
                         </div>
-                        <textarea id="output-report-textarea" class="result-textarea" placeholder="Menunggu proses submit..." style="height: 575px;" readonly></textarea>
+                        <textarea id="output-report-textarea" class="result-textarea" style="height: 575px;" readonly></textarea>
                     </div>
                 </div>
                 <div id="status-input-report" class="local-status" style="justify-content: center;"></div>
             </div>
         </div>
-
     </div>
 
     <script>
         lucide.createIcons();
 
-        // --- CORE CONFIG ---
-        const N8N_WEBHOOK_URL = 'https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/webhook/erafone-roxy-automation';
-        
+        // --- GLOBAL UTILS ---
+        window.safeJsonParse = async function(response) { 
+            const text = await response.text(); 
+            try { return JSON.parse(text); } catch (e) { return { message: text }; } 
+        }
+
+        const N8N_WEBHOOK_URL = 'https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/webhook-test/erafone-roxy-automation';
         const SUPABASE_URL = 'https://hgjyzhgpwcxwiqhaldhv.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhnanl6aGdwd2N4d2lxaGFsZGh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMDI5OTEsImV4cCI6MjA4NzY3ODk5MX0.ZVNOHbiuvs83QK-v8-XufA9QQ6cTTZ1rEWy2iy0_55g';
 
         window.currentStoreConfig = null;
 
-        // Modal Function
-        window.showModal = function(type, title, msg) {
-            const overlay = document.getElementById('modal-overlay');
-            const iconContainer = document.getElementById('modal-icon-container');
-            const iconLucide = document.getElementById('modal-icon-lucide');
-            const modalTitle = document.getElementById('modal-title');
-            const modalMsg = document.getElementById('modal-message');
-            const closeBtn = document.getElementById('btn-modal-close');
-
-            if (type === 'success') {
-                iconContainer.className = 'modal-icon success';
-                iconLucide.setAttribute('data-lucide', 'check-circle');
-                closeBtn.className = 'btn-modal-close success';
-            } else {
-                iconContainer.className = 'modal-icon error';
-                iconLucide.setAttribute('data-lucide', 'alert-circle');
-                closeBtn.className = 'btn-modal-close error';
-            }
-
-            modalTitle.innerText = title;
-            modalMsg.innerText = msg;
-            overlay.style.display = 'flex';
-            lucide.createIcons();
-        }
-
-        window.hideModal = function() { document.getElementById('modal-overlay').style.display = 'none'; }
-
-        // Login Handler
         window.handleLogin = async function() {
-            const sapInput = document.getElementById('sap-code');
-            const passInput = document.getElementById('login-pass');
-            const errorBox = document.getElementById('login-error-box');
-            const errorText = document.getElementById('login-error-text');
-            const loginBtn = document.getElementById('btn-login-submit');
-            
-            const sap = sapInput.value.trim();
-            const pass = passInput.value.trim();
-
-            if(!sap || !pass){
-                errorText.innerText = "Harap isi SAP Code dan Password!";
-                errorBox.style.display = 'flex';
-                return;
-            }
-
-            const originalBtnText = loginBtn.innerHTML;
-            loginBtn.innerHTML = '<i data-lucide="loader-2" class="spin-icon" style="width:18px; height:18px;"></i> Memverifikasi...';
-            loginBtn.disabled = true;
-            lucide.createIcons();
-            errorBox.style.display = 'none';
-
+            const sap = document.getElementById('sap-code').value.trim();
+            const pass = document.getElementById('login-pass').value.trim();
+            const btn = document.getElementById('btn-login-submit');
+            if(!sap || !pass) return;
+            btn.disabled = true;
             try {
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/store_config?sap_code=eq.${sap}&password=eq.${pass}&select=*`, {
-                    method: 'GET',
-                    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }
+                    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
                 });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data && data.length > 0) {
-                        window.currentStoreConfig = data[0]; 
-                        doLoginSuccess(data[0].store_name);
-                    } else { throw new Error("SAP Code atau Password salah!"); }
-                } else { throw new Error("Gagal terhubung ke database."); }
-            } catch (err) {
-                errorText.innerText = err.message;
-                errorBox.style.display = 'flex';
-            } finally {
-                loginBtn.innerHTML = originalBtnText;
-                loginBtn.disabled = false;
-                lucide.createIcons();
-            }
+                const data = await response.json();
+                if (data.length > 0) {
+                    window.currentStoreConfig = data[0];
+                    document.getElementById('login-overlay').style.display = 'none';
+                    document.getElementById('main-container').style.display = 'block';
+                    document.getElementById('dynamic-title').innerText = data[0].store_name;
+                    populateEros();
+                } else { throw new Error("SAP atau Password salah!"); }
+            } catch (err) { document.getElementById('login-error-box').style.display = 'flex'; btn.disabled = false; }
         }
 
-        function doLoginSuccess(userName) {
-            document.getElementById('login-overlay').style.display = 'none';
-            document.getElementById('main-container').style.display = 'block';
-            document.getElementById('dynamic-title').innerText = userName;
-
-            // POPULATE ERO DROPDOWN
+        function populateEros() {
             const eroSelect = document.getElementById('rep-nama');
             if (window.currentStoreConfig.ero_list && eroSelect) {
                 eroSelect.innerHTML = '<option value="">Pilih Nama ERO...</option>';
-                const eros = window.currentStoreConfig.ero_list.split(',');
-                eros.forEach(name => {
-                    const trimmedName = name.trim();
-                    if(trimmedName) {
-                        const opt = document.createElement('option');
-                        opt.value = trimmedName;
-                        opt.innerText = trimmedName;
-                        eroSelect.appendChild(opt);
-                    }
+                window.currentStoreConfig.ero_list.split(',').forEach(name => {
+                    const opt = document.createElement('option');
+                    opt.value = name.trim(); opt.innerText = name.trim();
+                    eroSelect.appendChild(opt);
                 });
             }
-
-            window.fetchLatestStockDate();
         }
 
-        window.handleLogout = function() {
-            window.currentStoreConfig = null;
-            location.reload();
-        }
+        window.handleLogout = () => location.reload();
+        window.openMasterSheet = () => window.open(window.currentStoreConfig.link_master, '_blank');
 
-        window.openMasterSheet = function() {
-            if (window.currentStoreConfig && window.currentStoreConfig.link_master) {
-                window.open(window.currentStoreConfig.link_master, '_blank');
-            } else {
-                window.showModal('error', 'Tautan Tidak Ditemukan', 'Link Master Spreadsheet untuk toko ini belum ditambahkan pada database Supabase (kolom link_master).');
-            }
-        }
-
-        window.setLocalStatus = function(elementId, msg, type = 'loading') {
-            const el = document.getElementById(elementId);
-            if (!el) return;
-            el.className = `local-status active ${type}`;
-            let icon = type === 'loading' ? 'loader-2' : (type === 'success' ? 'check-circle' : 'alert-circle');
-            el.innerHTML = `<i data-lucide="${icon}" class="${type === 'loading' ? 'spin-icon' : ''}" style="width:16px; height:16px;"></i> <span>${msg}</span>`;
+        window.openView = function(viewId) { 
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            if(viewId === 'view-input-report') window.switchReportTab('ero');
             lucide.createIcons();
         }
 
-        window.clearLocalStatus = function(elementId) {
-            const el = document.getElementById(elementId);
-            if (el) { el.className = 'local-status'; el.innerHTML = ''; }
-        }
-
-        // View Control
-        let lastStokUpdateDate = "-";
-        
-        // GLOBAL VARIABLES TO FIX ERROR
-        let isExcelProcessed = false;
-        let isPdfProcessed = false;
-
-        window.checkReconcileStatus = function() {
-            const btn = document.getElementById('btn-send-email');
-            if (btn) {
-                btn.disabled = !(isExcelProcessed && isPdfProcessed);
-                if (!btn.disabled) btn.classList.add('ready');
-                else btn.classList.remove('ready');
-            }
-        }
-
-        // GLOBAL FUNCTION DEFINED PROPERLY
-        window.resetReconcileState = function(type) {
-            if (type === 'excel') isExcelProcessed = false;
-            if (type === 'pdf') isPdfProcessed = false;
-            if (typeof window.checkReconcileStatus === 'function') window.checkReconcileStatus();
-        }
+        window.backToMain = () => window.openView('view-main');
 
         window.switchReportTab = function(tab) {
             if(tab === 'ero') {
@@ -948,407 +498,99 @@
             }
         }
 
-        window.openView = function(viewId) { 
-            const views = document.querySelectorAll('.view');
-            views.forEach(v => v.classList.remove('active')); 
-            const target = document.getElementById(viewId);
-            if (target) {
-                target.classList.add('active'); 
-                if(viewId === 'view-cek-stok') {
-                    const timeEl = document.getElementById('last-upload-time');
-                    if(timeEl) timeEl.innerText = lastStokUpdateDate;
-                    window.fetchLatestStockDate(); 
-                } else if(viewId === 'view-input-report') {
-                    const tglInput = document.getElementById('rep-tanggal');
-                    if(tglInput && !tglInput.value) tglInput.value = new Date().toISOString().split('T')[0];
-                    window.switchReportTab('ero'); // Reset tab to ERO
-                }
-                window.scrollTo({ top: 0, behavior: 'smooth' }); 
-            } else {
-                document.getElementById('view-main').classList.add('active');
-            }
-            const isMain = viewId === 'view-main' || !viewId;
-            document.getElementById('top-header').style.display = isMain ? 'flex' : 'none';
-            document.getElementById('top-logout').style.display = isMain ? 'flex' : 'none';
+        window.setLocalStatus = function(elementId, msg, type = 'loading') {
+            const el = document.getElementById(elementId);
+            el.className = `local-status active ${type}`;
+            el.innerHTML = `<i data-lucide="${type === 'loading' ? 'loader-2' : (type === 'success' ? 'check-circle' : 'alert-circle')}" class="${type === 'loading' ? 'spin-icon' : ''}"></i> <span>${msg}</span>`;
             lucide.createIcons();
         }
 
-        window.backToMain = function() { window.resetAllForms(); window.openView('view-main'); }
-
-        window.updateFileName = function(inputId, displayId) { const file = document.getElementById(inputId).files[0]; if (file) document.getElementById(displayId).innerText = file.name; }
-        window.safeJsonParse = async function(response) { const text = await response.text(); try { return JSON.parse(text); } catch (e) { return { message: text }; } }
-
-        // --- API FUNCTIONS ---
-        window.fetchLatestStockDate = async function() {
+        window.fetchStoreReport = async function() {
+            const bulan = document.getElementById('store-month-select').value;
+            if(!bulan) { window.setLocalStatus('status-input-report', 'Harap pilih bulan dahulu!', 'error'); return; }
+            window.setLocalStatus('status-input-report', `Menarik data Store - ${bulan}...`);
+            document.getElementById('disp-store-name').innerText = "Loading...";
+            
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/daily_stock?select=stock_date&order=stock_date.desc&limit=1`, {
-                    method: 'GET',
-                    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }
+                const response = await fetch(N8N_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: 'call_report_store', sap_code: window.currentStoreConfig.sap_code, bulan: bulan })
                 });
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data && data.length > 0) {
-                        const dateObj = new Date(data[0].stock_date);
-                        lastStokUpdateDate = new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(dateObj);
-                        const timeEl = document.getElementById('last-upload-time');
-                        if(timeEl) timeEl.innerText = lastStokUpdateDate;
-                    } 
-                }
-            } catch (e) { console.error(e); }
-        };
-
-        window.processUpdateStokArea = async function() {
-            const file = document.getElementById('stok-area-file').files[0];
-            if (!file) return;
-            window.setLocalStatus('status-update-stok', 'Mengunggah data master...');
-            try {
-                const formData = new FormData(); 
-                formData.append('file', file); 
-                formData.append('command', 'update_stok_area');
-                formData.append('sap_code', window.currentStoreConfig.sap_code);
-                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
-                if (response.ok) { 
-                    window.setLocalStatus('status-update-stok', 'Update Berhasil!', 'success');
-                    window.fetchLatestStockDate();
-                } else throw new Error(); 
-            } catch (e) { window.setLocalStatus('status-update-stok', 'Gagal update.', 'error'); }
-        }
-
-        window.processSearchStok = async function() {
-            const searchInput = document.getElementById('search-stok-input').value;
-            const tbody = document.querySelector('#stok-result-table tbody');
-            if (!searchInput) return;
-            window.setLocalStatus('status-search-stok', 'Mencari...');
-            try {
-                const response = await fetch(N8N_WEBHOOK_URL, { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ command: 'search_stok_area', search_query: searchInput, sap_code: window.currentStoreConfig.sap_code }) 
-                });
-                if (response.ok) {
-                    const data = await window.safeJsonParse(response);
-                    let raw = data.message || ""; let lines = raw.split('\n');
-                    if (lines.length > 0 && raw !== "") {
-                        tbody.innerHTML = '';
-                        lines.forEach(line => {
-                            if (line.includes('📦')) tbody.innerHTML += `<tr><td colspan="2" class="table-category-header">${line.replace('📦','').trim()}</td></tr>`;
-                            else if (line.includes(':')) {
-                                let p = line.split(':');
-                                tbody.innerHTML += `<tr><td>${p[0].trim()}</td><td style="font-weight:600; text-align:center;">${p[1].trim()}</td></tr>`;
-                            }
-                        });
-                        window.setLocalStatus('status-search-stok', 'Data ditemukan.', 'success');
-                    } else { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:4rem;">Barang tidak ditemukan.</td></tr>'; window.setLocalStatus('status-search-stok', 'Nol hasil.', 'error'); }
-                }
-            } catch (e) { window.setLocalStatus('status-search-stok', 'Error koneksi.', 'error'); }
-        }
-
-        window.processSales = async function() {
-            const file = document.getElementById('sales-file').files[0]; 
-            if (!file) {
-                window.setLocalStatus('status-sales-report', 'Silakan pilih file PDF dahulu.', 'error'); 
-                return; 
-            }
-            window.setLocalStatus('status-sales-report', 'Mengekstrak PDF...');
-            try {
-                const formData = new FormData(); 
-                formData.append('file', file); formData.append('command', 'sales_report_pdf'); formData.append('sap_code', window.currentStoreConfig.sap_code);
-                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
-                if (response.ok) { 
-                    const data = await window.safeJsonParse(response); 
-                    document.getElementById('sales-result-area').style.display = 'block'; 
-                    document.getElementById('sales-textarea').value = data.message; 
-                    window.setLocalStatus('status-sales-report', 'Berhasil!', 'success');
-                } else throw new Error(); 
-            } catch (e) { window.setLocalStatus('status-sales-report', 'Gagal.', 'error'); }
-        }
-
-        window.sendEmail = async function() {
-            const body = document.getElementById('email-body-textarea').value;
-            window.setLocalStatus('status-send-email', 'Mengirim email...');
-            try { 
-                const response = await fetch(N8N_WEBHOOK_URL, { 
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ command: 'send_reconcile_email', email_content: body, sap_code: window.currentStoreConfig.sap_code }) 
-                }); 
-                const result = await window.safeJsonParse(response);
-                if(response.ok) {
-                    window.setLocalStatus('status-send-email', 'Terkirim!', 'success'); 
-                    window.showModal('success', 'Email Terkirim!', result.message || 'Laporan rekonsiliasi telah berhasil dikirimkan.');
-                    setTimeout(window.resetAllForms, 3000);
-                } else throw new Error(result.message);
-            } catch (e) { 
-                window.setLocalStatus('status-send-email', 'Gagal.', 'error'); 
-                window.showModal('error', 'Gagal!', e.message);
-            }
-        }
-
-        window.processExcel = async function() {
-            const file = document.getElementById('recon-excel').files[0]; 
-            if (!file) {
-                window.setLocalStatus('status-excel', 'Pilih file Excel terlebih dahulu.', 'error');
-                return;
-            }
-            window.setLocalStatus('status-excel', 'Memproses sinkronisasi Excel...');
-            try {
-                const formData = new FormData(); 
-                formData.append('excel_file', file); 
-                formData.append('command', 'reconcile_excel');
-                formData.append('sap_code', window.currentStoreConfig.sap_code);
                 
-                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
-                if (response.ok) { 
-                    const data = await window.safeJsonParse(response); 
-                    document.getElementById('email-body-textarea').value = data.message; 
-                    isExcelProcessed = true; 
-                    window.checkReconcileStatus(); 
-                    window.setLocalStatus('status-excel', 'Data Excel tervalidasi!', 'success');
-                    
-                    document.getElementById('recon-excel').value = '';
-                    const excelNameEl = document.getElementById('excel-name');
-                    if (excelNameEl) excelNameEl.innerText = 'Pilih file Excel...';
-                }
-            } catch (e) { window.setLocalStatus('status-excel', 'Gagal memproses file.', 'error'); }
-        }
+                const data = await window.safeJsonParse(response);
+                const raw = data.message || "";
+                
+                document.getElementById('output-report-textarea').value = `RESPOND SERVER (${bulan}):\n` + raw;
+                window.setLocalStatus('status-input-report', 'Data berhasil ditarik!', 'success');
+                
+                const ex = (rgx) => { const m = raw.match(rgx); return m ? m[1].trim() : "0"; };
+                const perc = (est, tgt) => {
+                    const e = parseFloat(est.replace(/\./g, '').replace(',', '.')) || 0;
+                    const t = parseFloat(tgt.replace(/\./g, '').replace(',', '.')) || 0;
+                    return t === 0 ? "0%" : Math.round((e / t) * 100) + "%";
+                };
 
-        window.processPdf = async function() {
-            const file = document.getElementById('recon-pdf').files[0]; 
-            if (!file) {
-                window.setLocalStatus('status-pdf', 'Pilih file PDF terlebih dahulu.', 'error');
-                return;
+                document.getElementById('disp-store-name').innerText = window.currentStoreConfig.store_name;
+                
+                const abVal = ex(/All Bisnis\s*:\s*([^\n]+)/); const abTgt = ex(/Target AB\s*:\s*([^\n]+)/); const abEst = ex(/Estimasi AB\s*:\s*([^\n]+)/);
+                document.getElementById('disp-ab').innerText = abVal; document.getElementById('disp-target-ab').innerText = abTgt; document.getElementById('disp-est-ab').innerText = abEst; document.getElementById('disp-est-perc-ab').innerText = perc(abEst, abTgt);
+                
+                const devTgt = ex(/📱 DEVICE[\s\S]*?Target\s*:\s*([^\n]+)/); const devEst = ex(/📱 DEVICE[\s\S]*?Estimasi\s*:\s*([^\n]+)/);
+                document.getElementById('disp-target-dev').innerText = devTgt; document.getElementById('disp-dev-qty').innerText = ex(/📱 DEVICE[\s\S]*?Actual\s*:\s*(\d+)/); document.getElementById('disp-dev-val').innerText = ex(/📱 DEVICE[\s\S]*?Actual\s*:\s*\d+\/([^\n]+)/); document.getElementById('disp-est-dev').innerText = devEst; document.getElementById('disp-est-perc-dev').innerText = perc(devEst, devTgt);
+                
+                const accTgt = ex(/🎧 ACCESORIES[\s\S]*?Target\s*:\s*([^\n]+)/); const accEst = ex(/🎧 ACCESORIES[\s\S]*?Estimasi\s*:\s*([^\n]+)/);
+                document.getElementById('disp-target-acc').innerText = accTgt; document.getElementById('disp-acc-qty').innerText = ex(/🎧 ACCESORIES[\s\S]*?Actual\s*:\s*(\d+)/); document.getElementById('disp-acc-val').innerText = ex(/🎧 ACCESORIES[\s\S]*?Actual\s*:\s*\d+\/([^\n]+)/); document.getElementById('disp-est-acc').innerText = accEst; document.getElementById('disp-est-perc-acc').innerText = perc(accEst, accTgt);
+                document.getElementById('disp-ar-acc').innerText = ex(/AR Acc\s*:\s*([^\n]+)/); document.getElementById('disp-sob-acc').innerText = ex(/SOB Acc\s*:\s*([^\n]+)/);
+                
+                const boltTgt = ex(/🔒 BOLTECH[\s\S]*?Target\s*:\s*([^\n]+)/); const boltEst = ex(/🔒 BOLTECH[\s\S]*?Estimasi\s*:\s*([^\n]+)/);
+                document.getElementById('disp-target-bolt').innerText = boltTgt; document.getElementById('disp-bolt-qty').innerText = ex(/🔒 BOLTECH[\s\S]*?Actual\s*:\s*(\d+)/); document.getElementById('disp-bolt-val').innerText = ex(/🔒 BOLTECH[\s\S]*?Actual\s*:\s*\d+\/([^\n]+)/); document.getElementById('disp-est-bolt').innerText = boltEst; document.getElementById('disp-est-perc-bolt').innerText = perc(boltEst, boltTgt);
+                document.getElementById('disp-ar-bolt').innerText = ex(/AR Boltech\s*:\s*([^\n]+)/); document.getElementById('disp-sob-bolt').innerText = ex(/SOB Boltech\s*:\s*([^\n]+)/);
+                
+                const isatT = ex(/Indosat Target\s*:\s*([^\n]+)/); const isatE = ex(/Indosat Estimasi\s*:\s*([^\n]+)/);
+                document.getElementById('disp-target-isat').innerText = isatT; document.getElementById('disp-isat-qty').innerText = ex(/Indosat Actual\s*:\s*(\d+)/); document.getElementById('disp-isat-val').innerText = ex(/Indosat Actual\s*:\s*\d+\/([^\n]+)/); document.getElementById('disp-est-isat').innerText = isatE; document.getElementById('disp-est-perc-isat').innerText = perc(isatE, isatT);
+                
+                const xlT = ex(/XL Target\s*:\s*([^\n]+)/); const xlE = ex(/XL Estimasi\s*:\s*([^\n]+)/);
+                document.getElementById('disp-target-xl').innerText = xlT; document.getElementById('disp-xl-qty').innerText = ex(/XL Actual\s*:\s*(\d+)/); document.getElementById('disp-xl-val').innerText = ex(/XL Actual\s*:\s*\d+\/([^\n]+)/); document.getElementById('disp-est-xl').innerText = xlE; document.getElementById('disp-est-perc-xl').innerText = perc(xlE, xlT);
+
+                const haloT = ex(/Telkomsel Target\s*:\s*([^\n]+)/); const haloE = ex(/Telkomsel Estimasi\s*:\s*([^\n]+)/);
+                document.getElementById('disp-target-tsel').innerText = haloT; document.getElementById('disp-tsel-qty').innerText = ex(/Telkomsel Actual\s*:\s*(\d+)/); document.getElementById('disp-tsel-val').innerText = ex(/Telkomsel Actual\s*:\s*\d+\/([^\n]+)/); document.getElementById('disp-est-tsel').innerText = haloE; document.getElementById('disp-est-perc-tsel').innerText = perc(haloE, haloT);
+
+                document.getElementById('disp-wic-deal').innerText = ex(/Deal\s*:\s*(\d+)/);
+                document.getElementById('disp-wic-loss').innerText = ex(/Loss\s*:\s*(\d+)/);
+                document.getElementById('disp-cnp').innerText = ex(/CNP\s*:\s*(\d+)/);
+                document.getElementById('disp-csi').innerText = ex(/CSI\s*:\s*(\d+)/);
+                document.getElementById('disp-grev').innerText = ex(/G\.Review\s*:\s*(\d+)/);
+
+            } catch (e) { 
+                window.setLocalStatus('status-input-report', 'Gagal memproses respon server.', 'error'); 
+                document.getElementById('disp-store-name').innerText = "Gagal memproses";
             }
-            window.setLocalStatus('status-pdf', 'Menganalisis PDF POS...');
-            try {
-                const formData = new FormData(); 
-                formData.append('pdf_file', file); 
-                formData.append('command', 'reconcile_pdf');
-                formData.append('sap_code', window.currentStoreConfig.sap_code);
-
-                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
-                if (response.ok) { 
-                    isPdfProcessed = true; 
-                    window.checkReconcileStatus(); 
-                    window.setLocalStatus('status-pdf', 'Data PDF tervalidasi!', 'success'); 
-                    
-                    document.getElementById('recon-pdf').value = '';
-                    const pdfNameEl = document.getElementById('pdf-name');
-                    if (pdfNameEl) pdfNameEl.innerText = 'Pilih file PDF...';
-                }
-            } catch (e) { window.setLocalStatus('status-pdf', 'Gagal menganalisis file.', 'error'); }
-        }
-
-        window.processDailyStock = async function() {
-            const file = document.getElementById('daily-stock-file').files[0]; 
-            if (!file) {
-                window.setLocalStatus('status-daily-stock', 'Pilih file Excel terlebih dahulu.', 'error');
-                return;
-            }
-            window.setLocalStatus('status-daily-stock', 'Sinkronisasi...');
-            try {
-                const formData = new FormData(); 
-                formData.append('file', file); formData.append('command', 'daily_stock'); formData.append('sap_code', window.currentStoreConfig.sap_code);
-                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
-                if (response.ok) { document.getElementById('success-link-box').style.display = 'flex'; window.setLocalStatus('status-daily-stock', 'Selesai!', 'success'); }
-            } catch (e) { window.setLocalStatus('status-daily-stock', 'Gagal.', 'error'); }
-        }
-
-        // --- INPUT REPORT BY ERO LOGIC ---
-        const getVal = (id) => document.getElementById(id).value.trim() || "0";
-        const formatBulanIndo = (dStr) => {
-            if(!dStr) return "";
-            const d = new Date(dStr);
-            const m = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
-            return `${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()}`;
         }
 
         window.processInputReport = async function() {
             const tgl = document.getElementById('rep-tanggal').value;
             const nama = document.getElementById('rep-nama').value.trim();
-            if (!tgl || !nama) { window.setLocalStatus('status-input-report', 'Wajib isi Tanggal & Pilih Nama ERO!', 'error'); return; }
-
-            const templateText = `Update Sales daily by Ero
-Tanggal : ${formatBulanIndo(tgl)}
-
-Nama : ${nama}
-All bisnis : ${getVal('rep-allbisnis')}
-Device qty : ${getVal('rep-dev-qty')}
-Device value : ${getVal('rep-dev-val')}
-Acc qty : ${getVal('rep-acc-qty')}
-Acc value : ${getVal('rep-acc-val')}
-Boltech qty : ${getVal('rep-bolt-qty')}
-Boltech value : ${getVal('rep-bolt-val')}
-Indosat qty : ${getVal('rep-isat-qty')}
-Indosat value : ${getVal('rep-isat-val')}
-XL qty : ${getVal('rep-xl-qty')}
-XL value : ${getVal('rep-xl-val')}
-Tsel qty : ${getVal('rep-tsel-qty')}
-Tsel value : ${getVal('rep-tsel-val')}
-
-Wic deal : ${getVal('rep-wic-deal')}
-Wic loss : ${getVal('rep-wic-loss')}
-
-Cnp : ${getVal('rep-cnp')}
-Csi : ${getVal('rep-csi')}
-G.Riview : ${getVal('rep-grev')}`;
-
-            window.setLocalStatus('status-input-report', 'Mengirim data Report ERO...');
-            document.getElementById('output-report-textarea').value = "Mengirim:\n" + templateText;
-
+            if (!tgl || !nama) { window.setLocalStatus('status-input-report', 'Wajib isi Tanggal & Nama!', 'error'); return; }
+            window.setLocalStatus('status-input-report', 'Mengirim data...');
             try {
                 const response = await fetch(N8N_WEBHOOK_URL, { 
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ command: 'input_report', report_text: templateText, sap_code: window.currentStoreConfig.sap_code }) 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify({ 
+                        command: 'input_report', 
+                        sap_code: window.currentStoreConfig.sap_code,
+                        report_data: { date: tgl, name: nama, ab: document.getElementById('rep-allbisnis').value }
+                    }) 
                 });
                 if (response.ok) {
-                    const data = await window.safeJsonParse(response);
-                    document.getElementById('output-report-textarea').value = "RESPOND SERVER:\n" + (data.message || JSON.stringify(data));
                     window.setLocalStatus('status-input-report', 'Diterima!', 'success');
                 } else throw new Error(); 
             } catch (e) { window.setLocalStatus('status-input-report', 'Gagal.', 'error'); }
         }
 
-        window.fetchStoreReport = async function() {
-            window.setLocalStatus('status-input-report', 'Menarik data Report Store dari server...');
-            
-            document.getElementById('disp-store-name').innerText = "Memuat data...";
-            document.querySelectorAll('.report-table td[id^="disp-"]').forEach(td => td.innerText = "...");
-
-            const namaStore = window.currentStoreConfig.store_name;
-            const payload = { 
-                command: 'call_report_store', 
-                store_name: namaStore,
-                sap_code: window.currentStoreConfig.sap_code 
-            };
-
-            try {
-                const response = await fetch(N8N_WEBHOOK_URL, { 
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify(payload) 
-                });
-                
-                if (response.ok) {
-                    const data = await window.safeJsonParse(response);
-                    
-                    document.getElementById('output-report-textarea').value = "RESPOND SERVER (STORE):\n" + (data.message || JSON.stringify(data, null, 2));
-                    window.setLocalStatus('status-input-report', 'Data Store berhasil ditarik!', 'success');
-                    
-                    const rawText = data.message || data.text || JSON.stringify(data);
-                    
-                    const ex = (rgx, fallback = "0") => {
-                        const m = rawText.match(rgx);
-                        return m ? m[1].trim() : fallback;
-                    };
-
-                    const calcPerc = (estStr, tgtStr) => {
-                        const est = parseInt(estStr.replace(/\./g, '')) || 0;
-                        const tgt = parseInt(tgtStr.replace(/\./g, '')) || 0;
-                        if (tgt === 0) return "0%";
-                        return Math.round((est / tgt) * 100) + "%";
-                    };
-
-                    document.getElementById('disp-store-name').innerText = ex(/👤 Nama\s*:\s*([^\n]+)/, namaStore);
-                    document.getElementById('disp-store-date').innerText = ex(/📅 Bulan\s*:\s*([^\n]+)/, new Date().toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }));
-                    
-                    // ALL BISNIS
-                    const abVal = ex(/All Bisnis\s*:\s*([^\n]+)/);
-                    const abTgt = ex(/Target AB\s*:\s*([^\n]+)/);
-                    const abEst = ex(/Estimasi AB\s*:\s*([^\n]+)/);
-                    document.getElementById('disp-ab').innerText = abVal;
-                    document.getElementById('disp-target-ab').innerText = abTgt;
-                    document.getElementById('disp-est-ab').innerText = abEst;
-                    document.getElementById('disp-est-perc-ab').innerText = calcPerc(abEst, abTgt);
-                    
-                    // DEVICE
-                    const devTgt = ex(/📱 DEVICE[\s\S]*?Target\s*:\s*([^\n]+)/);
-                    const devEst = ex(/📱 DEVICE[\s\S]*?Estimasi\s*:\s*([^\n]+)/);
-                    document.getElementById('disp-target-dev').innerText = devTgt;
-                    document.getElementById('disp-dev-qty').innerText = ex(/📱 DEVICE[\s\S]*?Actual\s*:\s*(\d+)/);
-                    document.getElementById('disp-dev-val').innerText = ex(/📱 DEVICE[\s\S]*?Actual\s*:\s*\d+\/([^\n]+)/);
-                    document.getElementById('disp-est-dev').innerText = devEst;
-                    document.getElementById('disp-est-perc-dev').innerText = calcPerc(devEst, devTgt);
-                    
-                    // ACCESORIES
-                    const accTgt = ex(/🎧 ACCESORIES[\s\S]*?Target\s*:\s*([^\n]+)/);
-                    const accEst = ex(/🎧 ACCESORIES[\s\S]*?Estimasi\s*:\s*([^\n]+)/);
-                    document.getElementById('disp-target-acc').innerText = accTgt;
-                    document.getElementById('disp-acc-qty').innerText = ex(/🎧 ACCESORIES[\s\S]*?Actual\s*:\s*(\d+)/);
-                    document.getElementById('disp-acc-val').innerText = ex(/🎧 ACCESORIES[\s\S]*?Actual\s*:\s*\d+\/([^\n]+)/);
-                    document.getElementById('disp-est-acc').innerText = accEst;
-                    document.getElementById('disp-est-perc-acc').innerText = calcPerc(accEst, accTgt);
-                    
-                    // BOLTECH
-                    const boltTgt = ex(/🔒 BOLTECH[\s\S]*?Target\s*:\s*([^\n]+)/);
-                    const boltEst = ex(/🔒 BOLTECH[\s\S]*?Estimasi\s*:\s*([^\n]+)/);
-                    document.getElementById('disp-target-bolt').innerText = boltTgt;
-                    document.getElementById('disp-bolt-qty').innerText = ex(/🔒 BOLTECH[\s\S]*?Actual\s*:\s*(\d+)/);
-                    document.getElementById('disp-bolt-val').innerText = ex(/🔒 BOLTECH[\s\S]*?Actual\s*:\s*\d+\/([^\n]+)/);
-                    document.getElementById('disp-est-bolt').innerText = boltEst;
-                    document.getElementById('disp-est-perc-bolt').innerText = calcPerc(boltEst, boltTgt);
-                    
-                    // INDOSAT
-                    const isatTgt = ex(/Indosat Target\s*:\s*([^\n]+)/);
-                    const isatEst = ex(/Indosat Estimasi\s*:\s*([^\n]+)/);
-                    document.getElementById('disp-target-isat').innerText = isatTgt;
-                    document.getElementById('disp-isat-qty').innerText = ex(/Indosat Actual\s*:\s*(\d+)/);
-                    document.getElementById('disp-isat-val').innerText = ex(/Indosat Actual\s*:\s*\d+\/([^\n]+)/);
-                    document.getElementById('disp-est-isat').innerText = isatEst;
-                    document.getElementById('disp-est-perc-isat').innerText = calcPerc(isatEst, isatTgt);
-                    
-                    // XL
-                    const xlTgt = ex(/XL Target\s*:\s*([^\n]+)/);
-                    const xlEst = ex(/XL Estimasi\s*:\s*([^\n]+)/);
-                    document.getElementById('disp-target-xl').innerText = xlTgt;
-                    document.getElementById('disp-xl-qty').innerText = ex(/XL Actual\s*:\s*(\d+)/);
-                    document.getElementById('disp-xl-val').innerText = ex(/XL Actual\s*:\s*\d+\/([^\n]+)/);
-                    document.getElementById('disp-est-xl').innerText = xlEst;
-                    document.getElementById('disp-est-perc-xl').innerText = calcPerc(xlEst, xlTgt);
-                    
-                    // TELKOMSEL
-                    const tselTgt = ex(/Telkomsel Target\s*:\s*([^\n]+)/);
-                    const tselEst = ex(/Telkomsel Estimasi\s*:\s*([^\n]+)/);
-                    document.getElementById('disp-target-tsel').innerText = tselTgt;
-                    document.getElementById('disp-tsel-qty').innerText = ex(/Telkomsel Actual\s*:\s*(\d+)/);
-                    document.getElementById('disp-tsel-val').innerText = ex(/Telkomsel Actual\s*:\s*\d+\/([^\n]+)/);
-                    document.getElementById('disp-est-tsel').innerText = tselEst;
-                    document.getElementById('disp-est-perc-tsel').innerText = calcPerc(tselEst, tselTgt);
-                    
-                    // WIC
-                    document.getElementById('disp-wic-deal').innerText = ex(/Deal\s*:\s*(\d+)/);
-                    document.getElementById('disp-wic-loss').innerText = ex(/Loss\s*:\s*(\d+)/);
-                    
-                    // OTHERS
-                    document.getElementById('disp-cnp').innerText = ex(/CNP\s*:\s*(\d+)/);
-                    document.getElementById('disp-csi').innerText = ex(/CSI\s*:\s*(\d+)/);
-                    document.getElementById('disp-grev').innerText = ex(/G\.Review\s*:\s*(\d+)/);
-
-                } else throw new Error(); 
-            } catch (e) { 
-                window.setLocalStatus('status-input-report', 'Gagal menarik data.', 'error'); 
-                document.getElementById('disp-store-name').innerText = "Gagal memuat data";
-            }
-        }
-
-        window.resetAllForms = function() {
-            document.querySelectorAll('input:not([type=button]):not([type=submit])').forEach(i => { if(i.type!=='date') i.value=''; });
-            document.querySelectorAll('textarea').forEach(t => t.value='');
-            document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
-            document.querySelectorAll('.local-status').forEach(s => { s.className='local-status'; s.innerHTML=''; });
-            document.querySelectorAll('.upload-area p, .upload-compact p').forEach(p => { if(p.id.includes('file-name')) p.innerText='Pilih file...'; });
-            
-            const pdfNameEl = document.getElementById('pdf-name');
-            if (pdfNameEl) pdfNameEl.innerText = 'Pilih file PDF...';
-            
-            const excelNameEl = document.getElementById('excel-name');
-            if (excelNameEl) excelNameEl.innerText = 'Pilih file Excel...';
-
-            // Memastikan variabel Global dikembalikan dan fungsi dieksekusi normal
-            isExcelProcessed = false;
-            isPdfProcessed = false;
-            if (typeof window.checkReconcileStatus === 'function') window.checkReconcileStatus();
-        }
-
-        window.copyText = function(id) { const el = document.getElementById(id); el.select(); document.execCommand('copy'); }
-        window.copySalesText = function() { const el = document.getElementById('sales-textarea'); el.select(); document.execCommand('copy'); }
+        window.hideModal = () => document.getElementById('modal-overlay').style.display = 'none';
+        window.copyText = (id) => { const el = document.getElementById(id); el.select(); document.execCommand('copy'); };
     </script>
 </body>
 </html>
