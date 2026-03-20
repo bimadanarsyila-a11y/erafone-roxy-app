@@ -252,17 +252,36 @@
         .data-table th { background: #f8fafc; font-weight: 700; color: var(--text-main); font-size: 0.8rem; text-transform: uppercase; position: sticky; top: 0; z-index: 10; border-bottom: 1.5px solid var(--border-color); }
         .table-category-header { background: #f1f5f9 !important; font-weight: 800 !important; color: var(--bg-primary) !important; border: 1.5px solid var(--border-color) !important; }
 
-        /* --- SPESIFIK: INPUT REPORT by ERO --- */
+        /* --- SPESIFIK: INPUT REPORT BY ERO & STORE --- */
         .reconcile-top-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-bottom: 1.5rem; }
         
+        /* TABS UI */
+        .tab-container { display: flex; gap: 0.5rem; margin-bottom: 1rem; background: #f1f5f9; padding: 0.5rem; border-radius: var(--border-radius-md); border: 1.5px solid var(--border-color); }
+        .tab-btn { flex: 1; padding: 0.75rem; text-align: center; font-weight: 700; border-radius: 8px; cursor: pointer; transition: var(--transition); border: none; background: transparent; color: var(--text-muted); font-size: 0.9rem; }
+        .tab-btn.active { background: var(--bg-primary); color: white; border: 1.5px solid var(--border-color); box-shadow: var(--shadow-sm); }
+
         .report-form-container { 
             background: #f8fafc; border: 1.5px solid var(--border-color); border-radius: var(--border-radius-md); 
             padding: 1.5rem 1rem 1.5rem 1.5rem; max-height: 500px; overflow-y: auto; 
         }
+        
         /* Custom Scrollbar */
         .report-form-container::-webkit-scrollbar { width: 6px; }
         .report-form-container::-webkit-scrollbar-track { background: transparent; }
         .report-form-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+        /* Table Layout untuk Report Store (NEW WITH TARGET & ESTIMASI) */
+        .report-display-card { background: #ffffff; border: 1.5px solid var(--border-color); border-radius: var(--border-radius-md); overflow: hidden; box-shadow: var(--shadow-sm); }
+        .report-display-header { background: var(--bg-primary); color: #ffffff; padding: 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+        .report-display-header .store-badge { font-size: 1.05rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; }
+        .report-display-header .date-badge { font-size: 0.8rem; background: rgba(255,255,255,0.2); padding: 0.4rem 0.75rem; border-radius: 20px; font-weight: 700; display: flex; align-items: center; gap: 0.4rem; }
+        .report-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .report-table th, .report-table td { padding: 0.875rem 1.25rem; border-bottom: 1px solid #e2e8f0; font-size: 0.9rem; color: var(--text-main); }
+        .report-table th { background: #f8fafc; color: var(--text-muted); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .report-table .row-group td { background: #f1f5f9; font-weight: 800; color: var(--bg-primary); font-size: 0.85rem; padding: 0.6rem 1.25rem; border-top: 2px solid var(--border-color); }
+        .report-table .row-highlight td { background: #fffbeb; font-weight: 800; color: #b45309; border-bottom: 2px solid #fde68a; font-size: 0.95rem; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; font-weight: 600; }
 
         .section-title { font-size: 0.85rem; font-weight: 800; color: var(--bg-primary); margin: 1.5rem 0 0.75rem 0; border-bottom: 1px solid #cbd5e1; padding-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px; }
         .section-title:first-child { margin-top: 0; }
@@ -587,7 +606,7 @@
             </div>
         </div>
 
-        <!-- VIEW: INPUT REPORT -->
+        <!-- VIEW: INPUT REPORT BY ERO -->
         <div id="view-input-report" class="view">
             <div class="detail-view">
                 <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
@@ -596,74 +615,148 @@
                 <div class="reconcile-top-row">
                     <!-- Kolom Kiri: Form Input -->
                     <div class="column-card">
-                        <div class="flex-row-align" style="margin-bottom: 0.5rem;">
-                            <span class="column-title">1. Formulir Laporan Harian</span>
-                            <button class="btn-base btn-process" id="btn-submit-report" onclick="window.processInputReport()" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
-                                <i data-lucide="send" style="width:14px;"></i> Submit Laporan
-                            </button>
+                        
+                        <!-- TAB NAVIGASI -->
+                        <div class="tab-container">
+                            <button class="tab-btn active" id="tab-ero" onclick="window.switchReportTab('ero')">Laporan ERO</button>
+                            <button class="tab-btn" id="tab-store" onclick="window.switchReportTab('store')">Laporan Store</button>
                         </div>
                         
-                        <div class="report-form-container" id="manual-report-form">
-                            <h4 class="section-title">Informasi Dasar</h4>
-                            <div class="input-group">
-                                <label>Tanggal Laporan</label>
-                                <input type="date" id="rep-tanggal" class="form-input">
+                        <!-- FORM SECTION: Laporan ERO -->
+                        <div id="form-section-ero">
+                            <div class="flex-row-align" style="margin-bottom: 0.5rem;">
+                                <span class="column-title">1. Formulir Laporan Harian</span>
+                                <button class="btn-base btn-process" id="btn-submit-report" onclick="window.processInputReport()" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                                    <i data-lucide="send" style="width:14px;"></i> Submit Laporan ERO
+                                </button>
                             </div>
-                            <div class="input-group">
-                                <label>Nama ERO</label>
-                                <!-- DROPDOWN NAMA ERO -->
-                                <select id="rep-nama" class="form-input">
-                                    <option value="">Pilih Nama ERO...</option>
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label>Total All Bisnis (Rp)</label>
-                                <input type="text" id="rep-allbisnis" class="form-input" placeholder="Contoh: 24.794.004" inputmode="numeric">
-                            </div>
+                            
+                            <div class="report-form-container" id="manual-report-form">
+                                <h4 class="section-title">Informasi Dasar</h4>
+                                <div class="input-group">
+                                    <label>Tanggal Laporan</label>
+                                    <input type="date" id="rep-tanggal" class="form-input">
+                                </div>
+                                <div class="input-group">
+                                    <label>Nama ERO</label>
+                                    <!-- DROPDOWN NAMA ERO -->
+                                    <select id="rep-nama" class="form-input">
+                                        <option value="">Pilih Nama ERO...</option>
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <label>Total All Bisnis (Rp)</label>
+                                    <input type="text" id="rep-allbisnis" class="form-input" placeholder="Contoh: 24.794.004" inputmode="numeric">
+                                </div>
 
-                            <h4 class="section-title">Device & Accesories</h4>
-                            <div class="form-grid-2">
-                                <div class="input-group"><label>Device Qty</label><input type="number" id="rep-dev-qty" class="form-input" placeholder="0"></div>
-                                <div class="input-group"><label>Device Value</label><input type="text" id="rep-dev-val" class="form-input" placeholder="0" inputmode="numeric"></div>
-                            </div>
-                            <div class="form-grid-2">
-                                <div class="input-group"><label>Acc Qty</label><input type="number" id="rep-acc-qty" class="form-input" placeholder="0"></div>
-                                <div class="input-group"><label>Acc Value</label><input type="text" id="rep-acc-val" class="form-input" placeholder="0" inputmode="numeric"></div>
-                            </div>
+                                <h4 class="section-title">Device & Accesories</h4>
+                                <div class="form-grid-2">
+                                    <div class="input-group"><label>Device Qty</label><input type="number" id="rep-dev-qty" class="form-input" placeholder="0"></div>
+                                    <div class="input-group"><label>Device Value</label><input type="text" id="rep-dev-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                                </div>
+                                <div class="form-grid-2">
+                                    <div class="input-group"><label>Acc Qty</label><input type="number" id="rep-acc-qty" class="form-input" placeholder="0"></div>
+                                    <div class="input-group"><label>Acc Value</label><input type="text" id="rep-acc-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                                </div>
 
-                            <h4 class="section-title">Perlindungan & Layanan</h4>
-                            <div class="form-grid-2">
-                                <div class="input-group"><label>Boltech Qty</label><input type="number" id="rep-bolt-qty" class="form-input" placeholder="0"></div>
-                                <div class="input-group"><label>Boltech Value</label><input type="text" id="rep-bolt-val" class="form-input" placeholder="0" inputmode="numeric"></div>
-                            </div>
+                                <h4 class="section-title">Perlindungan & Layanan</h4>
+                                <div class="form-grid-2">
+                                    <div class="input-group"><label>Boltech Qty</label><input type="number" id="rep-bolt-qty" class="form-input" placeholder="0"></div>
+                                    <div class="input-group"><label>Boltech Value</label><input type="text" id="rep-bolt-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                                </div>
 
-                            <h4 class="section-title">Kategori Operator</h4>
-                            <div class="form-grid-2">
-                                <div class="input-group"><label>Indosat Qty</label><input type="number" id="rep-isat-qty" class="form-input" placeholder="0"></div>
-                                <div class="input-group"><label>Indosat Value</label><input type="text" id="rep-isat-val" class="form-input" placeholder="0" inputmode="numeric"></div>
-                            </div>
-                            <div class="form-grid-2">
-                                <div class="input-group"><label>XL Qty</label><input type="number" id="rep-xl-qty" class="form-input" placeholder="0"></div>
-                                <div class="input-group"><label>XL Value</label><input type="text" id="rep-xl-val" class="form-input" placeholder="0" inputmode="numeric"></div>
-                            </div>
-                            <div class="form-grid-2">
-                                <div class="input-group"><label>Telkomsel Qty</label><input type="number" id="rep-tsel-qty" class="form-input" placeholder="0"></div>
-                                <div class="input-group"><label>Telkomsel Value</label><input type="text" id="rep-tsel-val" class="form-input" placeholder="0" inputmode="numeric"></div>
-                            </div>
+                                <h4 class="section-title">Kategori Operator</h4>
+                                <div class="form-grid-2">
+                                    <div class="input-group"><label>Indosat Qty</label><input type="number" id="rep-isat-qty" class="form-input" placeholder="0"></div>
+                                    <div class="input-group"><label>Indosat Value</label><input type="text" id="rep-isat-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                                </div>
+                                <div class="form-grid-2">
+                                    <div class="input-group"><label>XL Qty</label><input type="number" id="rep-xl-qty" class="form-input" placeholder="0"></div>
+                                    <div class="input-group"><label>XL Value</label><input type="text" id="rep-xl-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                                </div>
+                                <div class="form-grid-2">
+                                    <div class="input-group"><label>Telkomsel Qty</label><input type="number" id="rep-tsel-qty" class="form-input" placeholder="0"></div>
+                                    <div class="input-group"><label>Telkomsel Value</label><input type="text" id="rep-tsel-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                                </div>
 
-                            <h4 class="section-title">Walk-In Customer (WIC)</h4>
-                            <div class="form-grid-2">
-                                <div class="input-group"><label>WIC Deal</label><input type="number" id="rep-wic-deal" class="form-input" placeholder="0"></div>
-                                <div class="input-group"><label>WIC Loss</label><input type="number" id="rep-wic-loss" class="form-input" placeholder="0"></div>
-                            </div>
+                                <h4 class="section-title">Walk-In Customer (WIC)</h4>
+                                <div class="form-grid-2">
+                                    <div class="input-group"><label>WIC Deal</label><input type="number" id="rep-wic-deal" class="form-input" placeholder="0"></div>
+                                    <div class="input-group"><label>WIC Loss</label><input type="number" id="rep-wic-loss" class="form-input" placeholder="0"></div>
+                                </div>
 
-                            <h4 class="section-title">Indikator Lainnya</h4>
-                            <div class="form-grid-3">
-                                <div class="input-group"><label>CNP</label><input type="number" id="rep-cnp" class="form-input" placeholder="0"></div>
-                                <div class="input-group"><label>CSI</label><input type="number" id="rep-csi" class="form-input" placeholder="0"></div>
-                                <div class="input-group"><label>G. Review</label><input type="number" id="rep-grev" class="form-input" placeholder="0"></div>
+                                <h4 class="section-title">Indikator Lainnya</h4>
+                                <div class="form-grid-3">
+                                    <div class="input-group"><label>CNP</label><input type="number" id="rep-cnp" class="form-input" placeholder="0"></div>
+                                    <div class="input-group"><label>CSI</label><input type="number" id="rep-csi" class="form-input" placeholder="0"></div>
+                                    <div class="input-group"><label>G. Review</label><input type="number" id="rep-grev" class="form-input" placeholder="0"></div>
+                                </div>
                             </div>
                         </div>
+
+                        <!-- FORM SECTION: Laporan Store (VIEW ONLY TABLE) -->
+                        <div id="form-section-store" style="display:none;">
+                            <div class="flex-row-align" style="margin-bottom: 1rem;">
+                                <span class="column-title">1. Output Final Laporan Store</span>
+                                <button class="btn-base btn-process" id="btn-pull-store" onclick="window.fetchStoreReport()" style="padding: 0.6rem 1.25rem; font-size: 0.9rem; background: #059669; border-color: #047857 !important;">
+                                    <i data-lucide="download-cloud" style="width:16px;"></i> Tarik Data Report Store
+                                </button>
+                            </div>
+                            
+                            <div class="report-display-card">
+                                <div class="report-display-header">
+                                    <div class="store-badge"><i data-lucide="store" style="width:20px;"></i> <span id="disp-store-name">Menunggu Data...</span></div>
+                                    <div class="date-badge"><i data-lucide="calendar" style="width:14px;"></i> <span id="disp-store-date">-</span></div>
+                                </div>
+                                <div style="max-height: 440px; overflow-y: auto; overflow-x: auto;">
+                                    <table class="report-table">
+                                        <thead>
+                                            <tr>
+                                                <th>KATEGORI</th>
+                                                <th class="text-right">TARGET</th>
+                                                <th class="text-center">QTY</th>
+                                                <th class="text-right">VALUE</th>
+                                                <th class="text-right">ESTIMASI</th>
+                                                <th class="text-center">EST %</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- ALL BISNIS -->
+                                            <tr class="row-highlight">
+                                                <td>Total All Bisnis</td>
+                                                <td class="text-right" id="disp-target-ab">0</td>
+                                                <td class="text-center">-</td>
+                                                <td class="text-right" id="disp-ab">0</td>
+                                                <td class="text-right" id="disp-est-ab">0</td>
+                                                <td class="text-center" id="disp-est-perc-ab">0%</td>
+                                            </tr>
+                                            <!-- DEVICE & ACC -->
+                                            <tr class="row-group"><td colspan="6">Device & Accessories</td></tr>
+                                            <tr><td>Device</td><td class="text-right" id="disp-target-dev">0</td><td class="text-center" id="disp-dev-qty">0</td><td class="text-right" id="disp-dev-val">0</td><td class="text-right" id="disp-est-dev">0</td><td class="text-center" id="disp-est-perc-dev">0%</td></tr>
+                                            <tr><td>Accessories</td><td class="text-right" id="disp-target-acc">0</td><td class="text-center" id="disp-acc-qty">0</td><td class="text-right" id="disp-acc-val">0</td><td class="text-right" id="disp-est-acc">0</td><td class="text-center" id="disp-est-perc-acc">0%</td></tr>
+                                            <!-- BOLTECH -->
+                                            <tr class="row-group"><td colspan="6">Perlindungan & Layanan</td></tr>
+                                            <tr><td>Boltech</td><td class="text-right" id="disp-target-bolt">0</td><td class="text-center" id="disp-bolt-qty">0</td><td class="text-right" id="disp-bolt-val">0</td><td class="text-right" id="disp-est-bolt">0</td><td class="text-center" id="disp-est-perc-bolt">0%</td></tr>
+                                            <!-- OPERATOR -->
+                                            <tr class="row-group"><td colspan="6">Kategori Operator</td></tr>
+                                            <tr><td>Indosat</td><td class="text-right" id="disp-target-isat">0</td><td class="text-center" id="disp-isat-qty">0</td><td class="text-right" id="disp-isat-val">0</td><td class="text-right" id="disp-est-isat">0</td><td class="text-center" id="disp-est-perc-isat">0%</td></tr>
+                                            <tr><td>XL</td><td class="text-right" id="disp-target-xl">0</td><td class="text-center" id="disp-xl-qty">0</td><td class="text-right" id="disp-xl-val">0</td><td class="text-right" id="disp-est-xl">0</td><td class="text-center" id="disp-est-perc-xl">0%</td></tr>
+                                            <tr><td>Telkomsel</td><td class="text-right" id="disp-target-tsel">0</td><td class="text-center" id="disp-tsel-qty">0</td><td class="text-right" id="disp-tsel-val">0</td><td class="text-right" id="disp-est-tsel">0</td><td class="text-center" id="disp-est-perc-tsel">0%</td></tr>
+                                            <!-- WIC -->
+                                            <tr class="row-group"><td colspan="6">Walk-In Customer (WIC)</td></tr>
+                                            <tr><td>WIC Deal</td><td class="text-right">-</td><td class="text-center" id="disp-wic-deal">0</td><td class="text-right">-</td><td class="text-right">-</td><td class="text-center">-</td></tr>
+                                            <tr><td>WIC Loss</td><td class="text-right">-</td><td class="text-center" id="disp-wic-loss">0</td><td class="text-right">-</td><td class="text-right">-</td><td class="text-center">-</td></tr>
+                                            <!-- OTHERS -->
+                                            <tr class="row-group"><td colspan="6">Indikator Lainnya</td></tr>
+                                            <tr><td>CNP</td><td class="text-right">-</td><td class="text-center" id="disp-cnp">0</td><td class="text-right">-</td><td class="text-right">-</td><td class="text-center">-</td></tr>
+                                            <tr><td>CSI</td><td class="text-right">-</td><td class="text-center" id="disp-csi">0</td><td class="text-right">-</td><td class="text-right">-</td><td class="text-center">-</td></tr>
+                                            <tr><td>G. Review</td><td class="text-right">-</td><td class="text-center" id="disp-grev">0</td><td class="text-right">-</td><td class="text-right">-</td><td class="text-center">-</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <!-- Kolom Kanan: Hasil Report -->
@@ -674,7 +767,7 @@
                                 <i data-lucide="copy" style="width:14px;"></i> Salin Teks
                             </button>
                         </div>
-                        <textarea id="output-report-textarea" class="result-textarea" placeholder="Menunggu proses submit..." style="height: 500px;" readonly></textarea>
+                        <textarea id="output-report-textarea" class="result-textarea" placeholder="Menunggu proses submit..." style="height: 575px;" readonly></textarea>
                     </div>
                 </div>
                 <div id="status-input-report" class="local-status" style="justify-content: center;"></div>
@@ -687,7 +780,7 @@
         lucide.createIcons();
 
         // --- CORE CONFIG ---
-        const N8N_WEBHOOK_URL = 'https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/webhook/erafone-roxy-automation';
+        const N8N_WEBHOOK_URL = 'https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/webhook-test/erafone-roxy-automation';
         
         const SUPABASE_URL = 'https://hgjyzhgpwcxwiqhaldhv.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhnanl6aGdwd2N4d2lxaGFsZGh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMDI5OTEsImV4cCI6MjA4NzY3ODk5MX0.ZVNOHbiuvs83QK-v8-XufA9QQ6cTTZ1rEWy2iy0_55g';
@@ -775,9 +868,7 @@
             // POPULATE ERO DROPDOWN
             const eroSelect = document.getElementById('rep-nama');
             if (window.currentStoreConfig.ero_list && eroSelect) {
-                // Bersihkan list lama (sisakan option default)
                 eroSelect.innerHTML = '<option value="">Pilih Nama ERO...</option>';
-                // Pecah string koma menjadi array
                 const eros = window.currentStoreConfig.ero_list.split(',');
                 eros.forEach(name => {
                     const trimmedName = name.trim();
@@ -822,6 +913,8 @@
 
         // View Control
         let lastStokUpdateDate = "-";
+        
+        // GLOBAL VARIABLES TO FIX ERROR
         let isExcelProcessed = false;
         let isPdfProcessed = false;
 
@@ -834,10 +927,25 @@
             }
         }
 
+        // GLOBAL FUNCTION DEFINED PROPERLY
         window.resetReconcileState = function(type) {
             if (type === 'excel') isExcelProcessed = false;
             if (type === 'pdf') isPdfProcessed = false;
-            window.checkReconcileStatus();
+            if (typeof window.checkReconcileStatus === 'function') window.checkReconcileStatus();
+        }
+
+        window.switchReportTab = function(tab) {
+            if(tab === 'ero') {
+                document.getElementById('tab-ero').classList.add('active');
+                document.getElementById('tab-store').classList.remove('active');
+                document.getElementById('form-section-ero').style.display = 'block';
+                document.getElementById('form-section-store').style.display = 'none';
+            } else {
+                document.getElementById('tab-store').classList.add('active');
+                document.getElementById('tab-ero').classList.remove('active');
+                document.getElementById('form-section-store').style.display = 'block';
+                document.getElementById('form-section-ero').style.display = 'none';
+            }
         }
 
         window.openView = function(viewId) { 
@@ -853,6 +961,7 @@
                 } else if(viewId === 'view-input-report') {
                     const tglInput = document.getElementById('rep-tanggal');
                     if(tglInput && !tglInput.value) tglInput.value = new Date().toISOString().split('T')[0];
+                    window.switchReportTab('ero'); // Reset tab to ERO
                 }
                 window.scrollTo({ top: 0, behavior: 'smooth' }); 
             } else {
@@ -1043,7 +1152,7 @@
             } catch (e) { window.setLocalStatus('status-daily-stock', 'Gagal.', 'error'); }
         }
 
-        // --- INPUT REPORT by ERO LOGIC ---
+        // --- INPUT REPORT BY ERO LOGIC ---
         const getVal = (id) => document.getElementById(id).value.trim() || "0";
         const formatBulanIndo = (dStr) => {
             if(!dStr) return "";
@@ -1082,7 +1191,7 @@ Cnp : ${getVal('rep-cnp')}
 Csi : ${getVal('rep-csi')}
 G.Riview : ${getVal('rep-grev')}`;
 
-            window.setLocalStatus('status-input-report', 'Mengirim data...');
+            window.setLocalStatus('status-input-report', 'Mengirim data Report ERO...');
             document.getElementById('output-report-textarea').value = "Mengirim:\n" + templateText;
 
             try {
@@ -1092,16 +1201,137 @@ G.Riview : ${getVal('rep-grev')}`;
                 });
                 if (response.ok) {
                     const data = await window.safeJsonParse(response);
-                    document.getElementById('output-report-textarea').value = "RESPOND:\n" + (data.message || JSON.stringify(data));
+                    document.getElementById('output-report-textarea').value = "RESPOND SERVER:\n" + (data.message || JSON.stringify(data));
                     window.setLocalStatus('status-input-report', 'Diterima!', 'success');
                 } else throw new Error(); 
             } catch (e) { window.setLocalStatus('status-input-report', 'Gagal.', 'error'); }
         }
 
+        window.fetchStoreReport = async function() {
+            window.setLocalStatus('status-input-report', 'Menarik data Report Store dari server...');
+            
+            document.getElementById('disp-store-name').innerText = "Memuat data...";
+            document.querySelectorAll('.report-table td[id^="disp-"]').forEach(td => td.innerText = "...");
+
+            const namaStore = window.currentStoreConfig.store_name;
+            const payload = { 
+                command: 'call_report_store', 
+                store_name: namaStore,
+                sap_code: window.currentStoreConfig.sap_code 
+            };
+
+            try {
+                const response = await fetch(N8N_WEBHOOK_URL, { 
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify(payload) 
+                });
+                
+                if (response.ok) {
+                    const data = await window.safeJsonParse(response);
+                    
+                    document.getElementById('output-report-textarea').value = "RESPOND SERVER (STORE):\n" + (data.message || JSON.stringify(data, null, 2));
+                    window.setLocalStatus('status-input-report', 'Data Store berhasil ditarik!', 'success');
+                    
+                    const rawText = data.message || data.text || JSON.stringify(data);
+                    
+                    const ex = (rgx, fallback = "0") => {
+                        const m = rawText.match(rgx);
+                        return m ? m[1].trim() : fallback;
+                    };
+
+                    const calcPerc = (estStr, tgtStr) => {
+                        const est = parseInt(estStr.replace(/\./g, '')) || 0;
+                        const tgt = parseInt(tgtStr.replace(/\./g, '')) || 0;
+                        if (tgt === 0) return "0%";
+                        return Math.round((est / tgt) * 100) + "%";
+                    };
+
+                    document.getElementById('disp-store-name').innerText = ex(/👤 Nama\s*:\s*([^\n]+)/, namaStore);
+                    document.getElementById('disp-store-date').innerText = ex(/📅 Bulan\s*:\s*([^\n]+)/, new Date().toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }));
+                    
+                    // ALL BISNIS
+                    const abVal = ex(/All Bisnis\s*:\s*([^\n]+)/);
+                    const abTgt = ex(/Target AB\s*:\s*([^\n]+)/);
+                    const abEst = ex(/Estimasi AB\s*:\s*([^\n]+)/);
+                    document.getElementById('disp-ab').innerText = abVal;
+                    document.getElementById('disp-target-ab').innerText = abTgt;
+                    document.getElementById('disp-est-ab').innerText = abEst;
+                    document.getElementById('disp-est-perc-ab').innerText = calcPerc(abEst, abTgt);
+                    
+                    // DEVICE
+                    const devTgt = ex(/📱 DEVICE[\s\S]*?Target\s*:\s*([^\n]+)/);
+                    const devEst = ex(/📱 DEVICE[\s\S]*?Estimasi\s*:\s*([^\n]+)/);
+                    document.getElementById('disp-target-dev').innerText = devTgt;
+                    document.getElementById('disp-dev-qty').innerText = ex(/📱 DEVICE[\s\S]*?Actual\s*:\s*(\d+)/);
+                    document.getElementById('disp-dev-val').innerText = ex(/📱 DEVICE[\s\S]*?Actual\s*:\s*\d+\/([^\n]+)/);
+                    document.getElementById('disp-est-dev').innerText = devEst;
+                    document.getElementById('disp-est-perc-dev').innerText = calcPerc(devEst, devTgt);
+                    
+                    // ACCESORIES
+                    const accTgt = ex(/🎧 ACCESORIES[\s\S]*?Target\s*:\s*([^\n]+)/);
+                    const accEst = ex(/🎧 ACCESORIES[\s\S]*?Estimasi\s*:\s*([^\n]+)/);
+                    document.getElementById('disp-target-acc').innerText = accTgt;
+                    document.getElementById('disp-acc-qty').innerText = ex(/🎧 ACCESORIES[\s\S]*?Actual\s*:\s*(\d+)/);
+                    document.getElementById('disp-acc-val').innerText = ex(/🎧 ACCESORIES[\s\S]*?Actual\s*:\s*\d+\/([^\n]+)/);
+                    document.getElementById('disp-est-acc').innerText = accEst;
+                    document.getElementById('disp-est-perc-acc').innerText = calcPerc(accEst, accTgt);
+                    
+                    // BOLTECH
+                    const boltTgt = ex(/🔒 BOLTECH[\s\S]*?Target\s*:\s*([^\n]+)/);
+                    const boltEst = ex(/🔒 BOLTECH[\s\S]*?Estimasi\s*:\s*([^\n]+)/);
+                    document.getElementById('disp-target-bolt').innerText = boltTgt;
+                    document.getElementById('disp-bolt-qty').innerText = ex(/🔒 BOLTECH[\s\S]*?Actual\s*:\s*(\d+)/);
+                    document.getElementById('disp-bolt-val').innerText = ex(/🔒 BOLTECH[\s\S]*?Actual\s*:\s*\d+\/([^\n]+)/);
+                    document.getElementById('disp-est-bolt').innerText = boltEst;
+                    document.getElementById('disp-est-perc-bolt').innerText = calcPerc(boltEst, boltTgt);
+                    
+                    // INDOSAT
+                    const isatTgt = ex(/Indosat Target\s*:\s*([^\n]+)/);
+                    const isatEst = ex(/Indosat Estimasi\s*:\s*([^\n]+)/);
+                    document.getElementById('disp-target-isat').innerText = isatTgt;
+                    document.getElementById('disp-isat-qty').innerText = ex(/Indosat Actual\s*:\s*(\d+)/);
+                    document.getElementById('disp-isat-val').innerText = ex(/Indosat Actual\s*:\s*\d+\/([^\n]+)/);
+                    document.getElementById('disp-est-isat').innerText = isatEst;
+                    document.getElementById('disp-est-perc-isat').innerText = calcPerc(isatEst, isatTgt);
+                    
+                    // XL
+                    const xlTgt = ex(/XL Target\s*:\s*([^\n]+)/);
+                    const xlEst = ex(/XL Estimasi\s*:\s*([^\n]+)/);
+                    document.getElementById('disp-target-xl').innerText = xlTgt;
+                    document.getElementById('disp-xl-qty').innerText = ex(/XL Actual\s*:\s*(\d+)/);
+                    document.getElementById('disp-xl-val').innerText = ex(/XL Actual\s*:\s*\d+\/([^\n]+)/);
+                    document.getElementById('disp-est-xl').innerText = xlEst;
+                    document.getElementById('disp-est-perc-xl').innerText = calcPerc(xlEst, xlTgt);
+                    
+                    // TELKOMSEL
+                    const tselTgt = ex(/Telkomsel Target\s*:\s*([^\n]+)/);
+                    const tselEst = ex(/Telkomsel Estimasi\s*:\s*([^\n]+)/);
+                    document.getElementById('disp-target-tsel').innerText = tselTgt;
+                    document.getElementById('disp-tsel-qty').innerText = ex(/Telkomsel Actual\s*:\s*(\d+)/);
+                    document.getElementById('disp-tsel-val').innerText = ex(/Telkomsel Actual\s*:\s*\d+\/([^\n]+)/);
+                    document.getElementById('disp-est-tsel').innerText = tselEst;
+                    document.getElementById('disp-est-perc-tsel').innerText = calcPerc(tselEst, tselTgt);
+                    
+                    // WIC
+                    document.getElementById('disp-wic-deal').innerText = ex(/Deal\s*:\s*(\d+)/);
+                    document.getElementById('disp-wic-loss').innerText = ex(/Loss\s*:\s*(\d+)/);
+                    
+                    // OTHERS
+                    document.getElementById('disp-cnp').innerText = ex(/CNP\s*:\s*(\d+)/);
+                    document.getElementById('disp-csi').innerText = ex(/CSI\s*:\s*(\d+)/);
+                    document.getElementById('disp-grev').innerText = ex(/G\.Review\s*:\s*(\d+)/);
+
+                } else throw new Error(); 
+            } catch (e) { 
+                window.setLocalStatus('status-input-report', 'Gagal menarik data.', 'error'); 
+                document.getElementById('disp-store-name').innerText = "Gagal memuat data";
+            }
+        }
+
         window.resetAllForms = function() {
             document.querySelectorAll('input:not([type=button]):not([type=submit])').forEach(i => { if(i.type!=='date') i.value=''; });
             document.querySelectorAll('textarea').forEach(t => t.value='');
-            document.querySelectorAll('select').forEach(s => s.selectedIndex = 0); // Reset dropdown
+            document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
             document.querySelectorAll('.local-status').forEach(s => { s.className='local-status'; s.innerHTML=''; });
             document.querySelectorAll('.upload-area p, .upload-compact p').forEach(p => { if(p.id.includes('file-name')) p.innerText='Pilih file...'; });
             
@@ -1111,9 +1341,10 @@ G.Riview : ${getVal('rep-grev')}`;
             const excelNameEl = document.getElementById('excel-name');
             if (excelNameEl) excelNameEl.innerText = 'Pilih file Excel...';
 
+            // Memastikan variabel Global dikembalikan dan fungsi dieksekusi normal
             isExcelProcessed = false;
             isPdfProcessed = false;
-            if(typeof window.checkReconcileStatus === 'function') window.checkReconcileStatus();
+            if (typeof window.checkReconcileStatus === 'function') window.checkReconcileStatus();
         }
 
         window.copyText = function(id) { const el = document.getElementById(id); el.select(); document.execCommand('copy'); }
