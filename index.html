@@ -6,7 +6,7 @@
     <title>Erafone and more ruko roxy - Dashboard</title>
     <!-- Menggunakan font modern dari Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Lucide Icons untuk estetika tombol -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         /* --- TEMA & WARNA UTAMA --- */
@@ -44,73 +44,115 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* --- LOGIN OVERLAY --- */
+        /* --- LOGIN & REGISTER OVERLAYS --- */
         #login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-gradient);
             display: flex; justify-content: center; align-items: center;
             z-index: 9999; padding: 1rem;
+            overflow-y: auto;
         }
 
-        .login-card {
+        /* Form Login Tampilan Padat / Compact */
+        #login-form-box {
             background: var(--card-bg);
-            padding: 3rem 2.5rem;
+            padding: 2rem; 
             border-radius: var(--border-radius-lg);
             width: 100%;
-            max-width: 420px;
+            max-width: 400px;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
             display: flex; flex-direction: column;
             border: 1.5px solid var(--border-color) !important;
         }
+        #login-form-box .logo-container { margin: 0 auto 1.5rem auto; width: 130px; }
 
-        .login-card .logo-container { margin: 0 auto 2rem; width: 160px; }
+        .login-footer-text { text-align: center; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-top: 1.5rem; }
+        .login-footer-text a { color: var(--bg-primary); text-decoration: underline; transition: var(--transition); }
+        .login-footer-text a:hover { color: var(--bg-dark); }
+
+        /* Canvas Registrasi (Tersembunyi by default) */
+        #register-canvas {
+            display: none;
+            background: white;
+            width: 100%;
+            max-width: 850px;
+            border-radius: var(--border-radius-lg);
+            border: 1.5px solid var(--border-color);
+            padding: 2.5rem;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.4s ease-out;
+        }
+
+        /* Styling Input Login & Form Umum */
+        .input-group { text-align: left; margin-bottom: 1rem; width: 100%; }
+        .input-group label { display: block; font-size: 0.8rem; font-weight: 800; color: var(--bg-primary); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        .input-group { text-align: left; margin-bottom: 1.25rem; width: 100%; }
-        .input-group label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--bg-primary); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        
-        .login-input {
+        .custom-input, .login-input {
             width: 100%; padding: 0.875rem 1.25rem; border-radius: var(--border-radius-md); font-size: 0.95rem; 
             border: 1.5px solid var(--border-color) !important; outline: none; transition: var(--transition);
-            background: #ffffff; color: var(--text-main);
+            background: #ffffff; color: var(--text-main); font-weight: 500;
         }
-        .login-input:focus { border-color: var(--accent-primary) !important; box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.3); }
+        .custom-input:focus, .login-input:focus { border-color: var(--accent-primary) !important; box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.3); }
+        .custom-input[readonly] { background: #f1f5f9; cursor: default; }
 
+        /* Styling Tombol Kuning */
         .btn-login {
-            width: 100%; padding: 1rem; background: var(--accent-primary); color: var(--text-main); 
+            width: 100%; padding: 0.875rem; background: var(--accent-primary); color: var(--text-main); 
             border-radius: var(--border-radius-md); font-weight: 800; font-size: 1rem; cursor: pointer; 
-            border: 2px solid var(--accent-primary) !important; 
-            box-shadow: 0 4px 0 #000000; transition: var(--transition); margin-top: 1rem;
+            border: 1.5px solid var(--border-color) !important; 
+            box-shadow: 0 4px 0 #000000; transition: var(--transition); margin-top: 0.5rem;
             display: flex; align-items: center; justify-content: center; gap: 0.5rem;
         }
         .btn-login:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 0 #000000; }
         .btn-login:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 #000000; }
-        .btn-login:disabled { background: #cbd5e1; border-color: #94a3b8 !important; color: #64748b; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-login:disabled { background: #cbd5e1; border-color: #94a3b8 !important; color: #64748b; cursor: not-allowed; box-shadow: none; transform: none; }
 
         .login-error-box {
-            background: #fef2f2; color: #b91c1c; padding: 0.875rem; border-radius: var(--border-radius-md);
-            border: 1.5px solid #fecaca; font-size: 0.85rem; font-weight: 600; margin-bottom: 1.5rem;
+            background: #fef2f2; color: #b91c1c; padding: 0.75rem; border-radius: var(--border-radius-md);
+            border: 1.5px solid #fecaca; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem;
             display: none; align-items: center; justify-content: center; gap: 0.5rem; text-align: center;
         }
 
+        /* --- STYLING PANDUAN REGISTRASI --- */
+        .reg-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid #f1f5f9; }
+        .reg-header-title { display: flex; align-items: center; gap: 0.75rem; font-size: 1.5rem; font-weight: 800; color: var(--bg-primary); }
+        .reg-icon-box { background: var(--bg-primary); color: var(--accent-primary); padding: 0.5rem; border-radius: 8px; display: flex; }
+        .reg-close-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; transition: var(--transition); display: flex; }
+        .reg-close-btn:hover { color: var(--bg-primary); }
+        .step-card { background: #f8fafc; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; border: 1.5px solid #e2e8f0; position: relative; }
+        .step-badge { position: absolute; top: -10px; left: -10px; background: var(--bg-primary); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .step-card h3 { font-size: 1.1rem; font-weight: 800; color: var(--bg-primary); margin-bottom: 0.5rem; }
+        .step-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+        .tutorial-img { width: 100%; border-radius: 8px; margin-top: 1rem; border: 1.5px solid var(--border-color); }
+        .reg-link-btn { display: inline-flex; align-items: center; gap: 0.5rem; background: #fef2f2; color: var(--bg-primary); padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 700; text-decoration: none; border: 1.5px solid var(--bg-primary); transition: var(--transition); margin-top: 1rem; font-size: 0.9rem; }
+        .reg-link-btn:hover { background: var(--bg-primary); color: white; }
+        .reg-email-box { margin-top: 1rem; margin-bottom: 1rem; padding: 0.75rem 1rem; background: #f1f5f9; border-radius: 8px; border: 1px solid #cbd5e1; font-family: monospace; font-size: 0.9rem; font-weight: 700; display: flex; justify-content: space-between; align-items: center; width: fit-content; gap: 2rem; color: #1e293b; }
+        .reg-copy-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; padding: 0; }
+        .reg-copy-btn:hover { color: #2563eb; }
+        .reg-submit-btn { display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: var(--success); color: white; width: 100%; padding: 1rem; border-radius: 12px; font-weight: 800; font-size: 1rem; text-decoration: none; box-shadow: 0 4px 0 #065f46; transition: var(--transition); margin-top: 1.5rem; border: 1.5px solid #065f46; }
+        .reg-submit-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #065f46; }
+        .reg-submit-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #065f46; }
+        .reg-back-link { display: flex; justify-content: center; align-items: center; gap: 0.5rem; width: 100%; text-transform: uppercase; font-size: 0.85rem; font-weight: 800; color: var(--text-muted); background: none; border: none; cursor: pointer; margin-top: 2rem; transition: var(--transition); }
+        .reg-back-link:hover { color: var(--bg-primary); }
+
         /* --- DASHBOARD LAYOUT --- */
         .container { width: 100%; max-width: 1100px; display: none; position: relative; }
-        
         .header-wrapper { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 3rem; gap: 1.5rem; }
         header { text-align: left; flex: 1; color: var(--text-white); }
         header h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 0.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
         header p { color: rgba(255, 255, 255, 0.85); font-size: 1.1rem; font-weight: 400; }
-        
         .logo-container { width: 160px; flex-shrink: 0; }
         .logo-container img { width: 100%; height: auto; display: block; }
-
         .logout-container { position: absolute; top: -10px; right: 0; z-index: 100; display: flex; gap: 0.5rem; }
+        
         .btn-logout {
             padding: 0.5rem 1rem; background: var(--bg-primary); color: white; border-radius: var(--border-radius-md); 
             font-weight: 700; font-size: 0.8rem; cursor: pointer; border: 1.5px solid var(--accent-primary) !important; 
             display: flex; align-items: center; gap: 0.5rem; transition: var(--transition);
         }
         .btn-logout:hover { background: var(--bg-dark); }
-
         .btn-master { background: #2563eb; border-color: #1d4ed8 !important; }
         .btn-master:hover { background: #1d4ed8; }
 
@@ -126,194 +168,92 @@
             background: var(--card-bg); border-radius: var(--border-radius-lg); padding: 2rem; cursor: pointer; 
             transition: var(--transition); display: flex; flex-direction: column; align-items: flex-start; 
             gap: 1.25rem; width: 100%; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
-            border: 1.5px solid var(--border-color) !important; 
+            border: 1.5px solid var(--border-color) !important; outline: none;
         }
         .control-card:hover { transform: translateY(-5px); background: #f8fafc; }
-
-        .icon-box { 
-            background: var(--bg-primary); color: var(--accent-primary); padding: 1rem; border-radius: 14px; 
-            display: flex; align-items: center; justify-content: center; transition: var(--transition);
-            border: 1.5px solid var(--accent-primary);
-        }
-        
+        .icon-box { background: var(--bg-primary); color: var(--accent-primary); padding: 1rem; border-radius: 14px; display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--accent-primary); }
         .card-info { text-align: left; }
         .card-info h3 { font-size: 1.15rem; font-weight: 700; color: var(--bg-primary); margin-bottom: 0.5rem; }
         .card-info p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
 
-        /* --- DETAIL VIEWS (INNER PAGES) --- */
-        .detail-view { 
-            background: var(--card-bg); border-radius: var(--border-radius-lg); padding: 2.5rem; 
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); border: 1.5px solid var(--border-color) !important; 
-            position: relative; 
-        }
-        
-        .back-btn { 
-            display: inline-flex; align-items: center; gap: 0.5rem; background: transparent; border: none; 
-            color: var(--bg-primary); font-weight: 700; font-size: 0.85rem; padding: 0.5rem 0; 
-            cursor: pointer; margin-bottom: 2rem; transition: var(--transition); 
-        }
+        /* --- DETAIL VIEWS --- */
+        .detail-view { background: var(--card-bg); border-radius: var(--border-radius-lg); padding: 2.5rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); border: 1.5px solid var(--border-color) !important; position: relative; }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; background: transparent; border: none; color: var(--bg-primary); font-weight: 700; font-size: 0.85rem; padding: 0.5rem 0; cursor: pointer; margin-bottom: 2rem; transition: var(--transition); }
         .back-btn:hover { opacity: 0.7; transform: translateX(-5px); }
-
         .detail-view h2 { color: var(--bg-primary); margin-bottom: 1.5rem; font-size: 1.5rem; font-weight: 800; }
 
-        /* --- COMING SOON BADGE --- */
-        .coming-soon-badge {
-            position: absolute;
-            top: 2.5rem;
-            right: 2.5rem;
-            background: #fef2f2;
-            border: 1.5px dashed var(--accent-primary);
-            padding: 0.75rem 1.25rem;
-            border-radius: var(--border-radius-md);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
+        .coming-soon-badge { position: absolute; top: 2.5rem; right: 2.5rem; background: #fef2f2; border: 1.5px dashed var(--accent-primary); padding: 0.75rem 1.25rem; border-radius: var(--border-radius-md); display: flex; align-items: center; gap: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
         .coming-soon-badge i { color: var(--accent-primary); }
         .coming-soon-badge div h4 { color: var(--bg-primary); font-size: 0.85rem; font-weight: 800; margin-bottom: 0.15rem; text-transform: uppercase; }
         .coming-soon-badge div p { color: var(--text-muted); font-size: 0.75rem; margin: 0; font-weight: 500; }
 
-        /* --- FORM ELEMENTS & INPUTS --- */
+        /* --- BUTTONS & UPLOADS --- */
         .column-card { display: flex; flex-direction: column; gap: 1rem; width: 100%; }
         .column-title { font-weight: 800; font-size: 0.85rem; color: var(--bg-primary); text-transform: uppercase; letter-spacing: 0.5px; }
-
-        /* Area Upload */
-        .upload-area { 
-            border: 1.5px dashed var(--border-color) !important; border-radius: var(--border-radius-md); padding: 2rem 1rem; 
-            text-align: center; background: #f8fafc; transition: var(--transition); min-height: 140px; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; 
-        }
-        .upload-area:hover { border-color: var(--accent-primary) !important; background: #f1f5f9; }
-        .upload-area i { width: 32px; height: 32px; color: var(--bg-primary); margin-bottom: 0.75rem; }
-        .upload-area p { color: var(--text-main); font-size: 0.9rem; font-weight: 500; }
-
-        /* Textareas & Form Inputs */
-        .result-textarea, .form-input { 
-            width: 100%; background: #ffffff; border-radius: var(--border-radius-md); padding: 0.875rem 1.25rem; 
-            font-size: 0.95rem; color: var(--text-main); border: 1.5px solid var(--border-color) !important; 
-            transition: var(--transition); outline: none;
-        }
-        .result-textarea:focus, .form-input:focus { border-color: var(--accent-primary) !important; box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.3); }
-        .result-textarea[readonly] { background: #f1f5f9; cursor: default; }
-
-        /* Buttons */
-        .btn-base {
-            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-            border-radius: var(--border-radius-md); font-weight: 800; cursor: pointer; 
-            transition: var(--transition); 
-            border: 2px solid var(--accent-primary) !important; 
-        }
+        .btn-base { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: var(--border-radius-md); font-weight: 800; cursor: pointer; transition: var(--transition); border: 1.5px solid var(--border-color) !important; outline: none; }
         .btn-process { background: var(--bg-primary); color: white; }
         .btn-process:hover { background: var(--bg-dark); transform: translateY(-1px); }
-        .btn-process:disabled { background: #cbd5e1; border-color: #94a3b8 !important; color: #64748b; cursor: not-allowed; transform: none; box-shadow: none; }
-        
+        .btn-process:disabled { background: #cbd5e1; border-color: #94a3b8 !important; color: #64748b; cursor: not-allowed; transform: none; }
         .btn-send { background: var(--accent-primary); color: var(--text-main); }
         .btn-send:hover { background: var(--accent-hover); transform: translateY(-1px); }
-        .btn-send:disabled { background: #cbd5e1; border-color: #94a3b8 !important; color: #64748b; cursor: not-allowed; transform: none; box-shadow: none; }
-
+        .btn-send:disabled { background: #cbd5e1; border-color: #94a3b8 !important; color: #64748b; cursor: not-allowed; transform: none; }
         .btn-large { width: 100%; padding: 1rem; font-size: 1rem; }
-        .btn-send.ready { background: var(--bg-primary) !important; color: white !important; }
-        .btn-send.ready:hover { background: var(--bg-dark) !important; }
-
-        /* --- SPESIFIK: CEK STOK AREA --- */
-        .section-divider { border-bottom: 1.5px solid var(--border-color); padding-bottom: 2rem; margin-bottom: 2rem; }
         
+        .upload-area { border: 1.5px dashed var(--border-color) !important; border-radius: var(--border-radius-md); padding: 2rem 1rem; text-align: center; background: #f8fafc; transition: var(--transition); min-height: 140px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; }
+        .upload-area:hover { border-color: var(--accent-primary) !important; background: #f1f5f9; }
+        .upload-area i { width: 32px; height: 32px; color: var(--bg-primary); margin-bottom: 0.75rem; }
+        .upload-area p { color: var(--text-main); font-size: 0.9rem; font-weight: 500; margin: 0; }
+
+        /* --- CEK STOK SPECIFIC --- */
+        .section-divider { border-bottom: 1.5px solid var(--border-color); padding-bottom: 2rem; margin-bottom: 2rem; }
         .flex-row-align { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
         .last-update-box { background: #f1f5f9; border: 1.5px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 0.4rem 0.75rem; display: inline-flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 0.8rem; }
         
         .action-row { display: flex; gap: 1rem; align-items: stretch; height: 48px; } 
-        
-        .upload-compact { 
-            flex: 1; min-height: unset; padding: 0 1rem; flex-direction: row; justify-content: flex-start; 
-            gap: 0.75rem; border: 1.5px dashed var(--border-color) !important; background: #f8fafc; border-radius: 8px;
-            display: flex; align-items: center; cursor: pointer; transition: var(--transition);
-        }
+        .upload-compact { flex: 1; padding: 0 1rem; border: 1.5px dashed var(--border-color) !important; background: #f8fafc; border-radius: 8px; display: flex; align-items: center; gap: 0.75rem; cursor: pointer; transition: var(--transition); }
         .upload-compact:hover { border-color: var(--accent-primary) !important; background: #ffffff; }
         .upload-compact i { margin: 0; width: 18px; height: 18px; color: var(--bg-primary); }
-        
-        .search-input { 
-            flex: 1; padding: 0 1.25rem; border-radius: 8px; border: 1.5px solid var(--border-color) !important; 
-            font-size: 0.95rem; outline: none; transition: var(--transition); background: #ffffff; color: var(--text-main);
-        }
+        .search-input { flex: 1; padding: 0 1.25rem; border-radius: 8px; border: 1.5px solid var(--border-color) !important; font-size: 0.95rem; outline: none; transition: var(--transition); background: #ffffff; color: var(--text-main); }
         .search-input:focus { border-color: var(--accent-primary) !important; }
+        .btn-action-compact { width: 160px; height: 100%; padding: 0; font-size: 0.9rem; flex-shrink: 0; margin: 0; border-radius: 8px; }
 
-        .btn-action-compact { 
-            width: 160px; height: 100%; padding: 0; font-size: 0.9rem; flex-shrink: 0; margin: 0; border-radius: 8px;
-        }
-
-        .table-wrapper-large { 
-            border: 1.5px solid var(--border-color) !important; 
-            max-height: 65vh; min-height: 400px; 
-            overflow-y: auto; border-radius: 8px; margin-top: 1.5rem; background: #ffffff; 
-        }
-        .data-table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; }
-        .data-table th, .data-table td { padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; }
-        .data-table th { background: #f8fafc; font-weight: 700; color: var(--text-main); font-size: 0.8rem; text-transform: uppercase; position: sticky; top: 0; z-index: 10; border-bottom: 1.5px solid var(--border-color); }
+        .table-wrapper-large { border: 1.5px solid var(--border-color) !important; max-height: 65vh; min-height: 400px; overflow-y: auto; border-radius: 8px; margin-top: 1.5rem; background: #ffffff; }
+        
+        /* --- TABLES & REPORT DISPLAY --- */
+        .data-table, .report-table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; }
+        .data-table th, .data-table td, .report-table th, .report-table td { padding: 1rem 1.25rem; border-bottom: 1px solid #e2e8f0; font-size: 0.85rem; color: var(--text-main); }
+        .data-table th, .report-table th { background: #f8fafc; color: var(--text-muted); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 10; border-bottom: 1.5px solid var(--border-color); }
         .table-category-header { background: #f1f5f9 !important; font-weight: 800 !important; color: var(--bg-primary) !important; border: 1.5px solid var(--border-color) !important; }
-
-        /* --- SPESIFIK: INPUT REPORT BY ERO & STORE --- */
-        .reconcile-top-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-bottom: 1.5rem; }
-        
-        /* TABS UI */
-        .tab-container { display: flex; gap: 0.5rem; margin-bottom: 1rem; background: #f1f5f9; padding: 0.5rem; border-radius: var(--border-radius-md); border: 1.5px solid var(--border-color); }
-        .tab-btn { flex: 1; padding: 0.75rem; text-align: center; font-weight: 700; border-radius: 8px; cursor: pointer; transition: var(--transition); border: none; background: transparent; color: var(--text-muted); font-size: 0.9rem; }
-        .tab-btn.active { background: var(--bg-primary); color: white; border: 1.5px solid var(--border-color); box-shadow: var(--shadow-sm); }
-
-        .report-form-container { 
-            background: #f8fafc; border: 1.5px solid var(--border-color); border-radius: var(--border-radius-md); 
-            padding: 1.5rem 1rem 1.5rem 1.5rem; max-height: 500px; overflow-y: auto; 
-        }
-        
-        /* Custom Scrollbar */
-        .report-form-container::-webkit-scrollbar { width: 6px; }
-        .report-form-container::-webkit-scrollbar-track { background: transparent; }
-        .report-form-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-
-        /* Table Layout untuk Report Store (WITH TARGET & ESTIMASI) */
-        .report-display-card { background: #ffffff; border: 1.5px solid var(--border-color); border-radius: var(--border-radius-md); overflow: hidden; box-shadow: var(--shadow-sm); }
-        .report-display-header { background: var(--bg-primary); color: #ffffff; padding: 1.25rem; display: flex; justify-content: space-between; align-items: center; }
-        .report-display-header .store-badge { font-size: 1.05rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; }
-        
-        /* Month Selector Badge styling */
-        .month-selector-badge { position: relative; display: flex; align-items: center; background: rgba(255,255,255,0.2); border-radius: 20px; transition: var(--transition); border: 1.5px solid white; }
-        .month-selector-badge:hover { background: rgba(255,255,255,0.3); }
-        .month-select-dropdown {
-            background: transparent; color: white; border: none; padding: 0.4rem 2rem 0.4rem 1rem; border-radius: 20px; 
-            font-weight: 700; font-size: 0.8rem; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none;
-        }
-        .month-select-dropdown option { color: var(--text-main); background: #ffffff; }
-
-        .report-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .report-table th, .report-table td { padding: 0.875rem 1.25rem; border-bottom: 1px solid #e2e8f0; font-size: 0.9rem; color: var(--text-main); }
-        .report-table th { background: #f8fafc; color: var(--text-muted); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
         .report-table .row-group td { background: #f1f5f9; font-weight: 800; color: var(--bg-primary); font-size: 0.85rem; padding: 0.6rem 1.25rem; border-top: 2px solid var(--border-color); }
         .report-table .row-highlight td { background: #fffbeb; font-weight: 800; color: #b45309; border-bottom: 2px solid #fde68a; font-size: 0.95rem; }
         .report-table .row-detail td { font-size: 0.8rem; padding: 0.5rem 1.25rem; background: #fafafa; border-bottom: 1px dashed #e2e8f0; color: var(--text-muted); font-weight: 500; }
-        
         .text-center { text-align: center; }
         .text-right { text-align: right; font-weight: 600; }
 
-        .section-title { font-size: 0.85rem; font-weight: 800; color: var(--bg-primary); margin: 1.5rem 0 0.75rem 0; border-bottom: 1px solid #cbd5e1; padding-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        .section-title:first-child { margin-top: 0; }
+        /* --- INPUT REPORT TABS & LAYOUT --- */
+        .reconcile-top-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-bottom: 1.5rem; }
+        .tab-container { display: flex; gap: 0.5rem; margin-bottom: 1rem; background: #f1f5f9; padding: 0.5rem; border-radius: var(--border-radius-md); border: 1.5px solid var(--border-color); }
+        .tab-btn { flex: 1; padding: 0.75rem; text-align: center; font-weight: 700; border-radius: 8px; cursor: pointer; transition: var(--transition); border: none; background: transparent; color: var(--text-muted); font-size: 0.9rem; }
+        .tab-btn.active { background: var(--bg-primary); color: white; border: 1.5px solid var(--border-color); box-shadow: var(--shadow-sm); }
+        .report-form-container { background: #f8fafc; border: 1.5px solid var(--border-color); border-radius: var(--border-radius-md); padding: 1.5rem 1rem 1.5rem 1.5rem; max-height: 500px; overflow-y: auto; }
+        .report-form-container::-webkit-scrollbar { width: 6px; }
+        .report-form-container::-webkit-scrollbar-track { background: transparent; }
+        .report-form-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         
         .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
         .form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem; }
-        
+
+        .report-display-card { background: #ffffff; border: 1.5px solid var(--border-color); border-radius: var(--border-radius-md); overflow: hidden; box-shadow: var(--shadow-sm); }
+        .report-display-header { background: var(--bg-primary); color: #ffffff; padding: 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+        .report-display-header .store-badge { font-size: 1.05rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; }
+        .month-selector-badge { position: relative; display: flex; align-items: center; background: rgba(255,255,255,0.2); border-radius: 20px; transition: var(--transition); border: 1.5px solid white; }
+        .month-selector-badge:hover { background: rgba(255,255,255,0.3); }
+        .month-select-dropdown { background: transparent; color: white; border: none; padding: 0.4rem 2rem 0.4rem 1rem; border-radius: 20px; font-weight: 700; font-size: 0.8rem; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none; }
+        .month-select-dropdown option { color: var(--text-main); background: #ffffff; }
+
         /* --- NOTIFICATION MODAL --- */
-        #modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
-            display: none; justify-content: center; align-items: center;
-            z-index: 10000; padding: 1rem;
-        }
-        .modal-card {
-            background: white; padding: 2.5rem; border-radius: var(--border-radius-lg);
-            width: 100%; max-width: 450px; text-align: center;
-            border: 2px solid var(--border-color);
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
-            animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+        #modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 10000; padding: 1rem; }
+        .modal-card { background: white; padding: 2.5rem; border-radius: var(--border-radius-lg); width: 100%; max-width: 450px; text-align: center; border: 2px solid var(--border-color); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes modalPop { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         .modal-icon { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
         .modal-icon.success { background: #ecfdf5; color: var(--success); border: 2px solid var(--success); }
@@ -333,7 +273,6 @@
         .spin-icon { animation: rotation 1s linear infinite; }
         @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Iframe */
         .iframe-container { width: 100%; height: calc(100vh - 180px); border-radius: var(--border-radius-md); overflow: hidden; background: #ffffff; border: 1.5px solid var(--border-color) !important; }
         .iframe-container iframe { width: 100%; height: 100%; border: none; }
 
@@ -345,27 +284,28 @@
             .action-row { flex-direction: column; height: auto; }
             .btn-action-compact { width: 100%; height: 48px; }
             .upload-compact, .search-input { height: 48px; }
-            .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; gap: 0.5rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- MODAL NOTIFIKASI -->
+    <!-- MODAL NOTIFIKASI UMUM -->
     <div id="modal-overlay">
         <div class="modal-card">
             <div id="modal-icon-container" class="modal-icon success">
                 <i id="modal-icon-lucide" data-lucide="check-circle" style="width: 40px; height: 40px;"></i>
             </div>
             <h3 id="modal-title" class="modal-title">Berhasil!</h3>
-            <p id="modal-message" class="modal-message">Laporan telah berhasil dikirimkan ke server.</p>
+            <p id="modal-message" class="modal-message">Pesan sukses disini.</p>
             <button id="btn-modal-close" class="btn-modal-close success" onclick="window.hideModal()">Oke, Mengerti</button>
         </div>
     </div>
 
-    <!-- POPUP LOGIN OVERLAY -->
+    <!-- OVERLAY LOGIN & PANDUAN PENDAFTARAN -->
     <div id="login-overlay">
-        <div class="login-card">
+        
+        <!-- Form Login Utama (Tampilan Padat & Compact) -->
+        <div id="login-form-box">
             <div class="logo-container">
                 <img src="https://res.cloudinary.com/dilamvetq/image/upload/v1772731767/phgzekbkwlsf4yjoewzl.png" alt="Logo">
             </div>
@@ -376,19 +316,94 @@
             </div>
 
             <div class="input-group">
-                <label>Sap Code / ID Toko</label>
-                <input type="text" id="sap-code" class="login-input" placeholder="Masukkan SAP Code">
+                <label>SAP CODE / ID TOKO</label>
+                <input type="text" id="sap-code" class="login-input uppercase" placeholder="Masukkan SAP Code">
             </div>
-            <div class="input-group">
-                <label>Password</label>
+            <div class="input-group" style="margin-bottom: 0.5rem;">
+                <label>PASSWORD</label>
                 <input type="password" id="login-pass" class="login-input" placeholder="Masukkan Password">
             </div>
             <button class="btn-login" id="btn-login-submit" onclick="window.handleLogin()">Sign In</button>
+            
+            <p class="login-footer-text">
+                Belum punya akun? <a href="javascript:void(0)" onclick="window.toggleRegister(true)">Daftar New Akun disini</a>
+            </p>
+        </div>
+
+        <!-- Canvas Informasi Pendaftaran (Sembunyi by default) -->
+        <div id="register-canvas">
+            <div class="reg-header">
+                <div class="reg-header-title">
+                    <div class="reg-icon-box"><i data-lucide="user-plus"></i></div>
+                    <h2 style="margin: 0;">Pendaftaran User Baru</h2>
+                </div>
+                <button onclick="window.toggleRegister(false)" class="reg-close-btn" title="Tutup">
+                    <i data-lucide="x-circle"></i>
+                </button>
+            </div>
+
+            <div>
+                <!-- STEP 1 -->
+                <div class="step-card">
+                    <div class="step-badge">1</div>
+                    <h3>Buat Salinan Database Spreadsheet</h3>
+                    <p>
+                        Anda wajib memiliki salinan database resmi untuk toko Anda. Silakan klik tautan di bawah ini untuk membuka template spreadsheet:
+                    </p>
+                    <a href="https://docs.google.com/spreadsheets/d/1vg5yOEAOe5DvDN5MSne3XuXw3UvWEtTmXJWjZKIuEWk/edit?usp=sharing" target="_blank" class="reg-link-btn">
+                        <i data-lucide="external-link" style="width: 16px;"></i> Buka Template Spreadsheet
+                    </a>
+                    <div style="margin-top: 1rem; padding: 0.75rem 1rem; background: #fffbeb; border-left: 4px solid #facc15; font-size: 0.85rem; color: #854d0e; border-radius: 0 8px 8px 0;">
+                        <b>WAJIB DILAKUKAN:</b> Setelah terbuka, klik menu <b>File</b> > <b>Buat Salinan (Make a Copy)</b>. Beri nama file baru tersebut sesuai dengan <b>Nama Store</b> Anda.
+                    </div>
+                </div>
+
+                <!-- STEP 2 -->
+                <div class="step-card">
+                    <div class="step-badge">2</div>
+                    <h3>Pengaturan Akses & Editor</h3>
+                    <p>
+                        Buka file salinan milik toko Anda, lalu klik tombol <b>Bagikan (Share)</b> di pojok kanan atas. Ubah pengaturan "Akses Umum" menjadi <b>"Siapa saja yang memiliki link"</b>, dan ketik email di bawah ini lalu jadikan sebagai <b>Editor</b>:
+                    </p>
+                    <div class="reg-email-box">
+                        <span id="copy-email-text">system.erafone@gmail.com</span>
+                        <button onclick="window.copyTextVal('copy-email-text')" class="reg-copy-btn" title="Salin Email"><i data-lucide="copy" style="width: 16px;"></i></button>
+                    </div>
+                    <img src="https://res.cloudinary.com/dilamvetq/image/upload/v1774786364/dnmpzd8uajd6nzip1aeo.jpg" class="tutorial-img" alt="Tutorial Share Google Sheets">
+                </div>
+
+                <!-- STEP 3 -->
+                <div class="step-card">
+                    <div class="step-badge">3</div>
+                    <h3>Simpan ID & Link Spreadsheet</h3>
+                    <p>
+                        Perhatikan URL di *browser* Anda. Salin <b>ID Spreadsheet</b> (kumpulan kode unik acak di antara /d/ dan /edit) beserta <b>Link URL lengkap</b> file tersebut. Simpan di catatan (note) Anda karena akan diminta pada saat pengisian form registrasi.
+                    </p>
+                    <img src="https://res.cloudinary.com/dilamvetq/image/upload/v1774786365/mavxzgnujtmcny8my8pr.jpg" class="tutorial-img" alt="Tutorial ID Spreadsheet">
+                </div>
+
+                <!-- STEP 4 -->
+                <div class="step-card" style="border-color: #bbf7d0; background: #f0fdf4;">
+                    <div class="step-badge" style="background: var(--success);">4</div>
+                    <h3 style="color: #166534;">Submit Formulir Pendaftaran</h3>
+                    <p style="color: #15803d;">
+                        Jika ketiga langkah di atas sudah selesai, silakan isi formulir pendaftaran resmi melalui tombol di bawah ini. Akun Anda akan dapat digunakan untuk Login setelah sistem melakukan sinkronisasi otomatis.
+                    </p>
+                    <a href="https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/form/3c4e2e02-48c0-428c-9a48-334967fcc590" target="_blank" class="reg-submit-btn">
+                        <i data-lucide="check-square"></i> LENGKAPI FORMULIR PENDAFTARAN SEKARANG
+                    </a>
+                </div>
+            </div>
+            
+            <button onclick="window.toggleRegister(false)" class="reg-back-link">
+                <i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Login
+            </button>
         </div>
     </div>
 
     <!-- MAIN DASHBOARD CONTENT -->
     <div class="container" id="main-container">
+        
         <div class="logout-container" id="top-logout">
             <button class="btn-logout btn-master" onclick="window.openMasterSheet()">
                 <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Master Spreadsheet Store
@@ -438,52 +453,7 @@
             </div>
         </div>
 
-        <!-- VIEW DETAIL: DASHBOARD SALES -->
-        <div id="view-dashboard-sales" class="view">
-            <div class="detail-view">
-                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                <h2>Dashboard Sales</h2>
-                
-                <div class="coming-soon-badge">
-                    <i data-lucide="hammer" style="width: 24px; height: 24px;"></i>
-                    <div>
-                        <h4>Segera Hadir</h4>
-                        <p>Integrasi Looker Studio</p>
-                    </div>
-                </div>
-
-                <div class="grid-automation" style="grid-template-columns: repeat(2, 1fr); margin-top: 1rem;">
-                    <button class="control-card" onclick="window.loadFullDashboard('store')">
-                        <div class="icon-box"><i data-lucide="store" style="width: 24px;"></i></div>
-                        <div class="card-info"><h3>Report Store</h3><p>Visualisasi pencapaian target toko keseluruhan.</p></div>
-                    </button>
-                    <button class="control-card" onclick="window.loadFullDashboard('ero')">
-                        <div class="icon-box"><i data-lucide="user-check" style="width: 24px;"></i></div>
-                        <div class="card-info"><h3>Report ERO</h3><p>Analisis kinerja dan produktivitas harian tim ERO.</p></div>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- VIEW: FULL SCREEN DASHBOARD -->
-        <div id="view-dashboard-full" class="view">
-            <div class="detail-view" style="padding: 1.5rem; height: 90vh; display: flex; flex-direction: column;">
-                <button class="back-btn" onclick="window.openView('view-dashboard-sales')" style="align-self: flex-start; margin-bottom: 1rem;"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali</button>
-                <div class="iframe-container" style="flex: 1; display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 1.5rem; background: #f8fafc;">
-                    <div style="background: var(--bg-primary); padding: 1.5rem; border-radius: 50%; border: 2px solid var(--accent-primary); box-shadow: 0 4px 0 #000;">
-                        <i data-lucide="bar-chart-3" style="width: 48px; height: 48px; color: var(--accent-primary);"></i>
-                    </div>
-                    <div style="text-align: center;">
-                        <h3 style="color: var(--bg-primary); font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: 0.5px;">DASHBOARD COMING SOON</h3>
-                        <p style="color: var(--text-main); font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem;">Visualisasi Data Sedang Dalam Tahap Pengembangan</p>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 450px; margin: 0 auto; line-height: 1.6;">Halaman ini nantinya akan menampilkan grafik interaktif dari Looker Studio untuk memantau performa penjualan secara real-time.</p>
-                    </div>
-                    <iframe id="dashboard-iframe" src="" allowfullscreen style="display: none;"></iframe>
-                </div>
-            </div>
-        </div>
-
-        <!-- VIEW: SALES REPORT -->
+        <!-- 1. VIEW: SALES REPORT -->
         <div id="view-sales-report" class="view">
             <div class="detail-view">
                 <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
@@ -501,12 +471,12 @@
                         <span class="column-title">Hasil Ekstraksi Data</span>
                         <button class="btn-base btn-process" onclick="window.copySalesText()" style="padding:0.5rem 1rem; font-size:0.85rem;"><i data-lucide="copy" style="width:14px;"></i> Salin Teks</button>
                     </div>
-                    <textarea id="sales-textarea" class="result-textarea" readonly style="height: 200px;"></textarea>
+                    <textarea id="sales-textarea" class="custom-input" readonly style="height: 200px; font-family: monospace; font-size: 0.85rem;"></textarea>
                 </div>
             </div>
         </div>
 
-        <!-- VIEW: RECONCILE DATA -->
+        <!-- 2. VIEW: RECONCILE DATA -->
         <div id="view-reconcile" class="view">
             <div class="detail-view">
                 <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
@@ -537,14 +507,37 @@
                 
                 <div class="column-card">
                     <span class="column-title">3. Tindakan Lanjutan</span>
-                    <textarea id="email-body-textarea" class="result-textarea" placeholder="Respon sistem / draft email akan muncul di sini..." style="height: 140px;"></textarea>
+                    <textarea id="email-body-textarea" class="custom-input" placeholder="Respon sistem / draft email akan muncul di sini..." style="height: 140px;"></textarea>
                     <button class="btn-base btn-send btn-large" id="btn-send-email" onclick="window.sendEmail()" disabled style="margin-top: 0.5rem;"><i data-lucide="mail"></i> Kirim Laporan via Email</button>
                     <div id="status-send-email" class="local-status"></div>
                 </div>
             </div>
         </div>
 
-        <!-- VIEW: CEK STOK AREA -->
+        <!-- 3. VIEW: DAILY STOCK -->
+        <div id="view-daily-stock" class="view">
+            <div class="detail-view">
+                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
+                <h2>Template Stok Daily</h2>
+                <div class="upload-area" onclick="document.getElementById('daily-stock-file').click()">
+                    <i data-lucide="file-spreadsheet"></i>
+                    <p id="daily-stock-file-name">Pilih file Excel Daily Stock</p>
+                    <input type="file" id="daily-stock-file" style="display:none" onchange="window.updateFileName('daily-stock-file', 'daily-stock-file-name')">
+                </div>
+                <button class="btn-base btn-process btn-large" id="btn-process-daily" onclick="window.processDailyStock()" style="margin-top:1.5rem">Proses Pembaruan Data</button>
+                <div id="status-daily-stock" class="local-status"></div>
+                
+                <div id="success-link-box" style="display: none; background: #ecfdf5; border: 1.5px solid #000000; border-radius: var(--border-radius-md); padding: 1.25rem; margin-top: 1.5rem; align-items: center; justify-content: space-between;">
+                    <span style="color: #065f46; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="check-circle" style="width: 18px;"></i> Sinkronisasi Selesai!</span>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <a id="link-download-sheet" href="#" target="_blank" style="background: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 6px; border: 1.5px solid #000000; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 0.4rem;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"><i data-lucide="download" style="width: 14px; height: 14px;"></i> Download</a>
+                        <a id="link-open-sheet" href="#" target="_blank" style="background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 6px; border: 1.5px solid #000000; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 0.4rem;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"><i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Buka</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. VIEW: CEK STOK AREA -->
         <div id="view-cek-stok" class="view">
             <div class="detail-view">
                 <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
@@ -594,37 +587,58 @@
             </div>
         </div>
 
-        <!-- VIEW: DAILY STOCK -->
-        <div id="view-daily-stock" class="view">
+        <!-- 5. VIEW: DASHBOARD SALES -->
+        <div id="view-dashboard-sales" class="view">
             <div class="detail-view">
                 <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                <h2>Template Stok Daily</h2>
-                <div class="upload-area" onclick="document.getElementById('daily-stock-file').click()">
-                    <i data-lucide="file-spreadsheet"></i>
-                    <p id="daily-stock-file-name">Pilih file Excel Daily Stock</p>
-                    <input type="file" id="daily-stock-file" style="display:none" onchange="window.updateFileName('daily-stock-file', 'daily-stock-file-name')">
-                </div>
-                <button class="btn-base btn-process btn-large" id="btn-process-daily" onclick="window.processDailyStock()" style="margin-top:1.5rem">Proses Pembaruan Data</button>
-                <div id="status-daily-stock" class="local-status"></div>
+                <h2>Dashboard Sales</h2>
                 
-                <div id="success-link-box" style="display: none; background: #ecfdf5; border: 1.5px solid #000000; border-radius: var(--border-radius-md); padding: 1.25rem; margin-top: 1.5rem; align-items: center; justify-content: space-between;">
-                    <span style="color: #065f46; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="check-circle" style="width: 18px;"></i> Sinkronisasi Selesai!</span>
-                    <div style="display: flex; gap: 0.75rem;">
-                        <a id="link-download-sheet" href="https://docs.google.com/spreadsheets/d/1NA0uUfavKA5XnPKPOvtyxaLp_FJU_I_piC0ZgT-FaeQ/export?format=xlsx" target="_blank" style="background: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 6px; border: 1.5px solid #000000; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 0.4rem;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"><i data-lucide="download" style="width: 14px; height: 14px;"></i> Download</a>
-                        <a id="link-open-sheet" href="https://docs.google.com/spreadsheets/d/1NA0uUfavKA5XnPKPOvtyxaLp_FJU_I_piC0ZgT-FaeQ/edit?usp=sharing" target="_blank" style="background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 6px; border: 1.5px solid #000000; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 0.4rem;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'"><i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Buka</a>
+                <div class="coming-soon-badge">
+                    <i data-lucide="hammer" style="width: 24px; height: 24px;"></i>
+                    <div>
+                        <h4>Segera Hadir</h4>
+                        <p>Integrasi Looker Studio</p>
                     </div>
+                </div>
+
+                <div class="grid-automation" style="grid-template-columns: repeat(2, 1fr); margin-top: 1rem;">
+                    <button class="control-card" onclick="window.openView('view-dashboard-full')">
+                        <div class="icon-box"><i data-lucide="store" style="width: 24px;"></i></div>
+                        <div class="card-info"><h3>Report Store</h3><p>Visualisasi pencapaian target toko keseluruhan.</p></div>
+                    </button>
+                    <button class="control-card" onclick="window.openView('view-dashboard-full')">
+                        <div class="icon-box"><i data-lucide="user-check" style="width: 24px;"></i></div>
+                        <div class="card-info"><h3>Report ERO</h3><p>Analisis kinerja dan produktivitas harian tim ERO.</p></div>
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- VIEW: INPUT REPORT BY ERO -->
+        <div id="view-dashboard-full" class="view">
+            <div class="detail-view" style="padding: 1.5rem; height: 90vh; display: flex; flex-direction: column;">
+                <button class="back-btn" onclick="window.openView('view-dashboard-sales')" style="align-self: flex-start; margin-bottom: 1rem;"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali</button>
+                <div class="iframe-container" style="flex: 1; display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 1.5rem; background: #f8fafc;">
+                    <div style="background: var(--bg-primary); padding: 1.5rem; border-radius: 50%; border: 2px solid var(--accent-primary); box-shadow: 0 4px 0 #000;">
+                        <i data-lucide="bar-chart-3" style="width: 48px; height: 48px; color: var(--accent-primary);"></i>
+                    </div>
+                    <div style="text-align: center;">
+                        <h3 style="color: var(--bg-primary); font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: 0.5px;">DASHBOARD COMING SOON</h3>
+                        <p style="color: var(--text-main); font-weight: 700; font-size: 1.05rem; margin-bottom: 0.5rem;">Visualisasi Data Sedang Dalam Tahap Pengembangan</p>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 450px; margin: 0 auto; line-height: 1.6;">Halaman ini nantinya akan menampilkan grafik interaktif dari Looker Studio untuk memantau performa penjualan secara real-time.</p>
+                    </div>
+                    <iframe id="dashboard-iframe" src="" allowfullscreen style="display: none;"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. VIEW: INPUT REPORT BY ERO -->
         <div id="view-input-report" class="view">
             <div class="detail-view">
                 <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
                 <h2>Input Report by ERO</h2>
                 
                 <div class="reconcile-top-row">
-                    <!-- Kolom Kiri: Form Input -->
+                    <!-- Kolom Kiri: Form Input / Table -->
                     <div class="column-card">
                         
                         <!-- TAB NAVIGASI -->
@@ -646,61 +660,60 @@
                                 <h4 class="section-title">Informasi Dasar</h4>
                                 <div class="input-group">
                                     <label>Tanggal Laporan</label>
-                                    <input type="date" id="rep-tanggal" class="form-input">
+                                    <input type="date" id="rep-tanggal" class="custom-input">
                                 </div>
                                 <div class="input-group">
                                     <label>Nama ERO</label>
-                                    <!-- DROPDOWN NAMA ERO -->
-                                    <select id="rep-nama" class="form-input">
+                                    <select id="rep-nama" class="custom-input">
                                         <option value="">Pilih Nama ERO...</option>
                                     </select>
                                 </div>
                                 <div class="input-group">
                                     <label>Total All Bisnis (Rp)</label>
-                                    <input type="text" id="rep-allbisnis" class="form-input" placeholder="Contoh: 24.794.004" inputmode="numeric">
+                                    <input type="text" id="rep-allbisnis" class="custom-input" placeholder="Contoh: 24.794.004" inputmode="numeric">
                                 </div>
 
                                 <h4 class="section-title">Device & Accesories</h4>
                                 <div class="form-grid-2">
-                                    <div class="input-group"><label>Device Qty</label><input type="number" id="rep-dev-qty" class="form-input" placeholder="0"></div>
-                                    <div class="input-group"><label>Device Value</label><input type="text" id="rep-dev-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                                    <div class="input-group"><label>Device Qty</label><input type="number" id="rep-dev-qty" class="custom-input" placeholder="0"></div>
+                                    <div class="input-group"><label>Device Value</label><input type="text" id="rep-dev-val" class="custom-input" placeholder="0" inputmode="numeric"></div>
                                 </div>
                                 <div class="form-grid-2">
-                                    <div class="input-group"><label>Acc Qty</label><input type="number" id="rep-acc-qty" class="form-input" placeholder="0"></div>
-                                    <div class="input-group"><label>Acc Value</label><input type="text" id="rep-acc-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                                    <div class="input-group"><label>Acc Qty</label><input type="number" id="rep-acc-qty" class="custom-input" placeholder="0"></div>
+                                    <div class="input-group"><label>Acc Value</label><input type="text" id="rep-acc-val" class="custom-input" placeholder="0" inputmode="numeric"></div>
                                 </div>
 
                                 <h4 class="section-title">Perlindungan & Layanan</h4>
                                 <div class="form-grid-2">
-                                    <div class="input-group"><label>Boltech Qty</label><input type="number" id="rep-bolt-qty" class="form-input" placeholder="0"></div>
-                                    <div class="input-group"><label>Boltech Value</label><input type="text" id="rep-bolt-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                                    <div class="input-group"><label>Boltech Qty</label><input type="number" id="rep-bolt-qty" class="custom-input" placeholder="0"></div>
+                                    <div class="input-group"><label>Boltech Value</label><input type="text" id="rep-bolt-val" class="custom-input" placeholder="0" inputmode="numeric"></div>
                                 </div>
 
                                 <h4 class="section-title">Kategori Operator</h4>
                                 <div class="form-grid-2">
-                                    <div class="input-group"><label>Indosat Qty</label><input type="number" id="rep-isat-qty" class="form-input" placeholder="0"></div>
-                                    <div class="input-group"><label>Indosat Value</label><input type="text" id="rep-isat-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                                    <div class="input-group"><label>Indosat Qty</label><input type="number" id="rep-isat-qty" class="custom-input" placeholder="0"></div>
+                                    <div class="input-group"><label>Indosat Value</label><input type="text" id="rep-isat-val" class="custom-input" placeholder="0" inputmode="numeric"></div>
                                 </div>
                                 <div class="form-grid-2">
-                                    <div class="input-group"><label>XL Qty</label><input type="number" id="rep-xl-qty" class="form-input" placeholder="0"></div>
-                                    <div class="input-group"><label>XL Value</label><input type="text" id="rep-xl-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                                    <div class="input-group"><label>XL Qty</label><input type="number" id="rep-xl-qty" class="custom-input" placeholder="0"></div>
+                                    <div class="input-group"><label>XL Value</label><input type="text" id="rep-xl-val" class="custom-input" placeholder="0" inputmode="numeric"></div>
                                 </div>
                                 <div class="form-grid-2">
-                                    <div class="input-group"><label>Telkomsel Qty</label><input type="number" id="rep-tsel-qty" class="form-input" placeholder="0"></div>
-                                    <div class="input-group"><label>Telkomsel Value</label><input type="text" id="rep-tsel-val" class="form-input" placeholder="0" inputmode="numeric"></div>
+                                    <div class="input-group"><label>Telkomsel Qty</label><input type="number" id="rep-tsel-qty" class="custom-input" placeholder="0"></div>
+                                    <div class="input-group"><label>Telkomsel Value</label><input type="text" id="rep-tsel-val" class="custom-input" placeholder="0" inputmode="numeric"></div>
                                 </div>
 
                                 <h4 class="section-title">Walk-In Customer (WIC)</h4>
                                 <div class="form-grid-2">
-                                    <div class="input-group"><label>WIC Deal</label><input type="number" id="rep-wic-deal" class="form-input" placeholder="0"></div>
-                                    <div class="input-group"><label>WIC Loss</label><input type="number" id="rep-wic-loss" class="form-input" placeholder="0"></div>
+                                    <div class="input-group"><label>WIC Deal</label><input type="number" id="rep-wic-deal" class="custom-input" placeholder="0"></div>
+                                    <div class="input-group"><label>WIC Loss</label><input type="number" id="rep-wic-loss" class="custom-input" placeholder="0"></div>
                                 </div>
 
                                 <h4 class="section-title">Indikator Lainnya</h4>
                                 <div class="form-grid-3">
-                                    <div class="input-group"><label>CNP</label><input type="number" id="rep-cnp" class="form-input" placeholder="0"></div>
-                                    <div class="input-group"><label>CSI</label><input type="number" id="rep-csi" class="form-input" placeholder="0"></div>
-                                    <div class="input-group"><label>G. Review</label><input type="number" id="rep-grev" class="form-input" placeholder="0"></div>
+                                    <div class="input-group"><label>CNP</label><input type="number" id="rep-cnp" class="custom-input" placeholder="0"></div>
+                                    <div class="input-group"><label>CSI</label><input type="number" id="rep-csi" class="custom-input" placeholder="0"></div>
+                                    <div class="input-group"><label>G. Review</label><input type="number" id="rep-grev" class="custom-input" placeholder="0"></div>
                                 </div>
                             </div>
                         </div>
@@ -751,7 +764,7 @@
                                                 <th class="text-center">EST %</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody id="store-table-body">
                                             <!-- ALL BISNIS -->
                                             <tr class="row-highlight">
                                                 <td>Total All Bisnis</td>
@@ -775,7 +788,7 @@
                                             <!-- OPERATOR -->
                                             <tr class="row-group"><td colspan="6">Kategori Operator</td></tr>
                                             <tr><td>Indosat</td><td class="text-right" id="disp-target-isat">0</td><td class="text-center" id="disp-isat-qty">0</td><td class="text-right" id="disp-isat-val">0</td><td class="text-right" id="disp-est-isat">0</td><td class="text-center" id="disp-est-perc-isat">0%</td></tr>
-                                            <tr><td>XL Axiata</td><td class="text-right" id="disp-target-xl">0</td><td class="text-center" id="disp-xl-qty">0</td><td class="text-right" id="disp-xl-val">0</td><td class="text-right" id="disp-est-xl">0</td><td class="text-center" id="disp-est-perc-xl">0%</td></tr>
+                                            <tr><td>XL</td><td class="text-right" id="disp-target-xl">0</td><td class="text-center" id="disp-xl-qty">0</td><td class="text-right" id="disp-xl-val">0</td><td class="text-right" id="disp-est-xl">0</td><td class="text-center" id="disp-est-perc-xl">0%</td></tr>
                                             <tr><td>Telkomsel</td><td class="text-right" id="disp-target-tsel">0</td><td class="text-center" id="disp-tsel-qty">0</td><td class="text-right" id="disp-tsel-val">0</td><td class="text-right" id="disp-est-tsel">0</td><td class="text-center" id="disp-est-perc-tsel">0%</td></tr>
                                             <!-- WIC -->
                                             <tr class="row-group"><td colspan="6">Walk-In Customer (WIC)</td></tr>
@@ -802,7 +815,7 @@
                                 <i data-lucide="copy" style="width:14px;"></i> Salin Teks
                             </button>
                         </div>
-                        <textarea id="output-report-textarea" class="result-textarea" placeholder="Menunggu proses submit/tarik data..." style="height: 575px;" readonly></textarea>
+                        <textarea id="output-report-textarea" class="custom-input" placeholder="Menunggu proses submit..." style="height: 575px; font-family: monospace; font-size: 0.85rem;" readonly></textarea>
                     </div>
                 </div>
                 <div id="status-input-report" class="local-status" style="justify-content: center;"></div>
@@ -813,12 +826,6 @@
 
     <script>
         lucide.createIcons();
-
-        // --- GLOBAL UTILS ---
-        window.safeJsonParse = async function(response) { 
-            const text = await response.text(); 
-            try { return JSON.parse(text); } catch (e) { return { message: text }; } 
-        }
 
         // --- CORE CONFIG ---
         const N8N_WEBHOOK_URL = 'https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/webhook/erafone-roxy-automation';
@@ -854,6 +861,31 @@
 
         window.hideModal = function() { document.getElementById('modal-overlay').style.display = 'none'; }
 
+        // Navigation & UI Toggle
+        window.toggleRegister = function(show) {
+            const loginBox = document.getElementById('login-form-box');
+            const registerCanvas = document.getElementById('register-canvas');
+            if(show) {
+                loginBox.style.display = 'none';
+                registerCanvas.style.display = 'block';
+            } else {
+                loginBox.style.display = 'flex';
+                registerCanvas.style.display = 'none';
+            }
+            lucide.createIcons();
+        }
+
+        window.copyTextVal = function(id) {
+            const textToCopy = document.getElementById(id).innerText;
+            const tempInput = document.createElement("input");
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            alert('Email tersalin: ' + textToCopy);
+        }
+
         // Login Handler
         window.handleLogin = async function() {
             const sapInput = document.getElementById('sap-code');
@@ -862,7 +894,7 @@
             const errorText = document.getElementById('login-error-text');
             const loginBtn = document.getElementById('btn-login-submit');
             
-            const sap = sapInput.value.trim();
+            const sap = sapInput.value.trim().toUpperCase();
             const pass = passInput.value.trim();
 
             if(!sap || !pass){
@@ -905,7 +937,6 @@
             document.getElementById('main-container').style.display = 'block';
             document.getElementById('dynamic-title').innerText = userName;
 
-            // POPULATE ERO DROPDOWN
             const eroSelect = document.getElementById('rep-nama');
             if (window.currentStoreConfig.ero_list && eroSelect) {
                 eroSelect.innerHTML = '<option value="">Pilih Nama ERO...</option>';
@@ -932,7 +963,7 @@
             if (window.currentStoreConfig && window.currentStoreConfig.link_master) {
                 window.open(window.currentStoreConfig.link_master, '_blank');
             } else {
-                window.showModal('error', 'Tautan Tidak Ditemukan', 'Link Master Spreadsheet untuk toko ini belum ditambahkan pada database Supabase (kolom link_master).');
+                window.showModal('error', 'Tautan Tidak Ditemukan', 'Link Master Spreadsheet untuk toko ini belum ditambahkan pada database.');
             }
         }
 
@@ -1011,12 +1042,10 @@
 
         window.backToMain = function() { window.resetAllForms(); window.openView('view-main'); }
 
-        window.updateFileName = function(inputId, displayId) { 
-            const file = document.getElementById(inputId).files[0]; 
-            if (file) document.getElementById(displayId).innerText = file.name; 
-        }
+        window.updateFileName = function(inputId, displayId) { const file = document.getElementById(inputId).files[0]; if (file) document.getElementById(displayId).innerText = file.name; }
+        window.safeJsonParse = async function(response) { const text = await response.text(); try { return JSON.parse(text); } catch (e) { return { message: text }; } }
 
-        // --- API FUNCTIONS RECONCILE & STOCK ---
+        // --- API FUNCTIONS ---
         window.fetchLatestStockDate = async function() {
             try {
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/daily_stock?select=stock_date&order=stock_date.desc&limit=1`, {
@@ -1083,10 +1112,7 @@
 
         window.processSales = async function() {
             const file = document.getElementById('sales-file').files[0]; 
-            if (!file) {
-                window.setLocalStatus('status-sales-report', 'Silakan pilih file PDF dahulu.', 'error'); 
-                return; 
-            }
+            if (!file) return;
             window.setLocalStatus('status-sales-report', 'Mengekstrak PDF...');
             try {
                 const formData = new FormData(); 
@@ -1123,10 +1149,7 @@
 
         window.processExcel = async function() {
             const file = document.getElementById('recon-excel').files[0]; 
-            if (!file) {
-                window.setLocalStatus('status-excel', 'Pilih file Excel terlebih dahulu.', 'error');
-                return;
-            }
+            if (!file) return;
             window.setLocalStatus('status-excel', 'Memproses sinkronisasi Excel...');
             try {
                 const formData = new FormData(); 
@@ -1148,10 +1171,7 @@
 
         window.processPdf = async function() {
             const file = document.getElementById('recon-pdf').files[0]; 
-            if (!file) {
-                window.setLocalStatus('status-pdf', 'Pilih file PDF terlebih dahulu.', 'error');
-                return;
-            }
+            if (!file) return;
             window.setLocalStatus('status-pdf', 'Menganalisis PDF POS...');
             try {
                 const formData = new FormData(); 
@@ -1171,29 +1191,18 @@
 
         window.processDailyStock = async function() {
             const file = document.getElementById('daily-stock-file').files[0]; 
-            if (!file) {
-                window.setLocalStatus('status-daily-stock', 'Pilih file Excel terlebih dahulu.', 'error');
-                return;
-            }
+            if (!file) return;
             window.setLocalStatus('status-daily-stock', 'Sinkronisasi...');
             try {
                 const formData = new FormData(); 
                 formData.append('file', file); formData.append('command', 'daily_stock'); formData.append('sap_code', window.currentStoreConfig.sap_code);
                 const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
-                
                 if (response.ok) { 
-                    // --- MENGUBAH LINK DOWNLOAD DAN BUKA MENJADI DINAMIS BERDASARKAN STORE ---
                     if (window.currentStoreConfig && window.currentStoreConfig.link_master) {
-                        const masterLink = window.currentStoreConfig.link_master;
-                        
-                        // Set link untuk tombol Buka (Link Asli ke Spreadsheet)
-                        document.getElementById('link-open-sheet').href = masterLink;
-                        
-                        // Set link untuk tombol Download (Ubah akhiran /edit... menjadi /export?format=xlsx)
-                        const downloadLink = masterLink.replace(/\/edit.*$/, '/export?format=xlsx');
-                        document.getElementById('link-download-sheet').href = downloadLink;
+                        const mLink = window.currentStoreConfig.link_master;
+                        document.getElementById('link-open-sheet').href = mLink;
+                        document.getElementById('link-download-sheet').href = mLink.replace(/\/edit.*$/, '/export?format=xlsx');
                     }
-                    
                     document.getElementById('success-link-box').style.display = 'flex'; 
                     window.setLocalStatus('status-daily-stock', 'Selesai!', 'success'); 
                 }
@@ -1256,84 +1265,159 @@ G.Riview : ${getVal('rep-grev')}`;
         }
 
         window.fetchStoreReport = async function() {
-            const bulan = document.getElementById('store-month-select').value;
-            if(!bulan) { window.setLocalStatus('status-input-report', 'Harap pilih bulan dahulu!', 'error'); return; }
-            window.setLocalStatus('status-input-report', `Menarik data Store - ${bulan}...`);
-            document.getElementById('disp-store-name').innerText = "Loading...";
+            const monthSelect = document.getElementById('store-month-select');
+            const selectedMonth = monthSelect.value;
             
+            if (!selectedMonth || selectedMonth === "") {
+                window.setLocalStatus('status-input-report', 'Harap pilih bulan terlebih dahulu!', 'error');
+                return;
+            }
+
+            window.setLocalStatus('status-input-report', `Menarik data Report Store bulan ${selectedMonth}...`);
+            
+            document.getElementById('disp-store-name').innerText = "Memuat data...";
+            document.querySelectorAll('.report-table td[id^="disp-"]').forEach(td => td.innerText = "...");
+
+            const namaStore = window.currentStoreConfig.store_name;
+            const payload = { 
+                command: 'call_report_store', 
+                store_name: namaStore,
+                sap_code: window.currentStoreConfig.sap_code,
+                bulan: selectedMonth
+            };
+
             try {
-                const response = await fetch(N8N_WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ command: 'call_report_store', sap_code: window.currentStoreConfig.sap_code, bulan: bulan })
+                const response = await fetch(N8N_WEBHOOK_URL, { 
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify(payload) 
                 });
                 
-                const data = await window.safeJsonParse(response);
-                const raw = data.message || "";
-                
-                document.getElementById('output-report-textarea').value = `RESPOND SERVER (${bulan}):\n` + raw;
-                window.setLocalStatus('status-input-report', 'Data berhasil ditarik!', 'success');
-                
-                const ex = (rgx) => { const m = raw.match(rgx); return m ? m[1].trim() : "0"; };
-                const perc = (est, tgt) => {
-                    const e = parseFloat(est.replace(/\./g, '').replace(',', '.')) || 0;
-                    const t = parseFloat(tgt.replace(/\./g, '').replace(',', '.')) || 0;
-                    return t === 0 ? "0%" : Math.round((e / t) * 100) + "%";
-                };
+                if (response.ok) {
+                    const data = await window.safeJsonParse(response);
+                    
+                    document.getElementById('output-report-textarea').value = `RESPOND SERVER (STORE - ${selectedMonth}):\n` + (data.message || JSON.stringify(data, null, 2));
+                    window.setLocalStatus('status-input-report', `Data Store bulan ${selectedMonth} berhasil ditarik!`, 'success');
+                    
+                    const rawText = data.message || data.text || JSON.stringify(data);
+                    
+                    const ex = (rgx, fallback = "0") => {
+                        const m = rawText.match(rgx);
+                        return m ? m[1].trim() : fallback;
+                    };
 
-                document.getElementById('disp-store-name').innerText = window.currentStoreConfig.store_name;
-                
-                // ALL BISNIS
-                const abVal = ex(/All Bisnis\s*:\s*([^\n]+)/); const abTgt = ex(/Target AB\s*:\s*([^\n]+)/); const abEst = ex(/Estimasi AB\s*:\s*([^\n]+)/);
-                document.getElementById('disp-ab').innerText = abVal; document.getElementById('disp-target-ab').innerText = abTgt; document.getElementById('disp-est-ab').innerText = abEst; document.getElementById('disp-est-perc-ab').innerText = perc(abEst, abTgt);
-                
-                // DEVICE
-                const devTgt = ex(/📱 DEVICE[\s\S]*?Target\s*:\s*([^\n]+)/); const devEst = ex(/📱 DEVICE[\s\S]*?Estimasi\s*:\s*([^\n]+)/);
-                document.getElementById('disp-target-dev').innerText = devTgt; document.getElementById('disp-dev-qty').innerText = ex(/📱 DEVICE[\s\S]*?Actual\s*:\s*(\d+)/); document.getElementById('disp-dev-val').innerText = ex(/📱 DEVICE[\s\S]*?Actual\s*:\s*\d+\/([^\n]+)/); document.getElementById('disp-est-dev').innerText = devEst; document.getElementById('disp-est-perc-dev').innerText = perc(devEst, devTgt);
-                
-                // ACC
-                const accTgt = ex(/🎧 ACCESORIES[\s\S]*?Target\s*:\s*([^\n]+)/); const accEst = ex(/🎧 ACCESORIES[\s\S]*?Estimasi\s*:\s*([^\n]+)/);
-                document.getElementById('disp-target-acc').innerText = accTgt; document.getElementById('disp-acc-qty').innerText = ex(/🎧 ACCESORIES[\s\S]*?Actual\s*:\s*(\d+)/); document.getElementById('disp-acc-val').innerText = ex(/🎧 ACCESORIES[\s\S]*?Actual\s*:\s*\d+\/([^\n]+)/); document.getElementById('disp-est-acc').innerText = accEst; document.getElementById('disp-est-perc-acc').innerText = perc(accEst, accTgt);
-                document.getElementById('disp-ar-acc').innerText = ex(/AR Acc\s*:\s*([^\n]+)/); document.getElementById('disp-sob-acc').innerText = ex(/SOB Acc\s*:\s*([^\n]+)/);
-                
-                // BOLTECH
-                const boltTgt = ex(/🔒 BOLTECH[\s\S]*?Target\s*:\s*([^\n]+)/); const boltEst = ex(/🔒 BOLTECH[\s\S]*?Estimasi\s*:\s*([^\n]+)/);
-                document.getElementById('disp-target-bolt').innerText = boltTgt; document.getElementById('disp-bolt-qty').innerText = ex(/🔒 BOLTECH[\s\S]*?Actual\s*:\s*(\d+)/); document.getElementById('disp-bolt-val').innerText = ex(/🔒 BOLTECH[\s\S]*?Actual\s*:\s*\d+\/([^\n]+)/); document.getElementById('disp-est-bolt').innerText = boltEst; document.getElementById('disp-est-perc-bolt').innerText = perc(boltEst, boltTgt);
-                document.getElementById('disp-ar-bolt').innerText = ex(/AR Boltech\s*:\s*([^\n]+)/); document.getElementById('disp-sob-bolt').innerText = ex(/SOB Boltech\s*:\s*([^\n]+)/);
-                
-                // OPERATORS
-                const isatT = ex(/Indosat Target\s*:\s*([^\n]+)/); const isatE = ex(/Indosat Estimasi\s*:\s*([^\n]+)/);
-                document.getElementById('disp-target-isat').innerText = isatT; document.getElementById('disp-isat-qty').innerText = ex(/Indosat Actual\s*:\s*(\d+)/); document.getElementById('disp-isat-val').innerText = ex(/Indosat Actual\s*:\s*\d+\/([^\n]+)/); document.getElementById('disp-est-isat').innerText = isatE; document.getElementById('disp-est-perc-isat').innerText = perc(isatE, isatT);
-                
-                const xlT = ex(/XL Target\s*:\s*([^\n]+)/); const xlE = ex(/XL Estimasi\s*:\s*([^\n]+)/);
-                document.getElementById('disp-target-xl').innerText = xlT; document.getElementById('disp-xl-qty').innerText = ex(/XL Actual\s*:\s*(\d+)/); document.getElementById('disp-xl-val').innerText = ex(/XL Actual\s*:\s*\d+\/([^\n]+)/); document.getElementById('disp-est-xl').innerText = xlE; document.getElementById('disp-est-perc-xl').innerText = perc(xlE, xlT);
+                    const calcPerc = (estStr, tgtStr) => {
+                        const est = parseFloat(estStr.replace(/\./g, '').replace(',', '.')) || 0;
+                        const tgt = parseFloat(tgtStr.replace(/\./g, '').replace(',', '.')) || 0;
+                        if (tgt === 0) return "0%";
+                        return Math.round((est / tgt) * 100) + "%";
+                    };
 
-                const haloT = ex(/Telkomsel Target\s*:\s*([^\n]+)/); const haloE = ex(/Telkomsel Estimasi\s*:\s*([^\n]+)/);
-                document.getElementById('disp-target-tsel').innerText = haloT; document.getElementById('disp-tsel-qty').innerText = ex(/Telkomsel Actual\s*:\s*(\d+)/); document.getElementById('disp-tsel-val').innerText = ex(/Telkomsel Actual\s*:\s*\d+\/([^\n]+)/); document.getElementById('disp-est-tsel').innerText = haloE; document.getElementById('disp-est-perc-tsel').innerText = perc(haloE, haloT);
+                    document.getElementById('disp-store-name').innerText = ex(/👤 Nama\s*:\s*([^\n]+)/, namaStore);
+                    
+                    // ALL BISNIS
+                    const abVal = ex(/All Bisnis\s*:\s*([^\n]+)/);
+                    const abTgt = ex(/Target AB\s*:\s*([^\n]+)/);
+                    const abEst = ex(/Estimasi AB\s*:\s*([^\n]+)/);
+                    document.getElementById('disp-ab').innerText = abVal;
+                    document.getElementById('disp-target-ab').innerText = abTgt;
+                    document.getElementById('disp-est-ab').innerText = abEst;
+                    document.getElementById('disp-est-perc-ab').innerText = calcPerc(abEst, abTgt);
+                    
+                    // DEVICE
+                    const devTgt = ex(/📱 DEVICE[\s\S]*?Target\s*:\s*([^\n]+)/);
+                    const devEst = ex(/📱 DEVICE[\s\S]*?Estimasi\s*:\s*([^\n]+)/);
+                    document.getElementById('disp-target-dev').innerText = devTgt;
+                    document.getElementById('disp-dev-qty').innerText = ex(/📱 DEVICE[\s\S]*?Actual\s*:\s*(\d+)/);
+                    document.getElementById('disp-dev-val').innerText = ex(/📱 DEVICE[\s\S]*?Actual\s*:\s*\d+\/([^\n]+)/);
+                    document.getElementById('disp-est-dev').innerText = devEst;
+                    document.getElementById('disp-est-perc-dev').innerText = calcPerc(devEst, devTgt);
+                    
+                    // ACCESORIES
+                    const accTgt = ex(/🎧 ACCESORIES[\s\S]*?Target\s*:\s*([^\n]+)/);
+                    const accEst = ex(/🎧 ACCESORIES[\s\S]*?Estimasi\s*:\s*([^\n]+)/);
+                    document.getElementById('disp-target-acc').innerText = accTgt;
+                    document.getElementById('disp-acc-qty').innerText = ex(/🎧 ACCESORIES[\s\S]*?Actual\s*:\s*(\d+)/);
+                    document.getElementById('disp-acc-val').innerText = ex(/🎧 ACCESORIES[\s\S]*?Actual\s*:\s*\d+\/([^\n]+)/);
+                    document.getElementById('disp-est-acc').innerText = accEst;
+                    document.getElementById('disp-est-perc-acc').innerText = calcPerc(accEst, accTgt);
+                    
+                    document.getElementById('disp-ar-acc').innerText = ex(/AR Acc\s*:\s*([^\n]+)/);
+                    document.getElementById('disp-sob-acc').innerText = ex(/SOB Acc\s*:\s*([^\n]+)/);
+                    
+                    // BOLTECH
+                    const boltTgt = ex(/🔒 BOLTECH[\s\S]*?Target\s*:\s*([^\n]+)/);
+                    const boltEst = ex(/🔒 BOLTECH[\s\S]*?Estimasi\s*:\s*([^\n]+)/);
+                    document.getElementById('disp-target-bolt').innerText = boltTgt;
+                    document.getElementById('disp-bolt-qty').innerText = ex(/🔒 BOLTECH[\s\S]*?Actual\s*:\s*(\d+)/);
+                    document.getElementById('disp-bolt-val').innerText = ex(/🔒 BOLTECH[\s\S]*?Actual\s*:\s*\d+\/([^\n]+)/);
+                    document.getElementById('disp-est-bolt').innerText = boltEst;
+                    document.getElementById('disp-est-perc-bolt').innerText = calcPerc(boltEst, boltTgt);
 
-                document.getElementById('disp-wic-deal').innerText = ex(/Deal\s*:\s*(\d+)/);
-                document.getElementById('disp-wic-loss').innerText = ex(/Loss\s*:\s*(\d+)/);
-                document.getElementById('disp-cnp').innerText = ex(/CNP\s*:\s*(\d+)/);
-                document.getElementById('disp-csi').innerText = ex(/CSI\s*:\s*(\d+)/);
-                document.getElementById('disp-grev').innerText = ex(/G\.Review\s*:\s*(\d+)/);
+                    document.getElementById('disp-ar-bolt').innerText = ex(/AR Boltech\s*:\s*([^\n]+)/);
+                    document.getElementById('disp-sob-bolt').innerText = ex(/SOB Boltech\s*:\s*([^\n]+)/);
+                    
+                    // OPERATOR
+                    const isatTgt = ex(/Indosat Target\s*:\s*([^\n]+)/);
+                    const isatEst = ex(/Indosat Estimasi\s*:\s*([^\n]+)/);
+                    document.getElementById('disp-target-isat').innerText = isatTgt;
+                    document.getElementById('disp-isat-qty').innerText = ex(/Indosat Actual\s*:\s*(\d+)/);
+                    document.getElementById('disp-isat-val').innerText = ex(/Indosat Actual\s*:\s*\d+\/([^\n]+)/);
+                    document.getElementById('disp-est-isat').innerText = isatEst;
+                    document.getElementById('disp-est-perc-isat').innerText = calcPerc(isatEst, isatTgt);
+                    
+                    const xlTgt = ex(/XL Target\s*:\s*([^\n]+)/);
+                    const xlEst = ex(/XL Estimasi\s*:\s*([^\n]+)/);
+                    document.getElementById('disp-target-xl').innerText = xlTgt;
+                    document.getElementById('disp-xl-qty').innerText = ex(/XL Actual\s*:\s*(\d+)/);
+                    document.getElementById('disp-xl-val').innerText = ex(/XL Actual\s*:\s*\d+\/([^\n]+)/);
+                    document.getElementById('disp-est-xl').innerText = xlEst;
+                    document.getElementById('disp-est-perc-xl').innerText = calcPerc(xlEst, xlTgt);
+                    
+                    const tselTgt = ex(/Telkomsel Target\s*:\s*([^\n]+)/);
+                    const tselEst = ex(/Telkomsel Estimasi\s*:\s*([^\n]+)/);
+                    document.getElementById('disp-target-tsel').innerText = tselTgt;
+                    document.getElementById('disp-tsel-qty').innerText = ex(/Telkomsel Actual\s*:\s*(\d+)/);
+                    document.getElementById('disp-tsel-val').innerText = ex(/Telkomsel Actual\s*:\s*\d+\/([^\n]+)/);
+                    document.getElementById('disp-est-tsel').innerText = tselEst;
+                    document.getElementById('disp-est-perc-tsel').innerText = calcPerc(tselEst, tselTgt);
+                    
+                    // WIC
+                    document.getElementById('disp-wic-deal').innerText = ex(/Deal\s*:\s*(\d+)/);
+                    document.getElementById('disp-wic-loss').innerText = ex(/Loss\s*:\s*(\d+)/);
+                    
+                    // OTHERS
+                    document.getElementById('disp-cnp').innerText = ex(/CNP\s*:\s*(\d+)/);
+                    document.getElementById('disp-csi').innerText = ex(/CSI\s*:\s*(\d+)/);
+                    document.getElementById('disp-grev').innerText = ex(/G\.Review\s*:\s*(\d+)/);
 
-            } catch (e) { window.setLocalStatus('status-input-report', 'Gagal tarik data.', 'error'); }
+                } else throw new Error(); 
+            } catch (e) { 
+                window.setLocalStatus('status-input-report', 'Gagal menarik data.', 'error'); 
+                document.getElementById('disp-store-name').innerText = "Gagal memuat data";
+            }
         }
 
         window.resetAllForms = function() {
             document.querySelectorAll('input:not([type=button]):not([type=submit])').forEach(i => { if(i.type!=='date') i.value=''; });
             document.querySelectorAll('textarea').forEach(t => t.value='');
-            document.querySelectorAll('select').forEach(s => { if(s.id !== 'store-month-select') s.selectedIndex = 0; });
+            document.querySelectorAll('select').forEach(s => {
+                if(s.id === 'store-month-select') {
+                    s.selectedIndex = 0;
+                } else {
+                    s.selectedIndex = 0;
+                }
+            });
             document.querySelectorAll('.local-status').forEach(s => { s.className='local-status'; s.innerHTML=''; });
             document.querySelectorAll('.upload-area p, .upload-compact p').forEach(p => { if(p.id.includes('file-name')) p.innerText='Pilih file...'; });
-            isExcelProcessed = false; isPdfProcessed = false;
             
             const pdfNameEl = document.getElementById('pdf-name');
             if (pdfNameEl) pdfNameEl.innerText = 'Pilih file PDF...';
             
             const excelNameEl = document.getElementById('excel-name');
             if (excelNameEl) excelNameEl.innerText = 'Pilih file Excel...';
-            
+
+            isExcelProcessed = false;
+            isPdfProcessed = false;
             if (typeof window.checkReconcileStatus === 'function') window.checkReconcileStatus();
         }
 
