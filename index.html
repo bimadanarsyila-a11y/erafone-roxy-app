@@ -1180,11 +1180,27 @@
                 const formData = new FormData(); 
                 formData.append('file', file); formData.append('command', 'daily_stock'); formData.append('sap_code', window.currentStoreConfig.sap_code);
                 const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
-                if (response.ok) { document.getElementById('success-link-box').style.display = 'flex'; window.setLocalStatus('status-daily-stock', 'Selesai!', 'success'); }
+                
+                if (response.ok) { 
+                    // --- MENGUBAH LINK DOWNLOAD DAN BUKA MENJADI DINAMIS BERDASARKAN STORE ---
+                    if (window.currentStoreConfig && window.currentStoreConfig.link_master) {
+                        const masterLink = window.currentStoreConfig.link_master;
+                        
+                        // Set link untuk tombol Buka (Link Asli ke Spreadsheet)
+                        document.getElementById('link-open-sheet').href = masterLink;
+                        
+                        // Set link untuk tombol Download (Ubah akhiran /edit... menjadi /export?format=xlsx)
+                        const downloadLink = masterLink.replace(/\/edit.*$/, '/export?format=xlsx');
+                        document.getElementById('link-download-sheet').href = downloadLink;
+                    }
+                    
+                    document.getElementById('success-link-box').style.display = 'flex'; 
+                    window.setLocalStatus('status-daily-stock', 'Selesai!', 'success'); 
+                }
             } catch (e) { window.setLocalStatus('status-daily-stock', 'Gagal.', 'error'); }
         }
 
-        // --- API FUNCTIONS INPUT REPORT ---
+        // --- INPUT REPORT BY ERO LOGIC ---
         const getVal = (id) => document.getElementById(id).value.trim() || "0";
         const formatBulanIndo = (dStr) => {
             if(!dStr) return "";
@@ -1326,5 +1342,3 @@ G.Riview : ${getVal('rep-grev')}`;
     </script>
 </body>
 </html>
-
-
