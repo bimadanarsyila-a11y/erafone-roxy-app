@@ -457,21 +457,21 @@
         <div id="view-sales-report" class="view">
             <div class="detail-view">
                 <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                <h2>Sales Report PDF</h2>
+                <h2>Sales Report PDF Extractor</h2>
                 <div class="upload-area" onclick="document.getElementById('sales-file').click()">
                     <i data-lucide="file-text"></i>
-                    <p id="sales-file-name">Pilih file PDF Laporan harian</p>
+                    <p id="sales-file-name">Pilih file PDF Laporan Penjualan (POS)</p>
                     <input type="file" id="sales-file" accept=".pdf" style="display:none" onchange="window.updateFileName('sales-file', 'sales-file-name')">
                 </div>
-                <button class="btn-base btn-process btn-large" id="btn-process-sales" onclick="window.processSales()" style="margin-top:1.5rem">Olah Data PDF</button>
-                <div id="status-sales-report" class="local-status"></div>
+                <button class="btn-base btn-process btn-large" style="margin-top:1.5rem; padding:1.25rem; font-size:1.1rem;" onclick="window.processSales()">Olah Data PDF Sekarang</button>
+                <div id="status-sales-report" class="local-status justify-center mt-4"></div>
                 
                 <div class="result-section" id="sales-result-area" style="display:none; margin-top:2rem">
                     <div class="flex-row-align" style="margin-bottom:0.75rem;">
-                        <span class="column-title">Hasil Ekstraksi Data</span>
+                        <span class="column-title">Hasil Ekstraksi Teks</span>
                         <button class="btn-base btn-process" onclick="window.copySalesText()" style="padding:0.5rem 1rem; font-size:0.85rem;"><i data-lucide="copy" style="width:14px;"></i> Salin Teks</button>
                     </div>
-                    <textarea id="sales-textarea" class="custom-input" readonly style="height: 200px; font-family: monospace; font-size: 0.85rem;"></textarea>
+                    <textarea id="sales-textarea" class="custom-input font-mono text-sm" readonly style="height: 250px;"></textarea>
                 </div>
             </div>
         </div>
@@ -479,8 +479,13 @@
         <!-- 2. VIEW: RECONCILE DATA -->
         <div id="view-reconcile" class="view">
             <div class="detail-view">
-                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                <h2>Rekonsiliasi Data</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <button class="back-btn" style="margin-bottom: 0;" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
+                    <a href="https://docs.google.com/spreadsheets/d/1CelOaKLiDc5bWYdkIQ5_RRyl3-BVKa7r/edit?usp=sharing&ouid=113833816706433632210&rtpof=true&sd=true" target="_blank" class="btn-base" style="background: #2563eb; color: white; border-color: #1d4ed8 !important; padding: 0.5rem 1rem; font-size: 0.85rem; text-decoration: none;">
+                        <i data-lucide="file-spreadsheet" style="width: 14px;"></i> Template Excel Recon
+                    </a>
+                </div>
+                <h2 style="margin-top: -0.5rem;">Rekonsiliasi Data Harian</h2>
                 
                 <div class="reconcile-top-row">
                     <div class="column-card">
