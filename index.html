@@ -365,6 +365,10 @@
                     <div class="icon-box"><i data-lucide="layout-dashboard" style="width: 28px; height: 28px;"></i></div>
                     <div class="card-info"><h3>Dashboard Sales</h3><p>Visualisasi interaktif pencapaian target toko & produktivitas tim.</p></div>
                 </button>
+                <button class="control-card" onclick="window.openView('view-input-report')">
+                    <div class="icon-box"><i data-lucide="file-text" style="width: 28px; height: 28px;"></i></div>
+                    <div class="card-info"><h3>Daily Report ERO</h3><p>Pengiriman & pantauan langsung laporan harian ERO.</p></div>
+                </button>
                 <button class="control-card" onclick="window.openView('view-sales-report')">
                     <div class="icon-box"><i data-lucide="file-up" style="width: 28px; height: 28px;"></i></div>
                     <div class="card-info"><h3>Sales Report</h3><p>Ekstraksi & olah otomatis PDF laporan penjualan harian store.</p></div>
@@ -380,10 +384,6 @@
                 <button class="control-card" onclick="window.openView('view-cek-stok')">
                     <div class="icon-box"><i data-lucide="search" style="width: 28px; height: 28px;"></i></div>
                     <div class="card-info"><h3>Cek Stok Area</h3><p>Pencarian cerdas ketersediaan unit barang di seluruh area.</p></div>
-                </button>
-                <button class="control-card" onclick="window.openView('view-input-report')">
-                    <div class="icon-box"><i data-lucide="file-text" style="width: 28px; height: 28px;"></i></div>
-                    <div class="card-info"><h3>Daily Report ERO</h3><p>Pengiriman & pantauan langsung laporan harian ERO.</p></div>
                 </button>
             </div>
         </div>
@@ -580,16 +580,13 @@
                 </div>
 
                 <!-- FORM SECTION: Laporan ERO (Original) -->
-                <div class="reconcile-top-row" id="form-section-ero">
+                <div id="form-section-ero" style="width: 100%; max-width: 800px; margin: 0 auto;">
                     <div class="column-card">
                         <div class="flex-row-align" style="margin-bottom: 0.5rem;">
-                            <span class="column-title">1. Formulir Laporan Harian</span>
-                            <button class="btn-base btn-process" id="btn-submit-report" onclick="window.processInputReport()" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
-                                <i data-lucide="send" style="width:14px;"></i> Submit Laporan
-                            </button>
+                            <span class="column-title">Formulir Laporan Harian</span>
                         </div>
                         
-                        <div class="report-form-container" id="manual-report-form">
+                        <div class="report-form-container" id="manual-report-form" style="max-height: none; overflow: visible;">
                             <h4 class="section-title">Informasi Dasar</h4>
                             <div class="input-group">
                                 <label>Tanggal Laporan</label>
@@ -650,18 +647,12 @@
                             </div>
 
                             <h4 class="section-title">Catatan Harian</h4>
-                            <textarea id="rep-naratif" class="custom-input" style="height: 120px;" placeholder="Tuliskan evaluasi atau kendala di lapangan..."></textarea>
-                        </div>
-                    </div>
-                    
-                    <div class="column-card">
-                        <div class="flex-row-align" style="margin-bottom: 0.5rem;">
-                            <span class="column-title">2. Summary Report (Log)</span>
-                            <button class="btn-base btn-process" onclick="window.copyText('output-report-textarea')" style="padding: 0.5rem 1rem; font-size: 0.85rem; background: #f1f5f9; color: var(--text-main); border: 1.5px solid var(--border-color) !important;">
-                                <i data-lucide="copy" style="width:14px;"></i> Salin Teks
+                            <textarea id="rep-naratif" class="custom-input" style="height: 120px; margin-bottom: 1.5rem;" placeholder="Tuliskan evaluasi atau kendala di lapangan..."></textarea>
+                            
+                            <button class="btn-base btn-process btn-large" id="btn-submit-report" onclick="window.processInputReport()" style="width: 100%; font-size: 1rem; padding: 1rem;">
+                                <i data-lucide="send" style="width:18px;"></i> Submit Laporan
                             </button>
                         </div>
-                        <textarea id="output-report-textarea" class="custom-input" placeholder="Menunggu proses submit/penarikan data..." style="height: 575px; font-family: monospace; font-size: 0.85rem;" readonly></textarea>
                     </div>
                 </div>
                 
@@ -887,7 +878,7 @@
             if(tab === 'ero') {
                 document.getElementById('tab-ero').classList.add('active');
                 document.getElementById('tab-data-ero').classList.remove('active');
-                document.getElementById('form-section-ero').style.display = 'grid'; // Grid display for 2 columns
+                document.getElementById('form-section-ero').style.display = 'block'; 
                 document.getElementById('form-section-data-ero').style.display = 'none';
             } else {
                 document.getElementById('tab-data-ero').classList.add('active');
@@ -1540,16 +1531,20 @@
             const naratifText = document.getElementById('rep-naratif').value.trim();
             const templateText = `Update Sales daily by Ero\nTanggal : ${formatBulanIndo(tgl)}\n\nNama : ${nama}\nAll bisnis : ${getVal('rep-allbisnis')}\nDevice qty : ${getVal('rep-dev-qty')}\nDevice value : ${getVal('rep-dev-val')}\nAcc qty : ${getVal('rep-acc-qty')}\nAcc value : ${getVal('rep-acc-val')}\nBoltech qty : ${getVal('rep-bolt-qty')}\nBoltech value : ${getVal('rep-bolt-val')}\nIndosat qty : ${getVal('rep-isat-qty')}\nIndosat value : ${getVal('rep-isat-val')}\nXL qty : ${getVal('rep-xl-qty')}\nXL value : ${getVal('rep-xl-val')}\nTsel qty : ${getVal('rep-tsel-qty')}\nTsel value : ${getVal('rep-tsel-val')}\n\nWic deal : ${getVal('rep-wic-deal')}\nWic loss : ${getVal('rep-wic-loss')}\n\nCnp : ${getVal('rep-cnp')}\nCsi : ${getVal('rep-csi')}\nG.Riview : ${getVal('rep-grev')}\n\nCatatan Harian:\n${naratifText}`;
             window.setLocalStatus('status-input-report', 'Mengirim data Report ERO...');
-            document.getElementById('output-report-textarea').value = "Mengirim data ke server...\n" + templateText;
 
             try {
                 const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ command: 'input_report', report_text: templateText, sap_code: window.currentStoreConfig.sap_code }) });
                 const data = await window.safeJsonParse(response);
                 if (!response.ok) throw new Error(data.message || `HTTP Error ${response.status}`);
                 if (data.error || data.status === 'error') throw new Error(data.message || data.error);
-                document.getElementById('output-report-textarea').value = "RESPOND SERVER:\n" + (data.message || JSON.stringify(data));
+                
                 window.setLocalStatus('status-input-report', 'Laporan Berhasil Diterima Server!', 'success');
-            } catch (e) { window.setLocalStatus('status-input-report', 'Gagal mengirim: ' + (e.message || 'Koneksi terputus'), 'error'); document.getElementById('output-report-textarea').value += "\n\n--- ERROR LOG ---\n" + e.message; }
+                window.showModal('success', 'Berhasil!', 'Laporan harian ERO berhasil dikirim.');
+                setTimeout(window.resetAllForms, 3000);
+            } catch (e) { 
+                window.setLocalStatus('status-input-report', 'Gagal mengirim: ' + (e.message || 'Koneksi terputus'), 'error'); 
+                window.showModal('error', 'Gagal Mengirim', e.message || 'Terjadi kesalahan saat mengirim laporan.');
+            }
         }
 
         window.resetAllForms = function() {
