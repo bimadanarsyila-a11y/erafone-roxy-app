@@ -364,7 +364,7 @@
 
     <!-- SETTINGS MODAL (NEW) -->
     <div id="settings-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 10001; justify-content: center; align-items: center; padding: 1rem; overflow-y: auto;">
-        <div style="background: white; padding: 2rem; border-radius: var(--border-radius-lg); width: 100%; max-width: 500px; border: 2px solid var(--border-color); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); animation: slideUp 0.3s ease-out;">
+        <div style="background: white; padding: 2rem; border-radius: var(--border-radius-lg); width: 100%; max-width: 500px; border: 2px solid var(--border-color); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); animation: slideUp 0.3s ease-out; max-height: 90vh; overflow-y: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem; margin-bottom: 1.5rem;">
                 <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--bg-primary); display: flex; align-items: center; gap: 0.5rem; margin: 0;"><i data-lucide="settings"></i> Pengaturan Akun</h3>
                 <button onclick="window.closeSettings()" style="background: #fef2f2; border: 1.5px solid #fca5a5; cursor: pointer; color: var(--danger); display: flex; padding: 0.4rem; border-radius: 8px; transition: var(--transition);"><i data-lucide="x" style="width: 20px; height: 20px;"></i></button>
@@ -374,18 +374,9 @@
                 <label>Password Baru (Opsional)</label>
                 <input type="password" id="set-new-pass" class="custom-input" placeholder="Kosongkan jika tidak ingin ganti password">
             </div>
-            <div class="input-group">
-                <label>Link Master Spreadsheet</label>
-                <input type="text" id="set-link-master" class="custom-input" placeholder="https://docs.google.com/spreadsheets/d/...">
-            </div>
-            <div class="input-group">
-                <label>Link Summary Report (Dashboard Sales)</label>
-                <input type="text" id="set-link-summary" class="custom-input" placeholder="https://docs.google.com/spreadsheets/d/...">
-            </div>
-            <div class="input-group">
-                <label>Link Rekap Report (Tracking ERO)</label>
-                <input type="text" id="set-link-rekap" class="custom-input" placeholder="https://docs.google.com/spreadsheets/d/...">
-            </div>
+            
+            <!-- Tempat Kolom Pengaturan Dinamis Supabase -->
+            <div id="dynamic-settings-container"></div>
             
             <hr style="border: 0; border-top: 1.5px dashed #cbd5e1; margin: 1.5rem 0;">
             
@@ -610,6 +601,9 @@
                         <span style="font-weight: 800; font-size: 0.9rem; color: var(--bg-primary);">Filter Data:</span>
                         <select id="dash-month-filter" class="filter-select" onchange="window.renderDashboardSales()">
                             <option value="All">Semua Bulan</option>
+                        </select>
+                        <select id="dash-ero-filter" class="filter-select" onchange="window.renderDashboardSales()">
+                            <option value="All">Semua ERO</option>
                         </select>
                     </div>
                     <button class="btn-base btn-process" onclick="window.fetchDashboardSalesData()" style="padding: 0.6rem 1.25rem; font-size: 0.85rem;">
@@ -925,16 +919,68 @@
             location.reload();
         }
 
-        // --- FUNGSI PENGATURAN AKUN (NEW) ---
+        // --- FUNGSI PENGATURAN AKUN (DINAMIS - NEW) ---
         window.openSettings = function() {
             if (!window.currentStoreConfig) return;
-            // Pre-fill data link yang sudah ada
-            document.getElementById('set-link-master').value = window.currentStoreConfig.link_master || '';
-            document.getElementById('set-link-summary').value = window.currentStoreConfig.summary_report || '';
-            document.getElementById('set-link-rekap').value = window.currentStoreConfig.rekap_report || '';
+            
             // Kosongkan kolom password
             document.getElementById('set-new-pass').value = '';
             document.getElementById('set-current-pass').value = '';
+            
+            const container = document.getElementById('dynamic-settings-container');
+            container.innerHTML = '';
+
+            // 1. Definisi UI untuk kolom yang kita kenal
+            const fieldConfig = {
+                'ero_list': { label: 'Daftar Nama ERO <span style="text-transform: none; color: var(--text-muted); font-weight: 500;">(Pisahkan dengan koma)</span>', type: 'textarea', placeholder: 'Contoh: Andi, Budi, Citra' },
+                'link_master': { label: 'Link Master Spreadsheet', type: 'text', placeholder: 'https://docs.google.com/spreadsheets/d/...' },
+                'summary_report': { label: 'Link Summary Report (Dashboard Sales)', type: 'text', placeholder: 'https://docs.google.com/spreadsheets/d/...' },
+                'rekap_report': { label: 'Link Rekap Report (Tracking ERO)', type: 'text', placeholder: 'https://docs.google.com/spreadsheets/d/...' }
+            };
+
+            // 2. Kolom yang dilarang diedit oleh user
+            const excludeFields = ['sap_code', 'store_name', 'password', 'id', 'created_at', 'updated_at'];
+            
+            // 3. Menentukan urutan render untuk kolom yang kita ketahui
+            const orderedKeys = ['ero_list', 'link_master', 'summary_report', 'rekap_report'];
+            
+            // Ambil semua kolom yang MEMANG ADA di database saat ini
+            const allKeys = Object.keys(window.currentStoreConfig);
+            
+            // Saring kolom yang tidak boleh diedit
+            const editableKeys = allKeys.filter(k => !excludeFields.includes(k));
+
+            // Pisahkan yang kita kenal dan tidak kenal agar urutannya bagus
+            const knownKeysToRender = orderedKeys.filter(k => editableKeys.includes(k));
+            const unknownKeysToRender = editableKeys.filter(k => !orderedKeys.includes(k));
+            
+            // Gabungkan urutan (yang utama di atas, sisanya di bawah)
+            const fieldsToRender = [...knownKeysToRender, ...unknownKeysToRender];
+
+            fieldsToRender.forEach(key => {
+                const val = window.currentStoreConfig[key] || '';
+                
+                // Buat label otomatis jika kolom tersebut baru/asing (cth: "target_bulanan" -> "Target Bulanan")
+                const autoLabel = key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                const config = fieldConfig[key] || { label: autoLabel, type: 'text', placeholder: `Masukkan ${autoLabel}` };
+
+                // Hindari XSS pada string (tanda kutip)
+                const safeVal = String(val).replace(/"/g, '&quot;');
+
+                let inputHTML = '';
+                if (config.type === 'textarea') {
+                    inputHTML = `<textarea data-key="${key}" class="custom-input dynamic-setting-input" style="height: 80px;" placeholder="${config.placeholder}">${safeVal}</textarea>`;
+                } else {
+                    inputHTML = `<input type="text" data-key="${key}" class="custom-input dynamic-setting-input" placeholder="${config.placeholder}" value="${safeVal}">`;
+                }
+
+                container.innerHTML += `
+                    <div class="input-group">
+                        <label>${config.label}</label>
+                        ${inputHTML}
+                    </div>
+                `;
+            });
             
             document.getElementById('settings-modal').style.display = 'flex';
             lucide.createIcons();
@@ -947,9 +993,6 @@
         window.saveSettings = async function() {
             const currentPass = document.getElementById('set-current-pass').value;
             const newPass = document.getElementById('set-new-pass').value.trim();
-            const linkMaster = document.getElementById('set-link-master').value.trim();
-            const linkSummary = document.getElementById('set-link-summary').value.trim();
-            const linkRekap = document.getElementById('set-link-rekap').value.trim();
 
             if (!currentPass) {
                 window.showModal('error', 'Verifikasi Gagal', 'Harap masukkan Password Saat Ini untuk menyimpan perubahan.');
@@ -967,12 +1010,17 @@
             btn.disabled = true;
             lucide.createIcons();
 
-            // Siapkan data yang akan dikirim (di-update) ke Supabase
-            const payload = {
-                link_master: linkMaster,
-                summary_report: linkSummary,
-                rekap_report: linkRekap
-            };
+            // Siapkan data yang akan di-update ke Supabase secara Dinamis
+            const payload = {};
+            
+            // Loop membaca semua nilai dari form dinamis
+            const dynamicInputs = document.querySelectorAll('.dynamic-setting-input');
+            dynamicInputs.forEach(input => {
+                const key = input.getAttribute('data-key');
+                if(key) {
+                    payload[key] = input.value;
+                }
+            });
 
             // Jika user mengisi password baru, update passwordnya
             if (newPass !== '') {
@@ -1000,8 +1048,24 @@
                     window.currentStoreConfig = data[0];
                     localStorage.setItem('erafoneStoreConfig', JSON.stringify(data[0]));
                     
+                    // Update dropdown Nama ERO secara otomatis
+                    const eroSelect = document.getElementById('rep-nama');
+                    if (data[0].ero_list && eroSelect) {
+                        eroSelect.innerHTML = '<option value="">Pilih Nama ERO...</option>';
+                        const eros = data[0].ero_list.split(',');
+                        eros.forEach(name => {
+                            const trimmedName = name.trim();
+                            if(trimmedName) {
+                                const opt = document.createElement('option');
+                                opt.value = trimmedName;
+                                opt.innerText = trimmedName;
+                                eroSelect.appendChild(opt);
+                            }
+                        });
+                    }
+
                     window.closeSettings();
-                    window.showModal('success', 'Tersimpan!', 'Pengaturan akun dan link spreadsheet berhasil diperbarui.');
+                    window.showModal('success', 'Tersimpan!', 'Pengaturan akun berhasil diperbarui.');
                 }
             } catch (err) {
                 window.showModal('error', 'Gagal Menyimpan', err.message);
@@ -1183,6 +1247,7 @@
 
                 dashboardSalesData = [];
                 let uniqueMonths = new Set();
+                let uniqueEros = new Set();
                 
                 rows.forEach(row => {
                     let bulan = getS(row, 'bulan', 'month', 'tanggal', 'periode');
@@ -1192,6 +1257,7 @@
                     
                     if (getV(row, 'all bisnis') > 0 || getV(row, 'target ab') > 0 || nama !== "ERO Tidak Diketahui") {
                         uniqueMonths.add(bulan);
+                        uniqueEros.add(nama);
                         dashboardSalesData.push({
                             bulan, nama,
                             allBisnis: getV(row, 'all bisnis'), targetAB: getV(row, 'target ab'), estimasiAB: getV(row, 'estimasi ab'),
@@ -1213,6 +1279,15 @@
                 });
                 if (uniqueMonths.has(currentValue)) filterSelect.value = currentValue;
 
+                const filterEroSelect = document.getElementById('dash-ero-filter');
+                const currentEroValue = filterEroSelect.value;
+                filterEroSelect.innerHTML = '<option value="All">Semua ERO</option>';
+                Array.from(uniqueEros).sort().forEach(e => {
+                    const opt = document.createElement('option'); opt.value = e; opt.innerText = e;
+                    filterEroSelect.appendChild(opt);
+                });
+                if (uniqueEros.has(currentEroValue)) filterEroSelect.value = currentEroValue;
+
                 window.renderDashboardSales();
                 window.setLocalStatus('status-dashboard-sales', 'Sinkronisasi berhasil!', 'success');
                 setTimeout(() => window.clearLocalStatus('status-dashboard-sales'), 3000);
@@ -1225,14 +1300,20 @@
 
         window.renderDashboardSales = function() {
             const filterMonth = document.getElementById('dash-month-filter').value;
+            const filterEro = document.getElementById('dash-ero-filter').value;
             const grid = document.getElementById('sales-performance-grid');
-            const filteredData = filterMonth === 'All' ? dashboardSalesData : dashboardSalesData.filter(d => d.bulan === filterMonth);
+            
+            const filteredData = dashboardSalesData.filter(d => {
+                const matchMonth = (filterMonth === 'All') || (d.bulan === filterMonth);
+                const matchEro = (filterEro === 'All') || (d.nama === filterEro);
+                return matchMonth && matchEro;
+            });
 
             grid.innerHTML = ''; 
             let totalTarget = 0, totalAktual = 0;
 
             if (filteredData.length === 0 && dashboardSalesData.length > 0) {
-                grid.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-muted); border: 1.5px dashed var(--border-color); border-radius: 8px;">Tidak ada data untuk bulan terpilih.</div>';
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-muted); border: 1.5px dashed var(--border-color); border-radius: 8px;">Tidak ada data untuk filter yang terpilih.</div>';
             } else {
                 filteredData.forEach(data => {
                     totalTarget += data.targetAB;
@@ -1332,7 +1413,7 @@
 
         // --- NEW: DATA REPORT ERO (TRACKING DATA ABSENSI) ---
         window.dataEroTracking = []; // Simpan list data absen per hari
-        window.eroTrackingList = []; // Simpan list nama-nama ERO dinamis
+        window.monthEroList = {}; // Simpan list nama ERO dinamis KHUSUS PER BULAN
 
         window.fetchDataReportEro = async function() {
             window.setLocalStatus('status-data-ero', 'Menganalisa rekam jejak report ERO...', 'loading');
@@ -1344,7 +1425,6 @@
             }
 
             const rawUrl = window.currentStoreConfig.rekap_report;
-            // Ekstrak otomatis Sheet ID dan GID dari URL
             const sheetIdMatch = rawUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
             const gidMatch = rawUrl.match(/[#&?]gid=([0-9]+)/);
 
@@ -1365,45 +1445,98 @@
                 if (!jsonString || !jsonString[1]) throw new Error("Gagal membaca struktur data Spreadsheet Tracking.");
 
                 const data = JSON.parse(jsonString[1]);
-                let cols = data.table.cols;
-                let rows = data.table.rows;
                 
-                let bulanIdx = -1, tglIdx = -1;
-                let eroList = []; 
-
-                // Identifikasi Kolom
-                cols.forEach((col, idx) => {
-                    if (col && col.label) {
-                        let lbl = col.label.trim();
-                        let lblLow = lbl.toLowerCase();
-                        if (lblLow === 'bulan' || lblLow === 'periode') bulanIdx = idx;
-                        else if (lblLow === 'tanggal' || lblLow === 'tgl') tglIdx = idx;
-                        else if (lbl !== '') eroList.push({ name: lbl, idx: idx });
-                    }
+                // Ambil semua data dan gabungkan header asli dari gviz ke baris pertama agar dibaca seragam
+                let allRows = [];
+                let headerRow = { c: [] };
+                data.table.cols.forEach(col => {
+                    headerRow.c.push({ v: col ? col.label : '' });
                 });
+                allRows.push(headerRow);
+                allRows.push(...data.table.rows);
 
-                if (eroList.length === 0 && rows.length > 0) {
-                    rows[0].c.forEach((cell, idx) => {
-                        if (cell && cell.v) {
-                            let lbl = String(cell.v).trim();
-                            let lblLow = lbl.toLowerCase();
-                            if (lblLow === 'bulan' || lblLow === 'periode') bulanIdx = idx;
-                            else if (lblLow === 'tanggal' || lblLow === 'tgl') tglIdx = idx;
-                            else if (lbl !== '') eroList.push({ name: lbl, idx: idx });
-                        }
-                    });
-                    rows.shift(); 
-                }
-
-                if (bulanIdx === -1 || tglIdx === -1) throw new Error("Pastikan terdapat kolom 'Bulan' dan 'Tanggal'.");
+                let currentMonth = "";
+                let currentHeaders = {}; 
+                let bulanIdx = -1;
+                let tglIdx = -1;
 
                 window.dataEroTracking = [];
-                window.eroTrackingList = eroList.map(e => e.name); 
+                window.monthEroList = {};
                 let uniqueMonths = new Set();
-                let lastBulan = ""; // CARRY OVER LOGIC untuk sel yang di-merge
 
-                rows.forEach(row => {
-                    // Ekstraksi Bulan dengan cerdas
+                // Ambil Header paling awal sebagai patokan pertama
+                let firstRow = allRows[0];
+                if(firstRow && firstRow.c) {
+                    // Tahap 1: Temukan index kolom Bulan dan Tanggal
+                    firstRow.c.forEach((cell, idx) => {
+                        if (cell && cell.v !== null && cell.v !== undefined) {
+                            let valLow = String(cell.v).trim().toLowerCase();
+                            if (valLow === 'bulan' || valLow === 'periode') bulanIdx = idx;
+                            else if (valLow === 'tanggal' || valLow === 'tgl') tglIdx = idx;
+                        }
+                    });
+                    
+                    // Tahap 2: Ekstrak sisa kolom sebagai nama ERO
+                    firstRow.c.forEach((cell, idx) => {
+                        if (idx !== bulanIdx && idx !== tglIdx && cell && cell.v !== null && cell.v !== undefined) {
+                            let val = String(cell.v).trim();
+                            if (val !== '' && val.toLowerCase() !== 'null') {
+                                currentHeaders[idx] = val;
+                            }
+                        }
+                    });
+                }
+                allRows.shift(); // Hapus baris pertama yang sudah diolah
+
+                allRows.forEach(row => {
+                    if (!row || !row.c) return;
+
+                    // Abaikan baris yang benar-benar kosong sepenuhnya
+                    if (row.c.every(cell => !cell || cell.v === null || cell.v === undefined || String(cell.v).trim() === '')) return;
+
+                    let isNewHeader = false;
+
+                    // Deteksi ketat baris header tabel baru (Mencari kata 'Tanggal' atau 'Bulan' di baris manapun)
+                    row.c.forEach((cell) => {
+                        if (cell && cell.v !== null && cell.v !== undefined) {
+                            let val = String(cell.v).trim().toLowerCase();
+                            if (val === 'bulan' || val === 'periode' || val === 'tanggal' || val === 'tgl') isNewHeader = true;
+                        }
+                    });
+
+                    // Jika ketemu header baru, RESET nama ERO & hanya catat yang tertulis di bulan ini
+                    if (isNewHeader) {
+                        let tempBulanIdx = bulanIdx; 
+                        let tempTglIdx = tglIdx; 
+
+                        // Update jika posisi kolom bergeser
+                        row.c.forEach((cell, idx) => {
+                            if (cell && cell.v !== null && cell.v !== undefined) {
+                                let valLow = String(cell.v).trim().toLowerCase();
+                                if (valLow === 'bulan' || valLow === 'periode') tempBulanIdx = idx;
+                                else if (valLow === 'tanggal' || valLow === 'tgl') tempTglIdx = idx;
+                            }
+                        });
+
+                        bulanIdx = tempBulanIdx;
+                        tglIdx = tempTglIdx;
+                        currentHeaders = {};
+
+                        // HANYA ambil nama ERO yang tertulis di sub-header ini (Abaikan kolom bulan & tanggal)
+                        row.c.forEach((cell, idx) => {
+                            if (idx !== bulanIdx && idx !== tglIdx && cell && cell.v !== null && cell.v !== undefined) {
+                                let val = String(cell.v).trim();
+                                if (val !== '' && val.toLowerCase() !== 'null') {
+                                    currentHeaders[idx] = val; 
+                                }
+                            }
+                        });
+                        return; // Selesai proses baris header, lewati baris ini agar tidak dianggap sebagai data harian
+                    }
+
+                    if (bulanIdx === -1 || tglIdx === -1) return; // Abaikan data sebelum header pertama ditemukan
+
+                    // Ekstraksi Bulan dengan carry-over logic
                     let cellBulan = row.c[bulanIdx];
                     let bulan = '';
                     if (cellBulan && cellBulan.v !== null && cellBulan.v !== undefined) {
@@ -1423,23 +1556,19 @@
                         }
                     }
                     
-                    // Gunakan bulan dari baris sebelumnya jika sel ini kosong (sering terjadi jika di spreadsheet di-merge)
-                    if (bulan !== '') lastBulan = bulan;
-                    else bulan = lastBulan;
+                    if (bulan !== '' && bulan.toLowerCase() !== 'null') currentMonth = bulan;
+                    else bulan = currentMonth; 
 
-                    // Ekstraksi Tanggal, wajib angkanya saja (harinya saja)
+                    // Ekstraksi Tanggal
                     let cellTgl = row.c[tglIdx];
                     let tanggal = 0;
                     if (cellTgl && cellTgl.v !== null && cellTgl.v !== undefined) {
                         let vStr = String(cellTgl.v);
                         let fStr = cellTgl.f ? String(cellTgl.f) : '';
-                        
-                        // Deteksi struktur Date bawaan google
                         let dateMatch = vStr.match(/Date\((\d+),\s*(\d+),\s*(\d+)/);
                         if (dateMatch) {
-                            tanggal = parseInt(dateMatch[3]); // Ambil Hari (Day) secara spesifik
+                            tanggal = parseInt(dateMatch[3]); 
                         } else {
-                            // Ekstrak angka paling pertama yang ketemu
                             let numMatch = (fStr || vStr).match(/^(\d+)/);
                             if (numMatch) tanggal = parseInt(numMatch[1]);
                             else tanggal = parseInt(vStr);
@@ -1447,18 +1576,31 @@
                     }
 
                     if (bulan && tanggal > 0) {
+                        if (!window.monthEroList[bulan]) {
+                            window.monthEroList[bulan] = new Set();
+                        }
+
                         uniqueMonths.add(bulan);
                         let eroStatus = {};
                         
-                        eroList.forEach(ero => {
-                            let cellObj = row.c[ero.idx];
+                        // Cek status KHUSUS untuk ERO yang aktif di tabel (currentHeaders) pada bulan ini
+                        for (let idx in currentHeaders) {
+                            let eroName = currentHeaders[idx];
+                            window.monthEroList[bulan].add(eroName);
+
+                            let cellObj = row.c[idx];
                             let cellVal = (cellObj && cellObj.v !== null && cellObj.v !== undefined) ? String(cellObj.v).trim().toLowerCase() : '';
-                            eroStatus[ero.name] = (cellVal !== '' && cellVal !== 'null'); 
-                        });
+                            eroStatus[eroName] = (cellVal !== '' && cellVal !== 'null'); 
+                        }
                         
                         window.dataEroTracking.push({ bulan: bulan, tanggal: tanggal, status: eroStatus });
                     }
                 });
+
+                // Ubah format Set menjadi Array biasa
+                for (let b in window.monthEroList) {
+                    window.monthEroList[b] = Array.from(window.monthEroList[b]);
+                }
 
                 const filterSelect = document.getElementById('data-ero-month-filter');
                 filterSelect.innerHTML = '<option value="">Pilih Bulan...</option>';
@@ -1497,8 +1639,16 @@
                 return;
             }
 
-            // Case-insensitive filtering perbaikan dari bug huruf kapital
             const filteredData = window.dataEroTracking.filter(d => d.bulan.toLowerCase() === filterMonth.toLowerCase());
+            
+            // Mengambil daftar nama ERO khusus yang ada di bulan tersebut
+            let actualMonthKey = Object.keys(window.monthEroList).find(k => k.toLowerCase() === filterMonth.toLowerCase());
+            const activeEros = window.monthEroList[actualMonthKey] || [];
+
+            if (activeEros.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 2rem; color: var(--text-muted); border: 1.5px dashed var(--border-color); border-radius: 8px;">Tidak ada ERO yang terdaftar di bulan ini.</div>';
+                return;
+            }
             
             const now = new Date();
             const monthNames = ["januari", "februari", "maret", "april", "mei", "juni", "juli", "agustus", "september", "oktober", "november", "desember"];
@@ -1507,7 +1657,7 @@
             const todayDate = now.getDate();
 
             let statsPerEro = {};
-            window.eroTrackingList.forEach(eroName => {
+            activeEros.forEach(eroName => {
                 statsPerEro[eroName] = { 
                     totalReport: 0, 
                     totalMissed: 0, 
@@ -1518,17 +1668,16 @@
             filteredData.forEach(row => {
                 let rowTgl = parseInt(row.tanggal);
                 
-                // SKIPPING FUTURE DATES (Jangan hitung tanggal esok/lusa jika di bulan berjalan)
+                // SKIPPING FUTURE DATES
                 if (isCurrentMonth && !isNaN(rowTgl) && rowTgl > todayDate) {
                     return; 
                 }
 
-                window.eroTrackingList.forEach(eroName => {
+                activeEros.forEach(eroName => {
                     if (row.status[eroName]) {
                         statsPerEro[eroName].totalReport++;
                     } else {
                         statsPerEro[eroName].totalMissed++;
-                        // Pastikan tidak masuk duplikat
                         if (!statsPerEro[eroName].missedDatesList.includes(rowTgl)) {
                             statsPerEro[eroName].missedDatesList.push(rowTgl);
                         }
@@ -1536,12 +1685,11 @@
                 });
             });
 
-            window.eroTrackingList.forEach(eroName => {
+            activeEros.forEach(eroName => {
                 const stat = statsPerEro[eroName];
                 const initial = eroName.charAt(0).toUpperCase();
                 const missedColorClass = stat.totalMissed > 0 ? 'danger' : '';
                 
-                // RENDER TANGGAL DALAM BENTUK CHIP (RAPIH & BERURUTAN)
                 let badgesHTML = '';
                 if (stat.missedDatesList.length > 0) {
                     stat.missedDatesList.sort((a, b) => parseInt(a) - parseInt(b));
