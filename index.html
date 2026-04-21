@@ -940,9 +940,27 @@
 
         window.fetchDashboardSalesData = async function() {
             window.setLocalStatus('status-dashboard-sales', 'Menarik data dari Spreadsheet...', 'loading');
-            const SHEET_ID = '123R_I3r08Nb0hEynMe4KjZKsDFHZYiybXO8_MlDh9iY';
-            const GID = '379990612';
+            
+            // CEK LINK SPREADSHEET MULTI-AKUN (summary_report)
+            if (!window.currentStoreConfig || !window.currentStoreConfig.summary_report) {
+                window.setLocalStatus('status-dashboard-sales', 'Link Summary Report belum dikonfigurasi di database untuk toko ini.', 'error');
+                return;
+            }
+
+            const rawUrl = window.currentStoreConfig.summary_report;
+            // Ekstrak otomatis Sheet ID dan GID dari URL
+            const sheetIdMatch = rawUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
+            const gidMatch = rawUrl.match(/[#&?]gid=([0-9]+)/);
+
+            if (!sheetIdMatch) {
+                window.setLocalStatus('status-dashboard-sales', 'Format link Summary Report di database tidak valid.', 'error');
+                return;
+            }
+
+            const SHEET_ID = sheetIdMatch[1];
+            const GID = gidMatch ? gidMatch[1] : '0';
             const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${GID}&headers=1`;
+            
             try {
                 const response = await fetch(url);
                 const textData = await response.text();
@@ -1144,9 +1162,24 @@
         window.fetchDataReportEro = async function() {
             window.setLocalStatus('status-data-ero', 'Menganalisa rekam jejak report ERO...', 'loading');
             
-            // Link Spreadsheet Baru untuk Tracking
-            const SHEET_ID = '123R_I3r08Nb0hEynMe4KjZKsDFHZYiybXO8_MlDh9iY';
-            const GID = '113801610';
+            // CEK LINK SPREADSHEET MULTI-AKUN (rekap_report)
+            if (!window.currentStoreConfig || !window.currentStoreConfig.rekap_report) {
+                window.setLocalStatus('status-data-ero', 'Link Rekap Report belum dikonfigurasi di database untuk toko ini.', 'error');
+                return;
+            }
+
+            const rawUrl = window.currentStoreConfig.rekap_report;
+            // Ekstrak otomatis Sheet ID dan GID dari URL
+            const sheetIdMatch = rawUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
+            const gidMatch = rawUrl.match(/[#&?]gid=([0-9]+)/);
+
+            if (!sheetIdMatch) {
+                window.setLocalStatus('status-data-ero', 'Format link Rekap Report di database tidak valid.', 'error');
+                return;
+            }
+
+            const SHEET_ID = sheetIdMatch[1];
+            const GID = gidMatch ? gidMatch[1] : '0';
             const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${GID}&headers=1`;
 
             try {
