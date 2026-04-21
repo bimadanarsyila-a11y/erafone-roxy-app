@@ -156,10 +156,24 @@
         .filter-bar { display: flex; justify-content: space-between; gap: 1rem; align-items: center; background: #f8fafc; padding: 1.25rem 1.5rem; border-radius: var(--border-radius-md); border: 1.5px solid var(--border-color); margin-bottom: 2rem; flex-wrap: wrap; box-shadow: var(--shadow-sm); }
         .filter-bar-left { display: flex; align-items: center; gap: 1rem; }
         .filter-select { padding: 0.6rem 1rem; border-radius: 8px; border: 1.5px solid var(--border-color); font-weight: 700; font-size: 0.9rem; outline: none; background: white; color: var(--text-main); cursor: pointer; min-width: 150px; }
-        .summary-dashboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
-        .summary-card { background: var(--bg-primary); color: white; padding: 1.5rem; border-radius: var(--border-radius-md); border: 1.5px solid var(--border-color); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 0.5rem; }
-        .summary-card h4 { font-size: 0.85rem; font-weight: 700; color: #fca5a5; text-transform: uppercase; margin: 0; }
-        .summary-card .val { font-size: 1.5rem; font-weight: 800; margin: 0; }
+        
+        /* UNIFIED SUMMARY WIDGETS */
+        .summary-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.25rem; margin-bottom: 2rem; }
+        .summary-card { padding: 1.25rem; border-radius: var(--border-radius-md); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: flex; flex-direction: column; color: white; border: 1.5px solid var(--border-color); transition: var(--transition); position: relative; overflow: hidden; }
+        .summary-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-sm); }
+        .summary-card::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: linear-gradient(to bottom right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%); pointer-events: none; }
+        
+        .sc-header { font-size: 0.95rem; font-weight: 800; color: rgba(255,255,255,0.95); text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; border-bottom: 1px dashed rgba(255,255,255,0.4); padding-bottom: 0.75rem; letter-spacing: 0.5px; z-index: 1; }
+        .sc-body { display: flex; flex-direction: column; gap: 0.6rem; z-index: 1; }
+        .sc-row { display: flex; justify-content: space-between; align-items: flex-end; font-size: 0.85rem; color: rgba(255,255,255,0.9); font-weight: 500; margin-bottom: 0.25rem; }
+        .sc-row span:first-child { flex-shrink: 0; margin-right: 0.5rem; padding-bottom: 0.1rem; }
+        .sc-row span:last-child { font-weight: 800; color: #ffffff; font-size: 1.1rem; text-align: right; line-height: 1.2; word-wrap: break-word; }
+        .sc-row.highlight span:last-child { color: var(--accent-primary); font-size: 1.25rem; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+        .sc-row.small-row { margin-top: 0.2rem; }
+        .sc-row.small-row span:last-child { font-size: 0.95rem; color: #fde047; font-weight: 700; }
+        
+        .sc-footer { border-top: 1px dashed rgba(255,255,255,0.4); margin-top: 0.75rem; padding-top: 0.75rem; display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: #f8fafc; z-index: 1; }
+        .sc-footer strong { font-size: 1.05rem; color: #fff; margin-left: 4px; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
         
         .progress-container { width: 100%; }
         .progress-header { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-main); }
@@ -544,44 +558,62 @@
         <!-- 4. VIEW: CEK STOK AREA -->
         <div id="view-cek-stok" class="view">
             <div class="detail-view">
-                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                <h2>Cek Stok Area</h2>
                 
-                <div class="column-card section-divider">
-                    <div class="flex-row-align">
-                        <span class="column-title">1. Update Data Master Stok Area</span>
-                        <div class="last-update-box">
+                <!-- HEADER & UPDATE SECTION COMPACT (TOP RIGHT) -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1.5rem; border-bottom: 2px dashed #cbd5e1; padding-bottom: 1.5rem;">
+                    <div>
+                        <button class="back-btn" onclick="window.backToMain()" style="margin-bottom: 1rem;"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
+                        <h2 style="margin: 0;">Cek Stok Area</h2>
+                    </div>
+                    
+                    <!-- Form Update Master Kecil di Pojok Kanan -->
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; width: 100%; max-width: 400px;">
+                        <div class="last-update-box" style="font-size: 0.75rem; padding: 0.25rem 0.6rem; margin: 0;">
                             <span style="font-weight: 700; color: var(--bg-primary); margin-right: 4px;">Last Update:</span>
-                            <i data-lucide="clock" style="width: 14px; height: 14px;"></i>
+                            <i data-lucide="clock" style="width: 12px; height: 12px;"></i>
                             <span id="last-upload-time">Belum ada data</span>
                         </div>
-                    </div>
-                    <div class="action-row">
-                        <div class="upload-compact" onclick="document.getElementById('stok-area-file').click()">
-                            <i data-lucide="file-spreadsheet"></i>
-                            <p id="stok-area-file-name" style="margin: 0; font-size: 0.9rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pilih file Excel master stok...</p>
-                            <input type="file" id="stok-area-file" style="display:none" onchange="window.updateFileName('stok-area-file', 'stok-area-file-name')">
+                        <div style="display: flex; gap: 0.5rem; width: 100%; height: 38px;">
+                            <div class="upload-compact" onclick="document.getElementById('stok-area-file').click()" style="height: 100%; padding: 0 0.75rem; border-radius: 6px; flex: 1;">
+                                <i data-lucide="file-spreadsheet" style="width: 16px; margin: 0;"></i>
+                                <p id="stok-area-file-name" style="margin: 0 0 0 0.5rem; font-size: 0.8rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pilih file Excel master...</p>
+                                <input type="file" id="stok-area-file" style="display:none" onchange="window.updateFileName('stok-area-file', 'stok-area-file-name')">
+                            </div>
+                            <button class="btn-base btn-process" id="btn-update-stok" onclick="window.processUpdateStokArea()" style="height: 100%; padding: 0 1rem; font-size: 0.8rem; border-radius: 6px; margin: 0;">
+                                <i data-lucide="upload-cloud" style="width: 14px;"></i> Update
+                            </button>
                         </div>
-                        <button class="btn-base btn-process btn-action-compact" id="btn-update-stok" onclick="window.processUpdateStokArea()">Update Master</button>
+                        <div id="status-update-stok" class="local-status" style="margin-top: 0; padding: 0.25rem 0.5rem; font-size: 0.75rem;"></div>
                     </div>
-                    <div id="status-update-stok" class="local-status"></div>
                 </div>
 
-                <div class="column-card">
-                    <span class="column-title">2. Cari Ketersediaan Barang</span>
-                    <div class="action-row">
-                        <input type="text" id="search-stok-input" class="search-input" placeholder="Masukkan nama, tipe, atau kode barang..." onkeypress="if(event.key === 'Enter') window.processSearchStok()">
-                        <button class="btn-base btn-send btn-action-compact" id="btn-search-stok" onclick="window.processSearchStok()">
-                            <i data-lucide="search" style="width:16px;"></i> Cari Data
+                <!-- SEARCH SECTION (LARGE & WIDE) -->
+                <div class="column-card" style="gap: 1.5rem;">
+                    <div class="action-row" style="height: 56px;">
+                        <input type="text" id="search-stok-input" class="search-input" placeholder="Ketik nama, tipe, atau kode barang untuk mencari stok..." onkeypress="if(event.key === 'Enter') window.processSearchStok()" style="font-size: 1.05rem; padding: 0 1.5rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
+                        <button class="btn-base btn-send" id="btn-search-stok" onclick="window.processSearchStok()" style="height: 100%; width: 180px; font-size: 1rem; border-radius: 8px; margin: 0;">
+                            <i data-lucide="search" style="width:20px;"></i> Cari Stok
                         </button>
                     </div>
-                    <div id="status-search-stok" class="local-status"></div>
+                    <div id="status-search-stok" class="local-status" style="margin-top: -0.5rem;"></div>
                     
-                    <div class="table-wrapper-large">
+                    <div class="table-wrapper-large" style="margin-top: 0; max-height: 70vh; min-height: 450px;">
                         <table class="data-table" id="stok-result-table">
-                            <thead><tr><th>Nama Lokasi / Store</th><th style="width: 120px; text-align: center;">Qty Tersedia</th></tr></thead>
+                            <thead>
+                                <tr>
+                                    <th style="font-size: 0.85rem;">Nama Lokasi / Store</th>
+                                    <th style="width: 150px; text-align: center; font-size: 0.85rem;">Qty Tersedia</th>
+                                </tr>
+                            </thead>
                             <tbody>
-                                <tr><td colspan="2" style="text-align:center; padding:6rem 1rem; color:var(--text-muted); font-style: italic;">Hasil pencarian stok barang akan terlampir di sini...</td></tr>
+                                <tr>
+                                    <td colspan="2" style="text-align:center; padding:8rem 1rem; color:var(--text-muted); font-size: 1.1rem; font-weight: 500;">
+                                        <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; opacity: 0.6;">
+                                            <i data-lucide="package-search" style="width: 64px; height: 64px;"></i>
+                                            Ketik nama barang di atas lalu tekan Cari
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -613,18 +645,74 @@
 
                 <div id="status-dashboard-sales" class="local-status" style="margin-bottom: 1.5rem; justify-content: center;"></div>
 
+                <!-- UNIFIED SUMMARY WIDGETS (ALL IN ONE GRID) -->
                 <div class="summary-dashboard">
-                    <div class="summary-card">
-                        <h4>Total Target (All Bisnis)</h4>
-                        <div class="val" id="dash-sum-target">Rp 0</div>
+                    <!-- ALL BISNIS -->
+                    <div class="summary-card" style="background: linear-gradient(135deg, #8b0000 0%, #5d0000 100%);">
+                        <div class="sc-header"><i data-lucide="briefcase" style="width: 16px;"></i> ALL BISNIS</div>
+                        <div class="sc-body">
+                            <div class="sc-row"><span>Target</span><span id="dash-sum-target">Rp 0</span></div>
+                            <div class="sc-row highlight">
+                                <span style="display: flex; flex-direction: column;">
+                                    Pencapaian <small id="dash-sum-ach" style="font-size: 0.75rem; color: rgba(255,255,255,0.8); font-weight: normal; margin-top: 3px;">Avg Ach: 0%</small>
+                                </span>
+                                <span id="dash-sum-aktual">Rp 0</span>
+                            </div>
+                            <div class="sc-row small-row"><span>Estimasi</span><span id="dash-sum-est">Rp 0 (0%)</span></div>
+                        </div>
                     </div>
-                    <div class="summary-card" style="background: #047857; border-color: #022c22;">
-                        <h4 style="color: #6ee7b7;">Total Pencapaian (All Bisnis)</h4>
-                        <div class="val" id="dash-sum-aktual">Rp 0</div>
+                    <!-- DEVICE -->
+                    <div class="summary-card" style="background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);">
+                        <div class="sc-header"><i data-lucide="smartphone" style="width: 16px;"></i> DEVICE</div>
+                        <div class="sc-body">
+                            <div class="sc-row"><span>Target</span><span id="dash-tgt-dev">Rp 0</span></div>
+                            <div class="sc-row highlight"><span>Pencapaian</span><span id="dash-sum-dev">Rp 0</span></div>
+                            <div class="sc-row small-row"><span>Estimasi</span><span id="dash-est-dev">Rp 0 (0%)</span></div>
+                        </div>
                     </div>
-                    <div class="summary-card" style="background: #b45309; border-color: #451a03;">
-                        <h4 style="color: #fcd34d;">Avg Pencapaian Keseluruhan</h4>
-                        <div class="val" id="dash-sum-ach">0%</div>
+                    <!-- ACCESSORIES -->
+                    <div class="summary-card" style="background: linear-gradient(135deg, #8b5cf6 0%, #5b21b6 100%);">
+                        <div class="sc-header"><i data-lucide="headphones" style="width: 16px;"></i> ACCESSORIES</div>
+                        <div class="sc-body">
+                            <div class="sc-row"><span>Target</span><span id="dash-tgt-acc">Rp 0</span></div>
+                            <div class="sc-row highlight"><span>Pencapaian</span><span id="dash-sum-acc">Rp 0</span></div>
+                            <div class="sc-row small-row"><span>Estimasi</span><span id="dash-est-acc">Rp 0 (0%)</span></div>
+                        </div>
+                        <div class="sc-footer">
+                            <span>AR: <strong id="dash-ar-acc">0%</strong></span>
+                            <span>SOB: <strong id="dash-sob-acc">0%</strong></span>
+                        </div>
+                    </div>
+                    <!-- BOLTECH -->
+                    <div class="summary-card" style="background: linear-gradient(135deg, #10b981 0%, #047857 100%);">
+                        <div class="sc-header"><i data-lucide="shield-check" style="width: 16px;"></i> BOLTECH</div>
+                        <div class="sc-body">
+                            <div class="sc-row"><span>Target</span><span id="dash-tgt-bolt">Rp 0</span></div>
+                            <div class="sc-row highlight"><span>Pencapaian</span><span id="dash-sum-bolt">Rp 0</span></div>
+                            <div class="sc-row small-row"><span>Estimasi</span><span id="dash-est-bolt">Rp 0 (0%)</span></div>
+                        </div>
+                        <div class="sc-footer">
+                            <span>AR: <strong id="dash-ar-bolt">0%</strong></span>
+                            <span>SOB: <strong id="dash-sob-bolt">0%</strong></span>
+                        </div>
+                    </div>
+                    <!-- OPERATOR -->
+                    <div class="summary-card" style="background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);">
+                        <div class="sc-header"><i data-lucide="radio" style="width: 16px;"></i> OPERATOR</div>
+                        <div class="sc-body">
+                            <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">Indosat</span><span id="dash-sum-isat" style="color: white;">Rp 0</span></div>
+                            <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">XL</span><span id="dash-sum-xl" style="color: white;">Rp 0</span></div>
+                            <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">Telkomsel</span><span id="dash-sum-tsel" style="color: white;">Rp 0</span></div>
+                        </div>
+                    </div>
+                    <!-- TRAFFIC & LAYANAN (NEW) -->
+                    <div class="summary-card" style="background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);">
+                        <div class="sc-header"><i data-lucide="users" style="width: 16px;"></i> TRAFFIC & LAYANAN</div>
+                        <div class="sc-body">
+                            <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">WIC (Deal/Loss)</span><span id="dash-sum-wic" style="color: white;">0 / 0</span></div>
+                            <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">CSI</span><span id="dash-sum-csi" style="color: white;">0</span></div>
+                            <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">G. Review</span><span id="dash-sum-grev" style="color: white;">0</span></div>
+                        </div>
                     </div>
                 </div>
 
@@ -1310,14 +1398,50 @@
             });
 
             grid.innerHTML = ''; 
-            let totalTarget = 0, totalAktual = 0;
+            
+            // Variabel Akumulasi All Bisnis
+            let totalTarget = 0, totalAktual = 0, totalEst = 0;
+            
+            // Variabel Akumulasi Kategori
+            let tDevTgt = 0, tDevVal = 0, tDevEst = 0, tDevQty = 0;
+            let tAccTgt = 0, tAccVal = 0, tAccEst = 0, tAccQty = 0;
+            let tBoltTgt = 0, tBoltVal = 0, tBoltEst = 0, tBoltQty = 0;
+            let tIsatVal = 0, tXlVal = 0, tTselVal = 0;
+            let tWicDeal = 0, tWicLoss = 0, tCsi = 0, tGrev = 0;
 
             if (filteredData.length === 0 && dashboardSalesData.length > 0) {
                 grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-muted); border: 1.5px dashed var(--border-color); border-radius: 8px;">Tidak ada data untuk filter yang terpilih.</div>';
             } else {
                 filteredData.forEach(data => {
+                    // Akumulasi Utama
                     totalTarget += data.targetAB;
                     totalAktual += data.allBisnis;
+                    totalEst += data.estimasiAB;
+                    
+                    // Akumulasi Kategori
+                    tDevTgt += data.devTarget;
+                    tDevVal += data.devVal;
+                    tDevEst += data.devEst;
+                    tDevQty += data.devQty;
+                    
+                    tAccTgt += data.accTarget;
+                    tAccVal += data.accVal;
+                    tAccEst += data.accEst;
+                    tAccQty += data.accQty;
+                    
+                    tBoltTgt += data.boltTarget;
+                    tBoltVal += data.boltVal;
+                    tBoltEst += data.boltEst;
+                    tBoltQty += data.boltQty;
+                    
+                    tIsatVal += data.isatVal;
+                    tXlVal += data.xlVal;
+                    tTselVal += data.tselVal;
+
+                    tWicDeal += data.wicDeal;
+                    tWicLoss += data.wicLoss;
+                    tCsi += data.csi;
+                    tGrev += data.gRev;
 
                     let achPerc = data.targetAB > 0 ? (data.allBisnis / data.targetAB) * 100 : 0;
                     const displayPerc = achPerc.toFixed(1);
@@ -1404,10 +1528,54 @@
                 });
             }
 
+            // Hitung Persentase Estimasi
+            const calcP = (v, t) => t > 0 ? ((v / t) * 100).toFixed(1) : 0;
+            const estPercAB = calcP(totalEst, totalTarget);
+            const estPercDev = calcP(tDevEst, tDevTgt);
+            const estPercAcc = calcP(tAccEst, tAccTgt);
+            const estPercBolt = calcP(tBoltEst, tBoltTgt);
+
+            // Hitung AR & SOB Secara Global
+            const arAcc = tDevQty > 0 ? ((tAccQty / tDevQty) * 100).toFixed(1) : 0;
+            const sobAcc = tDevVal > 0 ? ((tAccVal / tDevVal) * 100).toFixed(1) : 0;
+            const arBolt = tDevQty > 0 ? ((tBoltQty / tDevQty) * 100).toFixed(1) : 0;
+            const sobBolt = tDevVal > 0 ? ((tBoltVal / tDevVal) * 100).toFixed(1) : 0;
+
+            // Render Nilai ke DOM (All Bisnis)
             document.getElementById('dash-sum-target').innerText = formatRp(totalTarget);
             document.getElementById('dash-sum-aktual').innerText = formatRp(totalAktual);
-            const totalAch = totalTarget > 0 ? ((totalAktual / totalTarget) * 100).toFixed(1) : 0;
-            document.getElementById('dash-sum-ach').innerText = totalAch + '%';
+            document.getElementById('dash-sum-ach').innerText = 'Avg Ach: ' + (totalTarget > 0 ? ((totalAktual / totalTarget) * 100).toFixed(1) : 0) + '%';
+            document.getElementById('dash-sum-est').innerText = `${formatRp(totalEst)} (${estPercAB}%)`;
+            
+            // Render Nilai ke DOM (Device)
+            document.getElementById('dash-tgt-dev').innerText = formatRp(tDevTgt);
+            document.getElementById('dash-sum-dev').innerText = formatRp(tDevVal);
+            document.getElementById('dash-est-dev').innerText = `${formatRp(tDevEst)} (${estPercDev}%)`;
+            
+            // Render Nilai ke DOM (Acc)
+            document.getElementById('dash-tgt-acc').innerText = formatRp(tAccTgt);
+            document.getElementById('dash-sum-acc').innerText = formatRp(tAccVal);
+            document.getElementById('dash-est-acc').innerText = `${formatRp(tAccEst)} (${estPercAcc}%)`;
+            document.getElementById('dash-ar-acc').innerText = `${arAcc}%`;
+            document.getElementById('dash-sob-acc').innerText = `${sobAcc}%`;
+            
+            // Render Nilai ke DOM (Bolt)
+            document.getElementById('dash-tgt-bolt').innerText = formatRp(tBoltTgt);
+            document.getElementById('dash-sum-bolt').innerText = formatRp(tBoltVal);
+            document.getElementById('dash-est-bolt').innerText = `${formatRp(tBoltEst)} (${estPercBolt}%)`;
+            document.getElementById('dash-ar-bolt').innerText = `${arBolt}%`;
+            document.getElementById('dash-sob-bolt').innerText = `${sobBolt}%`;
+            
+            // Render Nilai ke DOM (Operator)
+            document.getElementById('dash-sum-isat').innerText = formatRp(tIsatVal);
+            document.getElementById('dash-sum-xl').innerText = formatRp(tXlVal);
+            document.getElementById('dash-sum-tsel').innerText = formatRp(tTselVal);
+
+            // Render Nilai ke DOM (Traffic & Layanan)
+            document.getElementById('dash-sum-wic').innerHTML = `${formatNum(tWicDeal)} <span style="color: #fda4af; font-size: 0.95rem;">/ ${formatNum(tWicLoss)}</span>`;
+            document.getElementById('dash-sum-csi').innerText = formatNum(tCsi);
+            document.getElementById('dash-sum-grev').innerText = formatNum(tGrev);
+
             lucide.createIcons();
         };
 
