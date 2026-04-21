@@ -320,19 +320,83 @@
                     <h3>Pengaturan Akses & Editor</h3>
                     <p>Buka file salinan, klik <b>Bagikan (Share)</b>, ubah ke <b>"Siapa saja yang memiliki link"</b>, jadikan email berikut <b>Editor</b>:</p>
                     <div class="reg-email-box"><span id="copy-email-text">system.erafone@gmail.com</span><button onclick="window.copyTextVal('copy-email-text')" class="reg-copy-btn" title="Salin Email"><i data-lucide="copy" style="width: 16px;"></i></button></div>
+                    <img src="https://res.cloudinary.com/dilamvetq/image/upload/v1774786364/dnmpzd8uajd6nzip1aeo.jpg" class="tutorial-img" alt="Tutorial Share Google Sheets">
                 </div>
                 <div class="step-card">
                     <div class="step-badge">3</div>
-                    <h3>Simpan ID & Link Spreadsheet</h3>
-                    <p>Salin <b>ID Spreadsheet</b> beserta <b>Link URL lengkap</b> file tersebut untuk pendaftaran.</p>
+                    <h3>Simpan ID Spreadsheet Utama</h3>
+                    <p>Perhatikan URL di <i>browser</i> Anda. Salin <b>ID Spreadsheet</b> (kumpulan kode unik acak di antara <code>/d/</code> dan <code>/edit</code>). Simpan di catatan Anda karena akan digunakan untuk pendaftaran.</p>
+                    <img src="https://res.cloudinary.com/dilamvetq/image/upload/v1774786365/mavxzgnujtmcny8my8pr.jpg" class="tutorial-img" alt="Tutorial ID Spreadsheet">
+                </div>
+                <div class="step-card">
+                    <div class="step-badge">4</div>
+                    <h3>Salin Link Rekap & Summary Report</h3>
+                    <p>Agar dashboard bisa membaca data toko Anda, Anda wajib menyalin 2 URL link dari tab/sheet yang spesifik:</p>
+                    
+                    <div style="margin-top: 1rem;">
+                        <p style="font-weight: 800; color: var(--bg-primary); margin-bottom: 0.5rem; font-size: 0.95rem;">A. Link Rekap Report (Untuk Data ERO)</p>
+                        <ul style="font-size: 0.85rem; color: var(--text-muted); margin-left: 1.5rem; margin-bottom: 0.5rem; line-height: 1.5;">
+                            <li>Klik sheet/tab <b>Rekap report</b> di bagian bawah spreadsheet.</li>
+                            <li>Copy/Salin seluruh URL link di bagian atas browser Anda.</li>
+                        </ul>
+                        <img src="https://res.cloudinary.com/dilamvetq/image/upload/v1776773037/kywzw1qdvgd5clkhn9bc.jpg" class="tutorial-img" alt="Tutorial Link Rekap Report">
+                    </div>
+
+                    <div style="margin-top: 1.5rem; border-top: 1px dashed #cbd5e1; padding-top: 1.5rem;">
+                        <p style="font-weight: 800; color: var(--bg-primary); margin-bottom: 0.5rem; font-size: 0.95rem;">B. Link Summary Report (Untuk Dashboard Sales)</p>
+                        <ul style="font-size: 0.85rem; color: var(--text-muted); margin-left: 1.5rem; margin-bottom: 0.5rem; line-height: 1.5;">
+                            <li>Klik sheet/tab <b>Summary report</b> di bagian bawah spreadsheet.</li>
+                            <li>Copy/Salin seluruh URL link di bagian atas browser Anda.</li>
+                        </ul>
+                        <img src="https://res.cloudinary.com/dilamvetq/image/upload/v1776773037/jo1tu6yothsokcutnkde.jpg" class="tutorial-img" alt="Tutorial Link Summary Report">
+                    </div>
                 </div>
                 <div class="step-card" style="border-color: #bbf7d0; background: #f0fdf4;">
-                    <div class="step-badge" style="background: var(--success);">4</div>
+                    <div class="step-badge" style="background: var(--success);">5</div>
                     <h3 style="color: #166534;">Submit Formulir Pendaftaran</h3>
+                    <p style="color: #15803d; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">Jika keempat langkah di atas sudah selesai dan Anda telah memegang <b>ID Spreadsheet</b>, <b>Link Rekap Report</b>, serta <b>Link Summary Report</b>, silakan lengkapi formulir pendaftaran di bawah ini.</p>
                     <a href="https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/form/3c4e2e02-48c0-428c-9a48-334967fcc590" target="_blank" class="reg-submit-btn"><i data-lucide="check-square"></i> LENGKAPI FORMULIR PENDAFTARAN SEKARANG</a>
                 </div>
             </div>
             <button onclick="window.toggleRegister(false)" class="reg-back-link"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Login</button>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL (NEW) -->
+    <div id="settings-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 10001; justify-content: center; align-items: center; padding: 1rem; overflow-y: auto;">
+        <div style="background: white; padding: 2rem; border-radius: var(--border-radius-lg); width: 100%; max-width: 500px; border: 2px solid var(--border-color); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); animation: slideUp 0.3s ease-out;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--bg-primary); display: flex; align-items: center; gap: 0.5rem; margin: 0;"><i data-lucide="settings"></i> Pengaturan Akun</h3>
+                <button onclick="window.closeSettings()" style="background: none; border: none; cursor: pointer; color: var(--text-muted); display: flex;"><i data-lucide="x-circle"></i></button>
+            </div>
+            
+            <div class="input-group">
+                <label>Password Baru (Opsional)</label>
+                <input type="password" id="set-new-pass" class="custom-input" placeholder="Kosongkan jika tidak ingin ganti password">
+            </div>
+            <div class="input-group">
+                <label>Link Master Spreadsheet</label>
+                <input type="text" id="set-link-master" class="custom-input" placeholder="https://docs.google.com/spreadsheets/d/...">
+            </div>
+            <div class="input-group">
+                <label>Link Summary Report (Dashboard Sales)</label>
+                <input type="text" id="set-link-summary" class="custom-input" placeholder="https://docs.google.com/spreadsheets/d/...">
+            </div>
+            <div class="input-group">
+                <label>Link Rekap Report (Tracking ERO)</label>
+                <input type="text" id="set-link-rekap" class="custom-input" placeholder="https://docs.google.com/spreadsheets/d/...">
+            </div>
+            
+            <hr style="border: 0; border-top: 1.5px dashed #cbd5e1; margin: 1.5rem 0;">
+            
+            <div class="input-group">
+                <label style="color: var(--danger);"><i data-lucide="lock" style="width: 12px; display: inline-block;"></i> Verifikasi (Wajib)</label>
+                <input type="password" id="set-current-pass" class="custom-input" placeholder="Ketik password saat ini untuk mengizinkan simpan" style="border-color: #fca5a5 !important; background: #fef2f2;">
+            </div>
+            
+            <button class="btn-base btn-process btn-large" id="btn-save-settings" onclick="window.saveSettings()" style="margin-top: 0.5rem;">
+                <i data-lucide="save" style="width: 18px;"></i> Simpan Perubahan
+            </button>
         </div>
     </div>
 
@@ -342,6 +406,10 @@
         <div class="logout-container" id="top-logout">
             <button class="btn-logout btn-master" onclick="window.openMasterSheet()">
                 <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Master Spreadsheet Store
+            </button>
+            <!-- TOMBOL PENGATURAN (NEW) -->
+            <button class="btn-logout" onclick="window.openSettings()" style="background: #475569; border-color: #334155 !important;">
+                <i data-lucide="settings" style="width: 14px; height: 14px;"></i> Pengaturan
             </button>
             <button class="btn-logout" onclick="window.handleLogout()">
                 <i data-lucide="log-out" style="width: 14px; height: 14px;"></i> Logout
@@ -834,6 +902,93 @@
             window.currentStoreConfig = null;
             localStorage.removeItem('erafoneStoreConfig');
             location.reload();
+        }
+
+        // --- FUNGSI PENGATURAN AKUN (NEW) ---
+        window.openSettings = function() {
+            if (!window.currentStoreConfig) return;
+            // Pre-fill data link yang sudah ada
+            document.getElementById('set-link-master').value = window.currentStoreConfig.link_master || '';
+            document.getElementById('set-link-summary').value = window.currentStoreConfig.summary_report || '';
+            document.getElementById('set-link-rekap').value = window.currentStoreConfig.rekap_report || '';
+            // Kosongkan kolom password
+            document.getElementById('set-new-pass').value = '';
+            document.getElementById('set-current-pass').value = '';
+            
+            document.getElementById('settings-modal').style.display = 'flex';
+            lucide.createIcons();
+        }
+
+        window.closeSettings = function() {
+            document.getElementById('settings-modal').style.display = 'none';
+        }
+
+        window.saveSettings = async function() {
+            const currentPass = document.getElementById('set-current-pass').value;
+            const newPass = document.getElementById('set-new-pass').value.trim();
+            const linkMaster = document.getElementById('set-link-master').value.trim();
+            const linkSummary = document.getElementById('set-link-summary').value.trim();
+            const linkRekap = document.getElementById('set-link-rekap').value.trim();
+
+            if (!currentPass) {
+                window.showModal('error', 'Verifikasi Gagal', 'Harap masukkan Password Saat Ini untuk menyimpan perubahan.');
+                return;
+            }
+
+            if (currentPass !== window.currentStoreConfig.password) {
+                window.showModal('error', 'Verifikasi Gagal', 'Password Saat Ini yang Anda masukkan salah!');
+                return;
+            }
+
+            const btn = document.getElementById('btn-save-settings');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="spin-icon" style="width: 18px;"></i> Menyimpan...';
+            btn.disabled = true;
+            lucide.createIcons();
+
+            // Siapkan data yang akan dikirim (di-update) ke Supabase
+            const payload = {
+                link_master: linkMaster,
+                summary_report: linkSummary,
+                rekap_report: linkRekap
+            };
+
+            // Jika user mengisi password baru, update passwordnya
+            if (newPass !== '') {
+                payload.password = newPass;
+            }
+
+            try {
+                // Menggunakan method PATCH untuk update data di Supabase berdasarkan sap_code
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/store_config?sap_code=eq.${window.currentStoreConfig.sap_code}`, {
+                    method: 'PATCH',
+                    headers: { 
+                        'apikey': SUPABASE_ANON_KEY, 
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=representation' // Meminta Supabase mengembalikan data terbaru
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error("Gagal mengupdate data di server.");
+                
+                const data = await response.json();
+                if (data && data.length > 0) {
+                    // Update state lokal dan localStorage
+                    window.currentStoreConfig = data[0];
+                    localStorage.setItem('erafoneStoreConfig', JSON.stringify(data[0]));
+                    
+                    window.closeSettings();
+                    window.showModal('success', 'Tersimpan!', 'Pengaturan akun dan link spreadsheet berhasil diperbarui.');
+                }
+            } catch (err) {
+                window.showModal('error', 'Gagal Menyimpan', err.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                lucide.createIcons();
+            }
         }
 
         window.openMasterSheet = function() {
