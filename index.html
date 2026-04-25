@@ -9,6 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Library html2canvas untuk fitur Download Gambar -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Plugin DataLabels untuk memunculkan teks di dalam grafik Pie/Doughnut -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
     <style>
         /* --- TEMA & WARNA UTAMA --- */
         :root {
@@ -251,6 +253,7 @@
         
         .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
         .form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem; }
+        .recon-grid { display: grid; grid-template-columns: 1fr 1.8fr; gap: 2rem; align-items: stretch; }
 
         /* --- DATA REPORT ERO (NEW) --- */
         .ero-track-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
@@ -301,7 +304,7 @@
             .btn-action-compact { width: 100%; height: 48px; }
             .upload-compact, .search-input { height: 48px; }
             .grid-automation { grid-template-columns: repeat(2, 1fr); }
-            .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
+            .form-grid-2, .form-grid-3, .recon-grid { grid-template-columns: 1fr; }
         }
         @media (max-width: 600px) { .grid-automation { grid-template-columns: 1fr; } }
     </style>
@@ -533,36 +536,58 @@
                         <i data-lucide="file-spreadsheet" style="width: 14px;"></i> Template Excel Recon
                     </a>
                 </div>
-                <h2 style="margin-top: -0.5rem;">Rekonsiliasi Data</h2>
+                <h2 style="margin-top: -0.5rem; margin-bottom: 1.5rem;">Rekonsiliasi Data</h2>
                 
-                <div class="reconcile-top-row">
-                    <div class="column-card">
-                        <span class="column-title">1. File PDF POS</span>
-                        <div class="upload-area" onclick="document.getElementById('recon-pdf').click()" style="min-height: 120px; padding: 1.5rem;">
-                            <i data-lucide="file-text" style="width: 24px; height: 24px;"></i><p id="pdf-name">Pilih file PDF...</p>
-                            <input type="file" id="recon-pdf" accept=".pdf" style="display:none" onchange="window.updateFileName('recon-pdf', 'pdf-name'); window.resetReconcileState('pdf')">
+                <div class="recon-grid">
+                    
+                    <!-- KOLOM KIRI: File Input (Compact) -->
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div class="column-card" style="background: #f8fafc; padding: 1.25rem; border-radius: var(--border-radius-md); border: 1.5px solid var(--border-color); box-shadow: var(--shadow-sm);">
+                            <span class="column-title" style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
+                                <i data-lucide="file-text" style="width: 16px; color: var(--danger);"></i> 1. File PDF POS
+                            </span>
+                            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <div class="upload-compact" onclick="document.getElementById('recon-pdf').click()" style="height: 48px; width: 100%; border: 1.5px dashed #cbd5e1 !important; background: white;">
+                                    <i data-lucide="upload-cloud" style="width: 16px; margin: 0; color: var(--text-muted);"></i>
+                                    <p id="pdf-name" style="margin: 0; font-size: 0.8rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pilih file PDF...</p>
+                                    <input type="file" id="recon-pdf" accept=".pdf" style="display:none" onchange="window.updateFileName('recon-pdf', 'pdf-name'); window.resetReconcileState('pdf')">
+                                </div>
+                                <button class="btn-base btn-process" id="btn-pdf-reconcile" onclick="window.processPdf()" style="width: 100%; padding: 0.6rem; font-size: 0.85rem;">Olah PDF</button>
+                            </div>
+                            <div id="status-pdf" class="local-status" style="margin-top: 0.75rem;"></div>
                         </div>
-                        <button class="btn-base btn-process btn-large" id="btn-pdf-reconcile" onclick="window.processPdf()">Olah PDF</button>
-                        <div id="status-pdf" class="local-status"></div>
-                    </div>
-                    <div class="column-card">
-                        <span class="column-title">2. File Excel</span>
-                        <div class="upload-area" onclick="document.getElementById('recon-excel').click()" style="min-height: 120px; padding: 1.5rem;">
-                            <i data-lucide="file-spreadsheet" style="width: 24px; height: 24px;"></i><p id="excel-name">Pilih file Excel...</p>
-                            <input type="file" id="recon-excel" accept=".xlsx, .xls" style="display:none" onchange="window.updateFileName('recon-excel', 'excel-name'); window.resetReconcileState('excel')">
-                        </div>
-                        <button class="btn-base btn-process btn-large" id="btn-excel-reconcile" onclick="window.processExcel()">Olah Excel</button>
-                        <div id="status-excel" class="local-status"></div>
-                    </div>
-                </div>
 
-                <div class="section-divider" style="margin-top: 2rem;"></div>
-                
-                <div class="column-card">
-                    <span class="column-title">3. Tindakan Lanjutan</span>
-                    <textarea id="email-body-textarea" class="custom-input" placeholder="Respon sistem / draft email akan muncul di sini..." style="height: 140px;"></textarea>
-                    <button class="btn-base btn-send btn-large" id="btn-send-email" onclick="window.sendEmail()" disabled style="margin-top: 0.5rem;"><i data-lucide="mail"></i> Kirim Laporan via Email</button>
-                    <div id="status-send-email" class="local-status"></div>
+                        <div class="column-card" style="background: #f8fafc; padding: 1.25rem; border-radius: var(--border-radius-md); border: 1.5px solid var(--border-color); box-shadow: var(--shadow-sm);">
+                            <span class="column-title" style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
+                                <i data-lucide="file-spreadsheet" style="width: 16px; color: var(--success);"></i> 2. File Excel
+                            </span>
+                            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <div class="upload-compact" onclick="document.getElementById('recon-excel').click()" style="height: 48px; width: 100%; border: 1.5px dashed #cbd5e1 !important; background: white;">
+                                    <i data-lucide="upload-cloud" style="width: 16px; margin: 0; color: var(--text-muted);"></i>
+                                    <p id="excel-name" style="margin: 0; font-size: 0.8rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pilih file Excel...</p>
+                                    <input type="file" id="recon-excel" accept=".xlsx, .xls" style="display:none" onchange="window.updateFileName('recon-excel', 'excel-name'); window.resetReconcileState('excel')">
+                                </div>
+                                <button class="btn-base btn-process" id="btn-excel-reconcile" onclick="window.processExcel()" style="width: 100%; padding: 0.6rem; font-size: 0.85rem;">Olah Excel</button>
+                            </div>
+                            <div id="status-excel" class="local-status" style="margin-top: 0.75rem;"></div>
+                        </div>
+                    </div>
+
+                    <!-- KOLOM KANAN: Textarea Ekstra Luas -->
+                    <div class="column-card" style="height: 100%; display: flex; flex-direction: column;">
+                        <span class="column-title" style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
+                            <i data-lucide="mail" style="width: 18px; color: var(--accent-primary);"></i> 3. Tindakan Lanjutan
+                        </span>
+                        <textarea id="email-body-textarea" class="custom-input" placeholder="Respon sistem dan draft email rekonsiliasi akan muncul secara utuh di sini..." style="flex: 1; min-height: 350px; font-family: monospace; font-size: 0.85rem; line-height: 1.6; resize: vertical; padding: 1.25rem;"></textarea>
+                        
+                        <div style="margin-top: 1rem;">
+                            <button class="btn-base btn-send" id="btn-send-email" onclick="window.sendEmail()" disabled style="width: 100%; padding: 1rem; font-size: 1rem;">
+                                <i data-lucide="send" style="width: 18px;"></i> Kirim Laporan via Email
+                            </button>
+                            <div id="status-send-email" class="local-status" style="margin-top: 0.75rem;"></div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -681,7 +706,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                     <div class="tab-container" style="max-width: 450px; margin-bottom: 0;">
                         <button class="tab-btn active" id="tab-sales-chart" onclick="window.switchSalesTab('chart')"><i data-lucide="pie-chart" style="width:16px; margin-right: 6px; vertical-align: -3px;"></i> Visualisasi Dashboard</button>
-                        <button class="tab-btn" id="tab-sales-card" onclick="window.switchSalesTab('card')"><i data-lucide="layout-grid" style="width:16px; margin-right: 6px; vertical-align: -3px;"></i> Tampilan Kartu</button>
+                        <button class="tab-btn" id="tab-sales-card" onclick="window.switchSalesTab('card')"><i data-lucide="layout-grid" style="width:16px; margin-right: 6px; vertical-align: -3px;"></i> ERO Card</button>
                     </div>
                     
                     <!-- Tombol Download Gambar (Hanya muncul di Visualisasi) -->
@@ -914,7 +939,7 @@
                     
                     <div class="input-group">
                         <label>All Bisnis (Total)</label>
-                        <input type="number" id="rep-allbisnis" class="custom-input" placeholder="all bisnis">
+                        <input type="number" id="rep-allbisnis" class="custom-input" placeholder="Total Pendapatan Rp">
                     </div>
 
                     <div class="form-grid-2">
@@ -950,7 +975,7 @@
                     </div>
 
                     <div class="input-group">
-                        <label>lampirkan issue daily jika ada loss sales</label>
+                        <label>Catatan Naratif / Penjelasan Harian</label>
                         <textarea id="rep-naratif" class="custom-input" style="height: 100px;" placeholder="Tuliskan kendala, laporan, atau penjelasan tambahan di sini..."></textarea>
                     </div>
 
@@ -1157,7 +1182,7 @@
                 'ero_list': { label: 'Daftar Nama ERO <span style="text-transform: none; color: var(--text-muted); font-weight: 500;">(Pisahkan dengan koma)</span>', type: 'textarea', placeholder: 'Contoh: Andi, Budi, Citra' },
                 'link_master': { label: 'Link Master Spreadsheet', type: 'text', placeholder: 'https://docs.google.com/spreadsheets/d/...' },
                 'summary_report': { label: 'Link Summary Report (Dashboard Sales)', type: 'text', placeholder: 'https://docs.google.com/spreadsheets/d/...' },
-                'daily_sales': { label: 'Link Daily Sales (Trend Chart Harian)', type: 'text', placeholder: 'https://docs.google.com/spreadsheets/d/...' },
+                'daily_sales': { label: 'Link Daily Sales <span style="text-transform: none; color: var(--text-muted); font-weight: 500;">(Trend Chart Harian)</span>', type: 'text', placeholder: 'https://docs.google.com/spreadsheets/d/...' },
                 'rekap_report': { label: 'Link Rekap Report (Tracking ERO)', type: 'text', placeholder: 'https://docs.google.com/spreadsheets/d/...' }
             };
 
@@ -1248,7 +1273,10 @@
             dynamicInputs.forEach(input => {
                 const key = input.getAttribute('data-key');
                 if(key) {
-                    payload[key] = input.value;
+                    // Tambahkan pembersih spasi (.trim) untuk mencegah error pada link URL
+                    let val = input.value;
+                    if (key !== 'ero_list') val = val.trim(); 
+                    payload[key] = val;
                 }
             });
 
@@ -1462,6 +1490,12 @@
         const formatRp = (angka) => { if(!angka || isNaN(angka)) return "Rp 0"; return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka); };
         const formatNum = (angka) => { if(!angka || isNaN(angka)) return "0"; return new Intl.NumberFormat('id-ID').format(angka); };
         const formatPerc = (angka) => { if(angka === null || angka === undefined) return "0%"; if(Math.abs(angka) > 0 && Math.abs(angka) <= 2) return (angka * 100).toFixed(1) + "%"; return parseFloat(angka).toFixed(1) + "%"; };
+        
+        // Pembulatan ERO Card (Hilangkan 3 digit ribuan & desimal) untuk cegah overlap
+        const formatRpRounded = (angka) => { 
+            if(!angka || isNaN(angka)) return "Rp 0"; 
+            return "Rp " + new Intl.NumberFormat('id-ID').format(Math.floor(angka / 1000)); 
+        };
 
         window.fetchDashboardSalesData = async function() {
             window.setLocalStatus('status-dashboard-sales', 'Menarik data dari Spreadsheet...', 'loading');
@@ -1734,7 +1768,12 @@
                 if(!timeMap.has(key)) timeMap.set(key, 0);
                 timeMap.set(key, timeMap.get(key) + t.pencapaian);
             });
-            const trendLabels = Array.from(timeMap.keys());
+            
+            // Ekstraksi hanya angka tanggalnya saja untuk chart garis
+            const trendLabels = Array.from(timeMap.keys()).map(dateStr => {
+                const match = dateStr.match(/\d+/);
+                return match ? match[0] : dateStr;
+            });
             const trendValues = Array.from(timeMap.values());
 
             const eroMap = new Map();
@@ -1790,31 +1829,33 @@
             const arBolt = tDevQty > 0 ? ((tBoltQty / tDevQty) * 100).toFixed(1) : 0;
             const sobBolt = tDevVal > 0 ? ((tBoltVal / tDevVal) * 100).toFixed(1) : 0;
 
-            document.getElementById('dash-sum-target').innerText = formatRp(totalTarget);
-            document.getElementById('dash-sum-aktual').innerText = formatRp(totalAktual);
+            // Memasukkan format bulat (/1000) ke ERO Card khusus Nominal Uang
+            document.getElementById('dash-sum-target').innerText = formatRpRounded(totalTarget);
+            document.getElementById('dash-sum-aktual').innerText = formatRpRounded(totalAktual);
             document.getElementById('dash-sum-ach').innerText = 'Avg Ach: ' + (totalTarget > 0 ? ((totalAktual / totalTarget) * 100).toFixed(1) : 0) + '%';
-            document.getElementById('dash-sum-est').innerText = `${formatRp(totalEst)} (${estPercAB}%)`;
+            document.getElementById('dash-sum-est').innerText = `${formatRpRounded(totalEst)} (${estPercAB}%)`;
             
-            document.getElementById('dash-tgt-dev').innerText = formatRp(tDevTgt);
-            document.getElementById('dash-sum-dev').innerText = formatRp(tDevVal);
-            document.getElementById('dash-est-dev').innerText = `${formatRp(tDevEst)} (${estPercDev}%)`;
+            document.getElementById('dash-tgt-dev').innerText = formatRpRounded(tDevTgt);
+            document.getElementById('dash-sum-dev').innerText = formatRpRounded(tDevVal);
+            document.getElementById('dash-est-dev').innerText = `${formatRpRounded(tDevEst)} (${estPercDev}%)`;
             
-            document.getElementById('dash-tgt-acc').innerText = formatRp(tAccTgt);
-            document.getElementById('dash-sum-acc').innerText = formatRp(tAccVal);
-            document.getElementById('dash-est-acc').innerText = `${formatRp(tAccEst)} (${estPercAcc}%)`;
+            document.getElementById('dash-tgt-acc').innerText = formatRpRounded(tAccTgt);
+            document.getElementById('dash-sum-acc').innerText = formatRpRounded(tAccVal);
+            document.getElementById('dash-est-acc').innerText = `${formatRpRounded(tAccEst)} (${estPercAcc}%)`;
             document.getElementById('dash-ar-acc').innerText = `${arAcc}%`;
             document.getElementById('dash-sob-acc').innerText = `${sobAcc}%`;
             
-            document.getElementById('dash-tgt-bolt').innerText = formatRp(tBoltTgt);
-            document.getElementById('dash-sum-bolt').innerText = formatRp(tBoltVal);
-            document.getElementById('dash-est-bolt').innerText = `${formatRp(tBoltEst)} (${estPercBolt}%)`;
+            document.getElementById('dash-tgt-bolt').innerText = formatRpRounded(tBoltTgt);
+            document.getElementById('dash-sum-bolt').innerText = formatRpRounded(tBoltVal);
+            document.getElementById('dash-est-bolt').innerText = `${formatRpRounded(tBoltEst)} (${estPercBolt}%)`;
             document.getElementById('dash-ar-bolt').innerText = `${arBolt}%`;
             document.getElementById('dash-sob-bolt').innerText = `${sobBolt}%`;
             
-            document.getElementById('dash-sum-isat').innerText = formatRp(tIsatVal);
-            document.getElementById('dash-sum-xl').innerText = formatRp(tXlVal);
-            document.getElementById('dash-sum-tsel').innerText = formatRp(tTselVal);
+            document.getElementById('dash-sum-isat').innerText = formatRpRounded(tIsatVal);
+            document.getElementById('dash-sum-xl').innerText = formatRpRounded(tXlVal);
+            document.getElementById('dash-sum-tsel').innerText = formatRpRounded(tTselVal);
 
+            // Traffic & Layanan tetap normal karena bukan nominal uang
             document.getElementById('dash-sum-wic').innerHTML = `${formatNum(tWicDeal)} <span style="color: #fda4af; font-size: 0.95rem;">/ ${formatNum(tWicLoss)}</span>`;
             document.getElementById('dash-sum-csi').innerText = formatNum(tCsi);
             document.getElementById('dash-sum-grev').innerText = formatNum(tGrev);
@@ -1979,7 +2020,7 @@
                         },
                         x: { 
                             grid: { display: false },
-                            ticks: { maxRotation: 45, minRotation: 0 }
+                            ticks: { maxRotation: 0, minRotation: 0 }
                         }
                     }
                 }
@@ -1997,11 +2038,19 @@
                         hoverOffset: 6
                     }]
                 },
+                plugins: typeof ChartDataLabels !== 'undefined' ? [ChartDataLabels] : [],
                 options: {
-                    responsive: true, maintainAspectRatio: false, cutout: '75%',
+                    responsive: true, maintainAspectRatio: false, cutout: '65%',
                     plugins: {
-                        legend: { position: 'bottom', labels: { color: '#d1d5db', padding: 20, usePointStyle: true, pointStyle: 'circle' } },
-                        tooltip: { callbacks: { label: function(ctx) { return ' ' + ctx.label + ': ' + new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(ctx.parsed); } } }
+                        legend: { position: 'bottom', labels: { color: '#d1d5db', padding: 15, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } },
+                        tooltip: { callbacks: { label: function(ctx) { return ' ' + ctx.label + ': ' + new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(ctx.parsed); } } },
+                        datalabels: {
+                            color: '#ffffff',
+                            font: { weight: '800', size: 10, family: "'Plus Jakarta Sans', sans-serif" },
+                            formatter: (value) => value > 0 ? formatCompact(value) : null,
+                            anchor: 'center',
+                            align: 'center'
+                        }
                     }
                 }
             });
@@ -2018,11 +2067,19 @@
                         hoverOffset: 6
                     }]
                 },
+                plugins: typeof ChartDataLabels !== 'undefined' ? [ChartDataLabels] : [],
                 options: {
-                    responsive: true, maintainAspectRatio: false, cutout: '75%',
+                    responsive: true, maintainAspectRatio: false, cutout: '65%',
                     plugins: {
-                        legend: { position: 'bottom', labels: { color: '#d1d5db', padding: 20, usePointStyle: true, pointStyle: 'circle' } },
-                        tooltip: { callbacks: { label: function(ctx) { return ' ' + ctx.label + ': ' + formatNum(ctx.parsed) + ' Orang'; } } }
+                        legend: { position: 'bottom', labels: { color: '#d1d5db', padding: 15, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } },
+                        tooltip: { callbacks: { label: function(ctx) { return ' ' + ctx.label + ': ' + formatNum(ctx.parsed) + ' Orang'; } } },
+                        datalabels: {
+                            color: '#ffffff',
+                            font: { weight: '800', size: 11, family: "'Plus Jakarta Sans', sans-serif" },
+                            formatter: (value) => value > 0 ? formatNum(value) : null,
+                            anchor: 'center',
+                            align: 'center'
+                        }
                     }
                 }
             });
