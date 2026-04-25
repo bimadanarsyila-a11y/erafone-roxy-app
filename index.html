@@ -7,9 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Library html2canvas untuk fitur Download Gambar -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- Plugin DataLabels untuk memunculkan teks di dalam grafik Pie/Doughnut -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
     <style>
         /* --- TEMA & WARNA UTAMA --- */
@@ -97,7 +95,7 @@
         /* --- DASHBOARD LAYOUT --- */
         .container { width: 100%; max-width: 1100px; display: none; position: relative; }
         
-        /* DIPERBAIKI: Top Logout Container dengan Z-Index Ultra & Pointer Events */
+        /* Top Logout Container (Aman dari block iframes / overlay) */
         .logout-container { display: flex; justify-content: flex-end; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; width: 100%; position: relative; z-index: 999; pointer-events: auto; }
         .btn-logout { padding: 0.6rem 1rem; background: var(--bg-primary); color: white; border-radius: var(--border-radius-md); font-weight: 700; font-size: 0.85rem; cursor: pointer; border: 1.5px solid var(--accent-primary) !important; display: flex; align-items: center; gap: 0.5rem; transition: var(--transition); }
         .btn-logout:hover { background: var(--bg-dark); transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
@@ -182,14 +180,6 @@
         
         .sc-footer { border-top: 1px dashed rgba(255,255,255,0.4); margin-top: 0.75rem; padding-top: 0.75rem; display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: #f8fafc; z-index: 1; }
         .sc-footer strong { font-size: 1.05rem; color: #fff; margin-left: 4px; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-        
-        .progress-container { width: 100%; }
-        .progress-header { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-main); }
-        .progress-bar-bg { width: 100%; height: 12px; background: #e2e8f0; border-radius: 6px; overflow: hidden; border: 1px solid #cbd5e1; }
-        .progress-bar-fill { height: 100%; transition: width 0.8s ease-in-out; border-radius: 6px; }
-        .progress-fill-red { background: var(--danger); }
-        .progress-fill-yellow { background: var(--accent-hover); }
-        .progress-fill-green { background: var(--success); }
 
         /* --- DARK DASHBOARD VISUALIZATION (PREMIUM EXCEL/UI) --- */
         .dark-dash-wrapper { background: #151521; padding: 1.5rem; border-radius: 16px; margin-top: 1.5rem; color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); }
@@ -199,7 +189,7 @@
         
         .dd-card { background: #1e1e2d; border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         
-        /* Tema Border Kartu (New) */
+        /* Tema Border Kartu */
         .theme-orange { border: 1px solid rgba(249, 115, 22, 0.2); border-top: 4px solid #f97316; }
         .theme-silver { border: 1px solid rgba(203, 213, 225, 0.2); border-top: 4px solid #cbd5e1; }
         .theme-yellow { border: 1px solid rgba(234, 179, 8, 0.2); border-top: 4px solid #eab308; }
@@ -210,7 +200,7 @@
         .dd-header { font-size: 1rem; font-weight: 700; color: #ffffff; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; letter-spacing: 0.5px; }
         .dd-chart-box { flex: 1; position: relative; min-height: 250px; width: 100%; }
         
-        /* Leaderboard Table di Dark Mode (Revisi Tabel Anti-Overlay) */
+        /* Leaderboard Table di Dark Mode */
         .dd-leaderboard-wrapper { overflow-y: auto; overflow-x: auto; max-height: 280px; padding-right: 0.25rem; }
         .dd-leaderboard-wrapper::-webkit-scrollbar { width: 4px; height: 4px; }
         .dd-leaderboard-wrapper::-webkit-scrollbar-track { background: #1e1e2d; }
@@ -232,17 +222,10 @@
         /* Category Progress Bars */
         .dd-progress-group { margin-bottom: 1.25rem; }
         .dd-progress-group:last-child { margin-bottom: 0; }
-        .dd-pg-head { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: #e5e7eb; }
         .dd-pg-bar-bg { width: 100%; height: 8px; background: #2d2d3f; border-radius: 4px; overflow: hidden; }
         .dd-pg-bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease-in-out; }
 
-        @media (max-width: 1024px) {
-            .dd-grid-3 { grid-template-columns: 1fr; }
-            .dd-grid-2 { grid-template-columns: 1fr; }
-        }
-
         /* --- INPUT REPORT TABS & LAYOUT --- */
-        .reconcile-top-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-bottom: 1.5rem; }
         .tab-container { display: flex; gap: 0.5rem; margin-bottom: 1rem; background: #f1f5f9; padding: 0.5rem; border-radius: var(--border-radius-md); border: 1.5px solid var(--border-color); }
         .tab-btn { flex: 1; padding: 0.75rem; text-align: center; font-weight: 700; border-radius: 8px; cursor: pointer; transition: var(--transition); border: none; background: transparent; color: var(--text-muted); font-size: 0.9rem; }
         .tab-btn.active { background: var(--bg-primary); color: white; border: 1.5px solid var(--border-color); box-shadow: var(--shadow-sm); }
@@ -299,7 +282,6 @@
             .header-wrapper { flex-direction: column-reverse; align-items: center; text-align: center; }
             .logout-container { justify-content: center; flex-wrap: wrap; }
             header { text-align: center; }
-            .reconcile-top-row { grid-template-columns: 1fr; }
             .action-row { flex-direction: column; height: auto; }
             .btn-action-compact { width: 100%; height: 48px; }
             .upload-compact, .search-input { height: 48px; }
@@ -311,7 +293,6 @@
 </head>
 <body>
 
-    <!-- MODAL NOTIFIKASI UMUM -->
     <div id="modal-overlay">
         <div class="modal-card">
             <div id="modal-icon-container" class="modal-icon success">
@@ -323,7 +304,6 @@
         </div>
     </div>
 
-    <!-- OVERLAY LOGIN & PANDUAN PENDAFTARAN -->
     <div id="login-overlay">
         <div id="login-form-box">
             <div class="logo-container">
@@ -376,37 +356,15 @@
                 </div>
                 <div class="step-card">
                     <div class="step-badge">3</div>
-                    <h3>Simpan ID Spreadsheet Utama</h3>
-                    <p>Perhatikan URL di <i>browser</i> Anda. Salin <b>ID Spreadsheet</b> (kumpulan kode unik acak di antara <code>/d/</code> dan <code>/edit</code>). Simpan di catatan Anda karena akan digunakan untuk pendaftaran.</p>
+                    <h3>Salin Link Spreadsheet Utama Anda</h3>
+                    <p>Perhatikan URL di <i>browser</i> Anda. Cukup <b>Salin (Copy)</b> seluruh URL link spreadsheet salinan Anda yang ada di bagian atas browser, lalu tempelkan (Paste) di formulir pendaftaran. Sistem kami akan mengatur sisanya secara otomatis!</p>
                     <img src="https://res.cloudinary.com/dilamvetq/image/upload/v1774786365/mavxzgnujtmcny8my8pr.jpg" class="tutorial-img" alt="Tutorial ID Spreadsheet">
                 </div>
-                <div class="step-card">
-                    <div class="step-badge">4</div>
-                    <h3>Salin Link Rekap & Summary Report</h3>
-                    <p>Agar dashboard bisa membaca data toko Anda, Anda wajib menyalin 2 URL link dari tab/sheet yang spesifik:</p>
-                    
-                    <div style="margin-top: 1rem;">
-                        <p style="font-weight: 800; color: var(--bg-primary); margin-bottom: 0.5rem; font-size: 0.95rem;">A. Link Rekap Report (Untuk Data ERO)</p>
-                        <ul style="font-size: 0.85rem; color: var(--text-muted); margin-left: 1.5rem; margin-bottom: 0.5rem; line-height: 1.5;">
-                            <li>Klik sheet/tab <b>Rekap report</b> di bagian bawah spreadsheet.</li>
-                            <li>Copy/Salin seluruh URL link di bagian atas browser Anda.</li>
-                        </ul>
-                        <img src="https://res.cloudinary.com/dilamvetq/image/upload/v1776773037/kywzw1qdvgd5clkhn9bc.jpg" class="tutorial-img" alt="Tutorial Link Rekap Report">
-                    </div>
-
-                    <div style="margin-top: 1.5rem; border-top: 1px dashed #cbd5e1; padding-top: 1.5rem;">
-                        <p style="font-weight: 800; color: var(--bg-primary); margin-bottom: 0.5rem; font-size: 0.95rem;">B. Link Summary Report (Untuk Dashboard Sales)</p>
-                        <ul style="font-size: 0.85rem; color: var(--text-muted); margin-left: 1.5rem; margin-bottom: 0.5rem; line-height: 1.5;">
-                            <li>Klik sheet/tab <b>Summary report</b> di bagian bawah spreadsheet.</li>
-                            <li>Copy/Salin seluruh URL link di bagian atas browser Anda.</li>
-                        </ul>
-                        <img src="https://res.cloudinary.com/dilamvetq/image/upload/v1776773037/jo1tu6yothsokcutnkde.jpg" class="tutorial-img" alt="Tutorial Link Summary Report">
-                    </div>
-                </div>
+                
                 <div class="step-card" style="border-color: #bbf7d0; background: #f0fdf4;">
-                    <div class="step-badge" style="background: var(--success);">5</div>
+                    <div class="step-badge" style="background: var(--success);">4</div>
                     <h3 style="color: #166534;">Submit Formulir Pendaftaran</h3>
-                    <p style="color: #15803d; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">Jika keempat langkah di atas sudah selesai dan Anda telah memegang <b>ID Spreadsheet</b>, <b>Link Rekap Report</b>, serta <b>Link Summary Report</b>, silakan lengkapi formulir pendaftaran di bawah ini.</p>
+                    <p style="color: #15803d; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">Jika Anda sudah memiliki link salinan spreadsheet tersebut, silakan lengkapi formulir pendaftaran di bawah ini untuk mengaktifkan akun toko Anda.</p>
                     <a href="https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/form/3c4e2e02-48c0-428c-9a48-334967fcc590" target="_blank" class="reg-submit-btn"><i data-lucide="check-square"></i> LENGKAPI FORMULIR PENDAFTARAN SEKARANG</a>
                 </div>
             </div>
@@ -414,7 +372,6 @@
         </div>
     </div>
 
-    <!-- SETTINGS MODAL (NEW) -->
     <div id="settings-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 10001; justify-content: center; align-items: center; padding: 1rem; overflow-y: auto;">
         <div style="background: white; padding: 2rem; border-radius: var(--border-radius-lg); width: 100%; max-width: 500px; border: 2px solid var(--border-color); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); animation: slideUp 0.3s ease-out; max-height: 90vh; overflow-y: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 1rem; margin-bottom: 1.5rem;">
@@ -427,7 +384,6 @@
                 <input type="password" id="set-new-pass" class="custom-input" placeholder="Kosongkan jika tidak ingin ganti password">
             </div>
             
-            <!-- Tempat Kolom Pengaturan Dinamis Supabase -->
             <div id="dynamic-settings-container"></div>
             
             <hr style="border: 0; border-top: 1.5px dashed #cbd5e1; margin: 1.5rem 0;">
@@ -448,10 +404,8 @@
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD CONTENT -->
     <div class="container" id="main-container">
         
-        <!-- DIPERBAIKI: Top Logout Container yang terbebas dari bug overlay CSS -->
         <div class="logout-container" id="top-logout">
             <button class="btn-logout btn-master" onclick="window.openMasterSheet()">
                 <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Master Spreadsheet Store
@@ -474,164 +428,29 @@
             </div>
         </div>
 
-        <!-- VIEW UTAMA -->
         <div id="view-main" class="view active">
             <div class="grid-automation">
                 <button class="control-card" onclick="window.openView('view-dashboard-sales')">
                     <div class="icon-box"><i data-lucide="layout-dashboard" style="width: 28px; height: 28px;"></i></div>
                     <div class="card-info"><h3>Dashboard Sales</h3><p>Visualisasi interaktif pencapaian target toko & produktivitas tim.</p></div>
                 </button>
-                <button class="control-card" onclick="window.openView('view-input-report')">
-                    <div class="icon-box"><i data-lucide="file-text" style="width: 28px; height: 28px;"></i></div>
-                    <div class="card-info"><h3>Daily Report ERO</h3><p>Pengiriman & pantauan langsung laporan harian ERO.</p></div>
-                </button>
-                <button class="control-card" onclick="window.openView('view-sales-report')">
-                    <div class="icon-box"><i data-lucide="file-up" style="width: 28px; height: 28px;"></i></div>
-                    <div class="card-info"><h3>Sales Report</h3><p>Ekstraksi & olah otomatis PDF laporan penjualan harian store.</p></div>
+                <!-- Menu Baru: Olah Data Otomatis -->
+                <button class="control-card" onclick="window.openView('view-olah-data')">
+                    <div class="icon-box"><i data-lucide="zap" style="width: 28px; height: 28px;"></i></div>
+                    <div class="card-info"><h3>Olah Data Otomatis</h3><p>Ekstraksi PDF Sales Report & Sinkronisasi Template Stok harian.</p></div>
                 </button>
                 <button class="control-card" onclick="window.openView('view-reconcile')">
                     <div class="icon-box"><i data-lucide="refresh-cw" style="width: 28px; height: 28px;"></i></div>
                     <div class="card-info"><h3>Reconcile Data</h3><p>Pencocokan silang antara data PDF POS dengan file Excel.</p></div>
                 </button>
-                <button class="control-card" onclick="window.openView('view-daily-stock')">
-                    <div class="icon-box"><i data-lucide="package" style="width: 28px; height: 28px;"></i></div>
-                    <div class="card-info"><h3>Template Stok Daily</h3><p>Sinkronisasi cepat template Excel untuk pembaruan stok harian.</p></div>
-                </button>
-                <button class="control-card" onclick="window.openView('view-cek-stok')">
-                    <div class="icon-box"><i data-lucide="search" style="width: 28px; height: 28px;"></i></div>
-                    <div class="card-info"><h3>Cek Stok Area</h3><p>Pencarian cerdas ketersediaan unit barang di seluruh area.</p></div>
-                </button>
             </div>
-        </div>
 
-        <!-- 1. VIEW: SALES REPORT -->
-        <div id="view-sales-report" class="view">
-            <div class="detail-view">
-                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                <h2>Sales Report PDF</h2>
-                <div class="upload-area" onclick="document.getElementById('sales-file').click()">
-                    <i data-lucide="file-text"></i>
-                    <p id="sales-file-name">Pilih file PDF Laporan harian</p>
-                    <input type="file" id="sales-file" accept=".pdf" style="display:none" onchange="window.updateFileName('sales-file', 'sales-file-name')">
-                </div>
-                <button class="btn-base btn-process btn-large" id="btn-process-sales" onclick="window.processSales()" style="margin-top:1.5rem">Olah Data PDF</button>
-                <div id="status-sales-report" class="local-status"></div>
-                
-                <div class="result-section" id="sales-result-area" style="display:none; margin-top:2rem">
-                    <div class="flex-row-align" style="margin-bottom:0.75rem;">
-                        <span class="column-title">Hasil Ekstraksi Data</span>
-                        <button class="btn-base btn-process" onclick="window.copySalesText()" style="padding:0.5rem 1rem; font-size:0.85rem;"><i data-lucide="copy" style="width:14px;"></i> Salin Teks</button>
-                    </div>
-                    <textarea id="sales-textarea" class="custom-input" readonly style="height: 200px; font-family: monospace; font-size: 0.85rem;"></textarea>
-                </div>
-            </div>
-        </div>
-
-        <!-- 2. VIEW: RECONCILE DATA (REVISI TAMPILAN PRESISI & RAPI) -->
-        <div id="view-reconcile" class="view">
-            <!-- Canvas putih dikembalikan (hapus style transparent) -->
-            <div class="detail-view">
-                
-                <!-- HEADER NAVIGATION -->
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
-                    <button class="back-btn" style="margin-bottom: 0; color: var(--bg-primary); font-size: 1rem;" onclick="window.backToMain()">
-                        <i data-lucide="arrow-left" style="width: 18px;"></i> Kembali ke Dashboard
-                    </button>
-                    <a href="https://docs.google.com/spreadsheets/d/1CelOaKLiDc5bWYdkIQ5_RRyl3-BVKa7r/edit?usp=sharing&ouid=113833816706433632210&rtpof=true&sd=true" target="_blank" class="btn-base" style="background: #3b82f6; color: white; border: none !important; border-radius: 8px; padding: 0.6rem 1.25rem; font-size: 0.95rem; text-decoration: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                        <i data-lucide="file-spreadsheet" style="width: 18px;"></i> Template Excel Recon
-                    </a>
-                </div>
-                
-                <h2 style="color: var(--bg-primary); font-size: 2.2rem; font-weight: 800; margin-bottom: 2rem; margin-top: 0;">Rekonsiliasi Data</h2>
-                
-                <div class="recon-grid" style="gap: 2.5rem; align-items: stretch;">
-                    
-                    <!-- KOLOM KIRI: File Input (Gaya Neo-Brutalism) -->
-                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                        
-                        <!-- CARD 1: PDF -->
-                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 2px solid #000; box-shadow: 4px 4px 0 #000; display: flex; flex-direction: column; gap: 1rem;">
-                            <span style="font-weight: 800; font-size: 0.95rem; color: var(--bg-primary); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase;">
-                                <i data-lucide="file-text" style="width: 18px; color: var(--danger);"></i> 1. File PDF POS
-                            </span>
-                            
-                            <div class="upload-compact" onclick="document.getElementById('recon-pdf').click()" style="height: 48px; width: 100%; border: 1.5px dashed #94a3b8 !important; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: flex-start; padding: 0 1rem; cursor: pointer;">
-                                <i data-lucide="upload-cloud" style="width: 18px; margin: 0 0.5rem 0 0; color: var(--text-muted);"></i>
-                                <p id="pdf-name" style="margin: 0; font-size: 0.85rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pilih file PDF...</p>
-                                <input type="file" id="recon-pdf" accept=".pdf" style="display:none" onchange="window.updateFileName('recon-pdf', 'pdf-name'); window.resetReconcileState('pdf')">
-                            </div>
-                            
-                            <button class="btn-base" id="btn-pdf-reconcile" onclick="window.processPdf()" style="width: 100%; padding: 0.75rem; font-size: 0.95rem; background: var(--bg-primary); color: white; border: 1.5px solid #000 !important; border-radius: 8px; font-weight: 800; cursor: pointer; transition: transform 0.1s;">
-                                Olah PDF
-                            </button>
-                            <div id="status-pdf" class="local-status" style="margin-top: 0;"></div>
-                        </div>
-
-                        <!-- CARD 2: EXCEL -->
-                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 2px solid #000; box-shadow: 4px 4px 0 #000; display: flex; flex-direction: column; gap: 1rem;">
-                            <span style="font-weight: 800; font-size: 0.95rem; color: var(--bg-primary); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase;">
-                                <i data-lucide="file-spreadsheet" style="width: 18px; color: var(--success);"></i> 2. File Excel
-                            </span>
-                            
-                            <div class="upload-compact" onclick="document.getElementById('recon-excel').click()" style="height: 48px; width: 100%; border: 1.5px dashed #94a3b8 !important; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: flex-start; padding: 0 1rem; cursor: pointer;">
-                                <i data-lucide="upload-cloud" style="width: 18px; margin: 0 0.5rem 0 0; color: var(--text-muted);"></i>
-                                <p id="excel-name" style="margin: 0; font-size: 0.85rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pilih file Excel...</p>
-                                <input type="file" id="recon-excel" accept=".xlsx, .xls" style="display:none" onchange="window.updateFileName('recon-excel', 'excel-name'); window.resetReconcileState('excel')">
-                            </div>
-                            
-                            <button class="btn-base" id="btn-excel-reconcile" onclick="window.processExcel()" style="width: 100%; padding: 0.75rem; font-size: 0.95rem; background: var(--bg-primary); color: white; border: 1.5px solid #000 !important; border-radius: 8px; font-weight: 800; cursor: pointer; transition: transform 0.1s;">
-                                Olah Excel
-                            </button>
-                            <div id="status-excel" class="local-status" style="margin-top: 0;"></div>
-                        </div>
-                    </div>
-
-                    <!-- KOLOM KANAN: Textarea & Send Button (Teks Label Dihilangkan) -->
-                    <div style="height: 100%; display: flex; flex-direction: column;">
-                        
-                        <textarea id="email-body-textarea" placeholder="Respon sistem dan draft email rekonsiliasi akan muncul secara utuh di sini..." style="flex: 1; min-height: 250px; border: 2px solid #000; border-radius: 12px; padding: 1.5rem; font-family: monospace; font-size: 0.9rem; line-height: 1.6; resize: vertical; outline: none; background: white; margin-bottom: 1.5rem; box-shadow: 4px 4px 0 rgba(0,0,0,0.05);"></textarea>
-                        
-                        <button class="btn-base" id="btn-send-email" onclick="window.sendEmail()" disabled style="width: 100%; padding: 1.2rem; font-size: 1.1rem; background: var(--accent-primary); color: var(--text-main); border: 2px solid #000 !important; border-radius: 12px; box-shadow: 4px 4px 0 #000; font-weight: 800; cursor: pointer; transition: transform 0.1s; display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
-                            <i data-lucide="send" style="width: 20px;"></i> Kirim Laporan via Email
-                        </button>
-                        <div id="status-send-email" class="local-status" style="margin-top: 0.75rem;"></div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. VIEW: DAILY STOCK -->
-        <div id="view-daily-stock" class="view">
-            <div class="detail-view">
-                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                <h2>Template Stok Daily</h2>
-                <div class="upload-area" onclick="document.getElementById('daily-stock-file').click()">
-                    <i data-lucide="file-spreadsheet"></i>
-                    <p id="daily-stock-file-name">Pilih file Excel Daily Stock (.xlsx)</p>
-                    <input type="file" id="daily-stock-file" style="display:none" onchange="window.updateFileName('daily-stock-file', 'daily-stock-file-name')">
-                </div>
-                <button class="btn-base btn-process btn-large" id="btn-process-daily" onclick="window.processDailyStock()" style="margin-top:1.5rem">Proses Pembaruan Data</button>
-                <div id="status-daily-stock" class="local-status"></div>
-                
-                <div id="success-link-box" style="display: none; background: #ecfdf5; border: 1.5px solid #000000; border-radius: var(--border-radius-md); padding: 1.25rem; margin-top: 1.5rem; align-items: center; justify-content: space-between;">
-                    <span style="color: #065f46; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="check-circle" style="width: 18px;"></i> Sinkronisasi Selesai!</span>
-                    <div style="display: flex; gap: 0.75rem;">
-                        <a id="link-download-sheet" href="#" target="_blank" style="background: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 6px; border: 1.5px solid #000000; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 0.4rem;"><i data-lucide="download" style="width: 14px; height: 14px;"></i> Download</a>
-                        <a id="link-open-sheet" href="#" target="_blank" style="background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 6px; border: 1.5px solid #000000; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 0.4rem;"><i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Buka</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. VIEW: CEK STOK AREA -->
-        <div id="view-cek-stok" class="view">
-            <div class="detail-view">
-                
+            <!-- MIGRASI CEK STOK AREA KE MENU UTAMA -->
+            <div class="detail-view" style="margin-top: 1rem;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1.5rem; border-bottom: 2px dashed #cbd5e1; padding-bottom: 1.5rem;">
                     <div>
-                        <button class="back-btn" onclick="window.backToMain()" style="margin-bottom: 1rem;"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                        <h2 style="margin: 0;">Cek Stok Area</h2>
+                        <h2 style="margin: 0; color: var(--bg-primary); display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="search" style="width: 24px; height: 24px;"></i> Cek Stok Area</h2>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem; font-weight: 500;">Pencarian cerdas ketersediaan unit barang di seluruh area secara instan.</p>
                     </div>
                     
                     <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; width: 100%; max-width: 400px;">
@@ -643,7 +462,7 @@
                         <div style="display: flex; gap: 0.5rem; width: 100%; height: 38px;">
                             <div class="upload-compact" onclick="document.getElementById('stok-area-file').click()" style="height: 100%; padding: 0 0.75rem; border-radius: 6px; flex: 1;">
                                 <i data-lucide="file-spreadsheet" style="width: 16px; margin: 0;"></i>
-                                <p id="stok-area-file-name" style="margin: 0 0 0 0.5rem; font-size: 0.8rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pilih file Excel master...</p>
+                                <p id="stok-area-file-name" style="margin: 0 0 0 0.5rem; font-size: 0.8rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pilih file master...</p>
                                 <input type="file" id="stok-area-file" style="display:none" onchange="window.updateFileName('stok-area-file', 'stok-area-file-name')">
                             </div>
                             <button class="btn-base btn-process" id="btn-update-stok" onclick="window.processUpdateStokArea()" style="height: 100%; padding: 0 1rem; font-size: 0.8rem; border-radius: 6px; margin: 0;">
@@ -663,7 +482,7 @@
                     </div>
                     <div id="status-search-stok" class="local-status" style="margin-top: -0.5rem;"></div>
                     
-                    <div class="table-wrapper-large" style="margin-top: 0; max-height: 70vh; min-height: 450px;">
+                    <div class="table-wrapper-large" style="margin-top: 0; max-height: 50vh; min-height: 350px;">
                         <table class="data-table" id="stok-result-table">
                             <thead>
                                 <tr>
@@ -673,7 +492,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td colspan="2" style="text-align:center; padding:8rem 1rem; color:var(--text-muted); font-size: 1.1rem; font-weight: 500;">
+                                    <td colspan="2" style="text-align:center; padding:6rem 1rem; color:var(--text-muted); font-size: 1.1rem; font-weight: 500;">
                                         <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; opacity: 0.6;">
                                             <i data-lucide="package-search" style="width: 64px; height: 64px;"></i>
                                             Ketik nama barang di atas lalu tekan Cari
@@ -687,47 +506,169 @@
             </div>
         </div>
 
-        <!-- 5. VIEW: DASHBOARD SALES -->
+        <!-- VIEW SUB-MENU: OLAH DATA OTOMATIS -->
+        <div id="view-olah-data" class="view">
+            <div class="detail-view">
+                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
+                <h2>Olah Data Otomatis</h2>
+                
+                <div class="grid-automation" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-bottom: 0; margin-top: 1.5rem;">
+                    <button class="control-card" onclick="window.openView('view-sales-report')">
+                        <div class="icon-box"><i data-lucide="file-up" style="width: 28px; height: 28px;"></i></div>
+                        <div class="card-info"><h3>Sales Report</h3><p>Ekstraksi & olah otomatis PDF laporan penjualan harian store.</p></div>
+                    </button>
+                    <button class="control-card" onclick="window.openView('view-daily-stock')">
+                        <div class="icon-box"><i data-lucide="package" style="width: 28px; height: 28px;"></i></div>
+                        <div class="card-info"><h3>Template Stok Daily</h3><p>Sinkronisasi cepat template Excel untuk pembaruan stok harian.</p></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-sales-report" class="view">
+            <div class="detail-view">
+                <button class="back-btn" onclick="window.backTo('view-olah-data')"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Olah Data</button>
+                <h2>Sales Report PDF</h2>
+                <div class="upload-area" onclick="document.getElementById('sales-file').click()">
+                    <i data-lucide="file-text"></i>
+                    <p id="sales-file-name">Pilih file PDF Laporan harian</p>
+                    <input type="file" id="sales-file" accept=".pdf" style="display:none" onchange="window.updateFileName('sales-file', 'sales-file-name')">
+                </div>
+                <button class="btn-base btn-process btn-large" id="btn-process-sales" onclick="window.processSales()" style="margin-top:1.5rem">Olah Data PDF</button>
+                <div id="status-sales-report" class="local-status"></div>
+                
+                <div class="result-section" id="sales-result-area" style="display:none; margin-top:2rem">
+                    <div class="flex-row-align" style="margin-bottom:0.75rem;">
+                        <span class="column-title">Hasil Ekstraksi Data</span>
+                        <button class="btn-base btn-process" onclick="window.copySalesText()" style="padding:0.5rem 1rem; font-size:0.85rem;"><i data-lucide="copy" style="width:14px;"></i> Salin Teks</button>
+                    </div>
+                    <textarea id="sales-textarea" class="custom-input" readonly style="height: 200px; font-family: monospace; font-size: 0.85rem;"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-reconcile" class="view">
+            <!-- Canvas putih dipulihkan dengan menghapus inline style transparent -->
+            <div class="detail-view">
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                    <button class="back-btn" style="margin-bottom: 0; color: var(--bg-primary); font-size: 1rem;" onclick="window.backToMain()">
+                        <i data-lucide="arrow-left" style="width: 18px;"></i> Kembali ke Dashboard
+                    </button>
+                    <a href="https://docs.google.com/spreadsheets/d/1CelOaKLiDc5bWYdkIQ5_RRyl3-BVKa7r/edit?usp=sharing&ouid=113833816706433632210&rtpof=true&sd=true" target="_blank" class="btn-base" style="background: #3b82f6; color: white; border: none !important; border-radius: 8px; padding: 0.6rem 1.25rem; font-size: 0.95rem; text-decoration: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <i data-lucide="file-spreadsheet" style="width: 18px;"></i> Template Excel Recon
+                    </a>
+                </div>
+                
+                <h2 style="color: var(--bg-primary); font-size: 2.2rem; font-weight: 800; margin-bottom: 2rem; margin-top: 0;">Rekonsiliasi Data</h2>
+                
+                <div class="recon-grid" style="gap: 2.5rem; align-items: stretch;">
+                    
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 2px solid #000; box-shadow: 4px 4px 0 #000; display: flex; flex-direction: column; gap: 1rem;">
+                            <span style="font-weight: 800; font-size: 0.95rem; color: var(--bg-primary); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase;">
+                                <i data-lucide="file-text" style="width: 18px; color: var(--danger);"></i> 1. File PDF POS
+                            </span>
+                            <div class="upload-compact" onclick="document.getElementById('recon-pdf').click()" style="height: 48px; width: 100%; border: 1.5px dashed #94a3b8 !important; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: flex-start; padding: 0 1rem; cursor: pointer;">
+                                <i data-lucide="upload-cloud" style="width: 18px; margin: 0 0.5rem 0 0; color: var(--text-muted);"></i>
+                                <p id="pdf-name" style="margin: 0; font-size: 0.85rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pilih file PDF...</p>
+                                <input type="file" id="recon-pdf" accept=".pdf" style="display:none" onchange="window.updateFileName('recon-pdf', 'pdf-name'); window.resetReconcileState('pdf')">
+                            </div>
+                            <button class="btn-base" id="btn-pdf-reconcile" onclick="window.processPdf()" style="width: 100%; padding: 0.75rem; font-size: 0.95rem; background: var(--bg-primary); color: white; border: 1.5px solid #000 !important; border-radius: 8px; font-weight: 800; cursor: pointer; transition: transform 0.1s;">Olah PDF</button>
+                            <div id="status-pdf" class="local-status" style="margin-top: 0;"></div>
+                        </div>
+
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 2px solid #000; box-shadow: 4px 4px 0 #000; display: flex; flex-direction: column; gap: 1rem;">
+                            <span style="font-weight: 800; font-size: 0.95rem; color: var(--bg-primary); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase;">
+                                <i data-lucide="file-spreadsheet" style="width: 18px; color: var(--success);"></i> 2. File Excel
+                            </span>
+                            <div class="upload-compact" onclick="document.getElementById('recon-excel').click()" style="height: 48px; width: 100%; border: 1.5px dashed #94a3b8 !important; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: flex-start; padding: 0 1rem; cursor: pointer;">
+                                <i data-lucide="upload-cloud" style="width: 18px; margin: 0 0.5rem 0 0; color: var(--text-muted);"></i>
+                                <p id="excel-name" style="margin: 0; font-size: 0.85rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pilih file Excel...</p>
+                                <input type="file" id="recon-excel" accept=".xlsx, .xls" style="display:none" onchange="window.updateFileName('recon-excel', 'excel-name'); window.resetReconcileState('excel')">
+                            </div>
+                            <button class="btn-base" id="btn-excel-reconcile" onclick="window.processExcel()" style="width: 100%; padding: 0.75rem; font-size: 0.95rem; background: var(--bg-primary); color: white; border: 1.5px solid #000 !important; border-radius: 8px; font-weight: 800; cursor: pointer; transition: transform 0.1s;">Olah Excel</button>
+                            <div id="status-excel" class="local-status" style="margin-top: 0;"></div>
+                        </div>
+                    </div>
+
+                    <div style="height: 100%; display: flex; flex-direction: column;">
+                        <textarea id="email-body-textarea" placeholder="Respon sistem dan draft email rekonsiliasi akan muncul secara utuh di sini..." style="flex: 1; min-height: 250px; border: 2px solid #000; border-radius: 12px; padding: 1.5rem; font-family: monospace; font-size: 0.9rem; line-height: 1.6; resize: vertical; outline: none; background: white; margin-bottom: 1.5rem; box-shadow: 4px 4px 0 rgba(0,0,0,0.05);"></textarea>
+                        
+                        <button class="btn-base" id="btn-send-email" onclick="window.sendEmail()" disabled style="width: 100%; padding: 1.2rem; font-size: 1.1rem; background: var(--accent-primary); color: var(--text-main); border: 2px solid #000 !important; border-radius: 12px; box-shadow: 4px 4px 0 #000; font-weight: 800; cursor: pointer; transition: transform 0.1s; display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
+                            <i data-lucide="send" style="width: 20px;"></i> Kirim Laporan via Email
+                        </button>
+                        <div id="status-send-email" class="local-status" style="margin-top: 0.75rem;"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="view-daily-stock" class="view">
+            <div class="detail-view">
+                <button class="back-btn" onclick="window.backTo('view-olah-data')"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Olah Data</button>
+                <h2>Template Stok Daily</h2>
+                <div class="upload-area" onclick="document.getElementById('daily-stock-file').click()">
+                    <i data-lucide="file-spreadsheet"></i>
+                    <p id="daily-stock-file-name">Pilih file Excel Daily Stock (.xlsx)</p>
+                    <input type="file" id="daily-stock-file" style="display:none" onchange="window.updateFileName('daily-stock-file', 'daily-stock-file-name')">
+                </div>
+                <button class="btn-base btn-process btn-large" id="btn-process-daily" onclick="window.processDailyStock()" style="margin-top:1.5rem">Proses Pembaruan Data</button>
+                <div id="status-daily-stock" class="local-status"></div>
+                
+                <div id="success-link-box" style="display: none; background: #ecfdf5; border: 1.5px solid #000000; border-radius: var(--border-radius-md); padding: 1.25rem; margin-top: 1.5rem; align-items: center; justify-content: space-between;">
+                    <span style="color: #065f46; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="check-circle" style="width: 18px;"></i> Sinkronisasi Selesai!</span>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <a id="link-download-sheet" href="#" target="_blank" style="background: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 6px; border: 1.5px solid #000000; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 0.4rem;"><i data-lucide="download" style="width: 14px; height: 14px;"></i> Download</a>
+                        <a id="link-open-sheet" href="#" target="_blank" style="background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 6px; border: 1.5px solid #000000; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: var(--transition); display: flex; align-items: center; gap: 0.4rem;"><i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Buka</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="view-dashboard-sales" class="view">
             <div class="detail-view">
                 <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                <h2>Dashboard Sales</h2>
+                <h2 style="margin-bottom: 1.5rem;">Dashboard Sales & Report</h2>
                 
-                <div class="filter-bar">
-                    <div class="filter-bar-left">
-                        <i data-lucide="filter" style="color: var(--bg-primary);"></i>
-                        <span style="font-weight: 800; font-size: 0.9rem; color: var(--bg-primary);">Filter Data:</span>
-                        <select id="dash-month-filter" class="filter-select" onchange="window.renderDashboardSales()">
+                <!-- POSISI BARU 1: TAB MENU DI ATAS (DIPERLEBAR & LEBIH COMPACT/TIPIS) -->
+                <div style="margin-bottom: 1.25rem; width: 100%;">
+                    <div class="tab-container" style="max-width: 100%; width: 100%; margin-bottom: 0; padding: 0.25rem; border-radius: 8px; display: flex;">
+                        <button class="tab-btn active" id="tab-sales-chart" onclick="window.switchSalesTab('chart')" style="padding: 0.5rem; font-size: 0.85rem;"><i data-lucide="pie-chart" style="width:14px; margin-right: 4px; vertical-align: -2px;"></i> Visualisasi Dashboard</button>
+                        <button class="tab-btn" id="tab-sales-card" onclick="window.switchSalesTab('card')" style="padding: 0.5rem; font-size: 0.85rem;"><i data-lucide="layout-grid" style="width:14px; margin-right: 4px; vertical-align: -2px;"></i> ERO Card</button>
+                        <button class="tab-btn" id="tab-ero" onclick="window.switchSalesTab('ero')" style="padding: 0.5rem; font-size: 0.85rem;"><i data-lucide="edit-3" style="width: 14px; margin-right: 4px; vertical-align: -2px;"></i> Input Report</button>
+                        <button class="tab-btn" id="tab-data-ero" onclick="window.switchSalesTab('data-ero')" style="padding: 0.5rem; font-size: 0.85rem;"><i data-lucide="database" style="width: 14px; margin-right: 4px; vertical-align: -2px;"></i> Tracking Data</button>
+                    </div>
+                </div>
+
+                <!-- POSISI BARU 2: FILTER BAR DI BAWAH & TOMBOL DOWNLOAD SEJAJAR -->
+                <div class="filter-bar" id="dash-main-filter-bar" style="padding: 0.75rem 1.25rem; margin-bottom: 1.5rem; border-radius: 8px;">
+                    <div class="filter-bar-left" style="gap: 0.75rem;">
+                        <i data-lucide="filter" style="color: var(--bg-primary); width: 16px;"></i>
+                        <span style="font-weight: 800; font-size: 0.85rem; color: var(--bg-primary);">Filter:</span>
+                        <select id="dash-month-filter" class="filter-select" style="padding: 0.4rem 0.75rem; font-size: 0.85rem; min-width: 130px; border-radius: 6px;" onchange="window.renderDashboardSales()">
                             <option value="All">Semua Bulan</option>
                         </select>
-                        <select id="dash-ero-filter" class="filter-select" onchange="window.renderDashboardSales()">
+                        <select id="dash-ero-filter" class="filter-select" style="padding: 0.4rem 0.75rem; font-size: 0.85rem; min-width: 130px; border-radius: 6px;" onchange="window.renderDashboardSales()">
                             <option value="All">Semua ERO</option>
                         </select>
                     </div>
-                    <button class="btn-base btn-process" onclick="window.fetchDashboardSalesData()" style="padding: 0.6rem 1.25rem; font-size: 0.85rem;">
-                        <i data-lucide="refresh-cw" style="width: 16px;"></i> Sinkronisasi Data
-                    </button>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button class="btn-base btn-process" onclick="window.fetchDashboardSalesData()" style="padding: 0.4rem 1rem; font-size: 0.8rem; border-radius: 6px;">
+                            <i data-lucide="refresh-cw" style="width: 14px;"></i> Sinkronisasi
+                        </button>
+                        <button class="btn-base btn-process" id="btn-download-dash" onclick="window.downloadDashboardImage()" style="background: #10b981; border-color: #059669 !important; padding: 0.4rem 1rem; font-size: 0.8rem; border-radius: 6px;">
+                            <i data-lucide="download" style="width: 14px;"></i> Download PNG
+                        </button>
+                    </div>
                 </div>
 
                 <div id="status-dashboard-sales" class="local-status" style="margin-bottom: 1.5rem; justify-content: center;"></div>
 
-                <!-- TABS DASHBOARD SALES & ACTION BUTTONS -->
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-                    <div class="tab-container" style="max-width: 450px; margin-bottom: 0;">
-                        <button class="tab-btn active" id="tab-sales-chart" onclick="window.switchSalesTab('chart')"><i data-lucide="pie-chart" style="width:16px; margin-right: 6px; vertical-align: -3px;"></i> Visualisasi Dashboard</button>
-                        <button class="tab-btn" id="tab-sales-card" onclick="window.switchSalesTab('card')"><i data-lucide="layout-grid" style="width:16px; margin-right: 6px; vertical-align: -3px;"></i> ERO Card</button>
-                    </div>
-                    
-                    <!-- Tombol Download Gambar (Hanya muncul di Visualisasi) -->
-                    <button class="btn-base btn-process" id="btn-download-dash" onclick="window.downloadDashboardImage()" style="background: #10b981; border-color: #059669 !important; padding: 0.6rem 1.25rem;">
-                        <i data-lucide="download" style="width: 16px;"></i> Download PNG
-                    </button>
-                </div>
-
                 <!-- TAMPILAN KARTU (HANYA SUMMARY) -->
                 <div id="sales-performance-card-wrapper" style="display: none;">
                     <div class="summary-dashboard">
-                        <!-- ALL BISNIS -->
                         <div class="summary-card" style="background: linear-gradient(135deg, #8b0000 0%, #5d0000 100%);">
                             <div class="sc-header"><i data-lucide="briefcase" style="width: 16px;"></i> ALL BISNIS</div>
                             <div class="sc-body">
@@ -741,7 +682,6 @@
                                 <div class="sc-row small-row"><span>Estimasi</span><span id="dash-sum-est">Rp 0 (0%)</span></div>
                             </div>
                         </div>
-                        <!-- DEVICE -->
                         <div class="summary-card" style="background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);">
                             <div class="sc-header"><i data-lucide="smartphone" style="width: 16px;"></i> DEVICE</div>
                             <div class="sc-body">
@@ -750,7 +690,6 @@
                                 <div class="sc-row small-row"><span>Estimasi</span><span id="dash-est-dev">Rp 0 (0%)</span></div>
                             </div>
                         </div>
-                        <!-- ACCESSORIES -->
                         <div class="summary-card" style="background: linear-gradient(135deg, #8b5cf6 0%, #5b21b6 100%);">
                             <div class="sc-header"><i data-lucide="headphones" style="width: 16px;"></i> ACCESSORIES</div>
                             <div class="sc-body">
@@ -763,7 +702,6 @@
                                 <span>SOB: <strong id="dash-sob-acc">0%</strong></span>
                             </div>
                         </div>
-                        <!-- BOLTECH -->
                         <div class="summary-card" style="background: linear-gradient(135deg, #10b981 0%, #047857 100%);">
                             <div class="sc-header"><i data-lucide="shield-check" style="width: 16px;"></i> BOLTECH</div>
                             <div class="sc-body">
@@ -776,7 +714,6 @@
                                 <span>SOB: <strong id="dash-sob-bolt">0%</strong></span>
                             </div>
                         </div>
-                        <!-- OPERATOR -->
                         <div class="summary-card" style="background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);">
                             <div class="sc-header"><i data-lucide="radio" style="width: 16px;"></i> OPERATOR</div>
                             <div class="sc-body">
@@ -785,7 +722,6 @@
                                 <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">Telkomsel</span><span id="dash-sum-tsel" style="color: white;">Rp 0</span></div>
                             </div>
                         </div>
-                        <!-- TRAFFIC & LAYANAN (NEW) -->
                         <div class="summary-card" style="background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);">
                             <div class="sc-header"><i data-lucide="users" style="width: 16px;"></i> TRAFFIC & LAYANAN</div>
                             <div class="sc-body">
@@ -797,10 +733,8 @@
                     </div>
                 </div>
 
-                <!-- VISUALISASI DASHBOARD CHART -->
                 <div id="sales-performance-chart-wrapper" style="display: block;">
                     <div class="dark-dash-wrapper">
-                        <!-- Top Row: Line Chart Full Width -->
                         <div class="dd-grid">
                             <div class="dd-card theme-orange">
                                 <div class="dd-header">
@@ -814,7 +748,6 @@
                             </div>
                         </div>
 
-                        <!-- Middle Row 1: Salesman & Categories -->
                         <div class="dd-grid-2">
                             <div class="dd-card theme-orange">
                                 <div class="dd-header">
@@ -831,8 +764,7 @@
                                         <div style="text-align: right;">(%)</div>
                                     </div>
                                     <div id="dd-leaderboard-tbody" style="display: flex; flex-direction: column;">
-                                        <!-- Dynamic rows -->
-                                    </div>
+                                        </div>
                                 </div>
                             </div>
                             <div class="dd-card theme-silver">
@@ -843,12 +775,10 @@
                                     </div>
                                 </div>
                                 <div id="dd-category-container" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
-                                    <!-- Dynamic progress bars -->
-                                </div>
+                                    </div>
                             </div>
                         </div>
 
-                        <!-- Middle Row 2: Accessories & Boltech -->
                         <div class="dd-grid-2">
                             <div class="dd-card theme-yellow">
                                 <div class="dd-header">
@@ -865,8 +795,7 @@
                                         <div style="text-align: right; color:#3b82f6;">SOB</div>
                                     </div>
                                     <div id="dd-acc-tbody" style="display: flex; flex-direction: column;">
-                                        <!-- Dynamic rows -->
-                                    </div>
+                                        </div>
                                 </div>
                             </div>
                             <div class="dd-card theme-green">
@@ -884,13 +813,11 @@
                                         <div style="text-align: right; color:#3b82f6;">SOB</div>
                                     </div>
                                     <div id="dd-boltech-tbody" style="display: flex; flex-direction: column;">
-                                        <!-- Dynamic rows -->
-                                    </div>
+                                        </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Bottom Row: Operator, Traffic -->
                         <div class="dd-grid-2">
                             <div class="dd-card theme-blue">
                                 <div class="dd-header">
@@ -914,22 +841,8 @@
                     </div>
                 </div>
 
-            </div>
-        </div>
-
-        <!-- 6. VIEW: INPUT REPORT BY ERO (DIPULIHKAN SEPENUHNYA) -->
-        <div id="view-input-report" class="view">
-            <div class="detail-view">
-                <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                <h2>Daily Report ERO</h2>
-                
-                <div class="tab-container" style="max-width: 400px;">
-                    <button class="tab-btn active" id="tab-ero" onclick="window.switchReportTab('ero')"><i data-lucide="edit-3" style="width: 16px; margin-right: 6px;"></i> Input Report</button>
-                    <button class="tab-btn" id="tab-data-ero" onclick="window.switchReportTab('data-ero')"><i data-lucide="database" style="width: 16px; margin-right: 6px;"></i> Tracking Data</button>
-                </div>
-
-                <!-- FORM INPUT REPORT -->
-                <div id="form-section-ero" class="report-form-container">
+                <!-- MIGRASI: FORM INPUT REPORT -->
+                <div id="form-section-ero" class="report-form-container" style="display: none;">
                     <div class="form-grid-2">
                         <div class="input-group">
                             <label>Tanggal Report</label>
@@ -939,8 +852,7 @@
                             <label>Nama ERO</label>
                             <select id="rep-nama" class="custom-input">
                                 <option value="">Pilih Nama ERO...</option>
-                                <!-- Dynamic options -->
-                            </select>
+                                </select>
                         </div>
                     </div>
 
@@ -984,15 +896,15 @@
                     </div>
 
                     <div class="input-group">
-                        <label>issue daily</label>
-                        <textarea id="rep-naratif" class="custom-input" style="height: 100px;" placeholder="Tuliskan kendala, laporan, atau penjelasan tambahan di sini..."></textarea>
+                        <label>Issue</label>
+                        <textarea id="rep-naratif" class="custom-input" style="height: 100px;" placeholder="Tuliskan kendala atau issue harian di sini..."></textarea>
                     </div>
 
                     <button class="btn-base btn-process btn-large" onclick="window.processInputReport()" style="margin-top: 1rem;"><i data-lucide="send"></i> Kirim Laporan Harian</button>
                     <div id="status-input-report" class="local-status"></div>
                 </div>
 
-                <!-- TAB TRACKING DATA ERO -->
+                <!-- MIGRASI: TAB TRACKING DATA ERO -->
                 <div id="form-section-data-ero" style="display: none;">
                     <div class="filter-bar" style="margin-bottom: 0;">
                         <div class="filter-bar-left">
@@ -1009,9 +921,9 @@
                     <div id="status-data-ero" class="local-status" style="justify-content: center; margin-top: 1rem;"></div>
 
                     <div class="ero-track-grid" id="ero-tracking-grid">
-                        <!-- Kartu tracking ERO di-render disini -->
-                    </div>
+                        </div>
                 </div>
+
             </div>
         </div>
 
@@ -1152,19 +1064,17 @@
                 });
             }
             
-            // --- LOGIKA MENGEMBALIKAN POSISI MENU SAAT REFRESH ---
             let initialView = 'view-main';
             const hash = window.location.hash.substring(1);
             if (hash && document.getElementById(hash) && document.getElementById(hash).classList.contains('view')) {
                 initialView = hash;
             }
             
-            // Set base history state jika belum ada (DIBUNGKUS TRY CATCH AGAR TIDAK ERROR DI IFRAME)
             try {
                 if (!history.state) {
                     history.replaceState({ view: initialView }, '', `#${initialView}`);
                 }
-            } catch(e) { console.warn("History API diblokir oleh lingkungan browser."); }
+            } catch(e) { console.warn("History API dinonaktifkan di iframe ini."); }
             
             window.openView(initialView, false); 
             window.fetchLatestStockDate();
@@ -1174,31 +1084,22 @@
             try {
                 window.currentStoreConfig = null;
                 localStorage.removeItem('erafoneStoreConfig');
-                
-                // Hapus URL hash dengan aman
                 try { history.replaceState(null, '', window.location.pathname); } catch(e){}
-                
-                // Segarkan halaman untuk memutus sesi UI
                 window.location.reload();
             } catch(err) {
-                console.error("Kesalahan saat logout: ", err);
-                // Fallback jika reload standar gagal
                 window.location.href = window.location.pathname;
             }
         }
 
-        // --- FUNGSI PENGATURAN AKUN (DINAMIS - SMART AUTO-FILL) ---
         window.openSettings = function() {
             if (!window.currentStoreConfig) return;
             
-            // Kosongkan kolom password
             document.getElementById('set-new-pass').value = '';
             document.getElementById('set-current-pass').value = '';
             
             const container = document.getElementById('dynamic-settings-container');
             container.innerHTML = '';
 
-            // 1. Definisi UI untuk kolom yang kita kenal
             const fieldConfig = {
                 'ero_list': { label: 'Daftar Nama ERO <span style="text-transform: none; color: var(--text-muted); font-weight: 500;">(Pisahkan dengan koma)</span>', type: 'textarea', placeholder: 'Contoh: Andi, Budi, Citra' },
                 'link_master': { label: 'Link Master Spreadsheet', type: 'text', placeholder: 'https://docs.google.com/spreadsheets/d/...' },
@@ -1207,40 +1108,25 @@
                 'rekap_report': { label: 'Link Rekap Report (Tracking ERO)', type: 'text', placeholder: 'https://docs.google.com/spreadsheets/d/...' }
             };
 
-            // 2. Kolom yang dilarang diedit oleh user
             const excludeFields = ['sap_code', 'store_name', 'password', 'id', 'created_at', 'updated_at'];
-            
-            // 3. Menentukan urutan render
             const orderedKeys = ['ero_list', 'link_master', 'summary_report', 'daily_sales', 'rekap_report'];
             
-            // BUG FIX: Paksa tambahkan keys standar ke config jika sebelumnya toko belum punya kolom ini di database-nya
             orderedKeys.forEach(k => {
                 if (window.currentStoreConfig[k] === undefined) {
                     window.currentStoreConfig[k] = '';
                 }
             });
 
-            // Ambil semua kolom yang MEMANG ADA di config saat ini
             const allKeys = Object.keys(window.currentStoreConfig);
-            
-            // Saring kolom yang tidak boleh diedit
             const editableKeys = allKeys.filter(k => !excludeFields.includes(k));
-
-            // Pisahkan yang kita kenal dan tidak kenal agar urutannya bagus
             const knownKeysToRender = orderedKeys.filter(k => editableKeys.includes(k));
             const unknownKeysToRender = editableKeys.filter(k => !orderedKeys.includes(k));
-            
-            // Gabungkan urutan (yang utama di atas, sisanya di bawah)
             const fieldsToRender = [...knownKeysToRender, ...unknownKeysToRender];
 
             fieldsToRender.forEach(key => {
                 const val = window.currentStoreConfig[key] || '';
-                
-                // Buat label otomatis jika kolom tersebut baru/asing
                 const autoLabel = key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
                 const config = fieldConfig[key] || { label: autoLabel, type: 'text', placeholder: `Masukkan ${autoLabel}` };
-
-                // Hindari XSS pada string (tanda kutip)
                 const safeVal = String(val).replace(/"/g, '&quot;');
 
                 let inputHTML = '';
@@ -1250,12 +1136,7 @@
                     inputHTML = `<input type="text" data-key="${key}" class="custom-input dynamic-setting-input" placeholder="${config.placeholder}" value="${safeVal}">`;
                 }
 
-                container.innerHTML += `
-                    <div class="input-group">
-                        <label>${config.label}</label>
-                        ${inputHTML}
-                    </div>
-                `;
+                container.innerHTML += `<div class="input-group"><label>${config.label}</label>${inputHTML}</div>`;
             });
             
             document.getElementById('settings-modal').style.display = 'flex';
@@ -1270,15 +1151,8 @@
             const currentPass = document.getElementById('set-current-pass').value;
             const newPass = document.getElementById('set-new-pass').value.trim();
 
-            if (!currentPass) {
-                window.showModal('error', 'Verifikasi Gagal', 'Harap masukkan Password Saat Ini untuk menyimpan perubahan.');
-                return;
-            }
-
-            if (currentPass !== window.currentStoreConfig.password) {
-                window.showModal('error', 'Verifikasi Gagal', 'Password Saat Ini yang Anda masukkan salah!');
-                return;
-            }
+            if (!currentPass) { window.showModal('error', 'Verifikasi Gagal', 'Harap masukkan Password Saat Ini.'); return; }
+            if (currentPass !== window.currentStoreConfig.password) { window.showModal('error', 'Verifikasi Gagal', 'Password Saat Ini salah!'); return; }
 
             const btn = document.getElementById('btn-save-settings');
             const originalText = btn.innerHTML;
@@ -1286,40 +1160,26 @@
             btn.disabled = true;
             lucide.createIcons();
 
-            // Siapkan data yang akan di-update ke Supabase secara Dinamis
             const payload = {};
-            
-            // Loop membaca semua nilai dari form dinamis
-            const dynamicInputs = document.querySelectorAll('.dynamic-setting-input');
-            dynamicInputs.forEach(input => {
+            document.querySelectorAll('.dynamic-setting-input').forEach(input => {
                 const key = input.getAttribute('data-key');
                 if(key) {
-                    // Tambahkan pembersih spasi (.trim) untuk mencegah error pada link URL
                     let val = input.value;
                     if (key !== 'ero_list') val = val.trim(); 
                     payload[key] = val;
                 }
             });
 
-            // Jika user mengisi password baru, update passwordnya
-            if (newPass !== '') {
-                payload.password = newPass;
-            }
+            if (newPass !== '') payload.password = newPass;
 
             try {
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/store_config?sap_code=eq.${window.currentStoreConfig.sap_code}`, {
                     method: 'PATCH',
-                    headers: { 
-                        'apikey': SUPABASE_ANON_KEY, 
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 
-                        'Content-Type': 'application/json',
-                        'Prefer': 'return=representation' 
-                    },
+                    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
                     body: JSON.stringify(payload)
                 });
 
                 if (!response.ok) throw new Error("Gagal mengupdate data di server.");
-                
                 const data = await response.json();
                 if (data && data.length > 0) {
                     window.currentStoreConfig = data[0];
@@ -1328,14 +1188,10 @@
                     const eroSelect = document.getElementById('rep-nama');
                     if (data[0].ero_list && eroSelect) {
                         eroSelect.innerHTML = '<option value="">Pilih Nama ERO...</option>';
-                        const eros = data[0].ero_list.split(',');
-                        eros.forEach(name => {
+                        data[0].ero_list.split(',').forEach(name => {
                             const trimmedName = name.trim();
                             if(trimmedName) {
-                                const opt = document.createElement('option');
-                                opt.value = trimmedName;
-                                opt.innerText = trimmedName;
-                                eroSelect.appendChild(opt);
+                                const opt = document.createElement('option'); opt.value = trimmedName; opt.innerText = trimmedName; eroSelect.appendChild(opt);
                             }
                         });
                     }
@@ -1343,20 +1199,15 @@
                     window.closeSettings();
                     window.showModal('success', 'Tersimpan!', 'Pengaturan akun berhasil diperbarui.');
                 }
-            } catch (err) {
-                window.showModal('error', 'Gagal Menyimpan', err.message);
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                lucide.createIcons();
-            }
+            } catch (err) { window.showModal('error', 'Gagal Menyimpan', err.message); } 
+            finally { btn.innerHTML = originalText; btn.disabled = false; lucide.createIcons(); }
         }
 
         window.openMasterSheet = function() {
             if (window.currentStoreConfig && window.currentStoreConfig.link_master) {
                 window.open(window.currentStoreConfig.link_master, '_blank');
             } else {
-                window.showModal('error', 'Tautan Tidak Ditemukan', 'Link Master Spreadsheet untuk toko ini belum ditambahkan pada database.');
+                window.showModal('error', 'Tautan Tidak Ditemukan', 'Link Master Spreadsheet untuk toko ini belum ditambahkan pada pengaturan.');
             }
         }
 
@@ -1389,7 +1240,6 @@
             window.checkReconcileStatus();
         }
 
-        // --- FUNGSI DOWNLOAD GAMBAR DASHBOARD ---
         window.downloadDashboardImage = async function() {
             const element = document.querySelector('.dark-dash-wrapper');
             if (!element) return;
@@ -1401,72 +1251,60 @@
             lucide.createIcons();
 
             try {
-                // Html2canvas memotret elemen dark-dash-wrapper dengan skala resolusi 2x lipat
-                const canvas = await html2canvas(element, {
-                    scale: 2, 
-                    backgroundColor: '#151521', 
-                    useCORS: true, 
-                    logging: false
-                });
-
-                // Buat link download semu dan panggil klik
+                const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#151521', useCORS: true, logging: false });
                 const link = document.createElement('a');
                 link.download = `Dashboard_Sales_Erafone_${new Date().toISOString().split('T')[0]}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-                
                 window.showModal('success', 'Berhasil Download!', 'Gambar visualisasi dashboard telah berhasil diunduh ke perangkat Anda.');
-            } catch (err) {
-                console.error('Error generating image:', err);
-                window.showModal('error', 'Gagal Download', 'Terjadi kesalahan saat memproses gambar PNG.');
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                lucide.createIcons();
-            }
+            } catch (err) { window.showModal('error', 'Gagal Download', 'Terjadi kesalahan saat memproses gambar PNG.'); } 
+            finally { btn.innerHTML = originalText; btn.disabled = false; lucide.createIcons(); }
         }
 
-        // TABS DASHBOARD SALES 
+        // LOGIKA TAB YANG DIPERBARUI (Unified Sales Tabs)
         window.switchSalesTab = function(tab) {
             document.getElementById('tab-sales-chart').classList.remove('active');
             document.getElementById('tab-sales-card').classList.remove('active');
+            document.getElementById('tab-ero').classList.remove('active');
+            document.getElementById('tab-data-ero').classList.remove('active');
             
             document.getElementById('sales-performance-chart-wrapper').style.display = 'none';
             document.getElementById('sales-performance-card-wrapper').style.display = 'none';
+            document.getElementById('form-section-ero').style.display = 'none';
+            document.getElementById('form-section-data-ero').style.display = 'none';
             
             const btnDownload = document.getElementById('btn-download-dash');
+            const mainFilterBar = document.getElementById('dash-main-filter-bar');
 
             if(tab === 'chart') {
                 document.getElementById('tab-sales-chart').classList.add('active');
                 document.getElementById('sales-performance-chart-wrapper').style.display = 'block'; 
-                if(btnDownload) btnDownload.style.display = 'inline-flex'; // Munculkan tombol download
+                if(btnDownload) btnDownload.style.display = 'inline-flex'; 
+                if(mainFilterBar) mainFilterBar.style.display = 'flex';
             } else if (tab === 'card') {
                 document.getElementById('tab-sales-card').classList.add('active');
                 document.getElementById('sales-performance-card-wrapper').style.display = 'block';
-                if(btnDownload) btnDownload.style.display = 'none'; // Sembunyikan tombol download
-            }
-        }
-
-        // TABS REPORT ERO
-        window.switchReportTab = function(tab) {
-            if(tab === 'ero') {
+                if(btnDownload) btnDownload.style.display = 'none'; 
+                if(mainFilterBar) mainFilterBar.style.display = 'flex';
+            } else if (tab === 'ero') {
                 document.getElementById('tab-ero').classList.add('active');
-                document.getElementById('tab-data-ero').classList.remove('active');
-                document.getElementById('form-section-ero').style.display = 'block'; 
-                document.getElementById('form-section-data-ero').style.display = 'none';
-            } else {
-                document.getElementById('tab-data-ero').classList.add('active');
-                document.getElementById('tab-ero').classList.remove('active');
-                document.getElementById('form-section-data-ero').style.display = 'block';
-                document.getElementById('form-section-ero').style.display = 'none';
+                document.getElementById('form-section-ero').style.display = 'block';
+                if(btnDownload) btnDownload.style.display = 'none';
+                if(mainFilterBar) mainFilterBar.style.display = 'none';
                 
-                if (!window.dataEroTracking || window.dataEroTracking.length === 0) {
-                    window.fetchDataReportEro();
-                }
+                // Set default tanggal hari ini
+                const tglInput = document.getElementById('rep-tanggal');
+                if(tglInput && !tglInput.value) tglInput.value = new Date().toISOString().split('T')[0];
+            } else if (tab === 'data-ero') {
+                document.getElementById('tab-data-ero').classList.add('active');
+                document.getElementById('form-section-data-ero').style.display = 'block';
+                if(btnDownload) btnDownload.style.display = 'none';
+                if(mainFilterBar) mainFilterBar.style.display = 'none';
+                
+                if (!window.dataEroTracking || window.dataEroTracking.length === 0) window.fetchDataReportEro();
             }
         }
 
-        // --- PEMBARUAN FUNGSI OPEN VIEW (DIAMANKAN DARI ERROR HISTORY API) ---
         window.openView = function(viewId, pushHistory = true) { 
             const views = document.querySelectorAll('.view');
             views.forEach(v => v.classList.remove('active')); 
@@ -1476,9 +1314,7 @@
 
             target.classList.add('active'); 
             
-            if(finalViewId === 'view-cek-stok') {
-                const timeEl = document.getElementById('last-upload-time');
-                if(timeEl) timeEl.innerText = lastStokUpdateDate;
+            if(finalViewId === 'view-main') {
                 window.fetchLatestStockDate(); 
             } else if(finalViewId === 'view-input-report') {
                 const tglInput = document.getElementById('rep-tanggal');
@@ -1495,28 +1331,22 @@
             document.getElementById('top-logout').style.display = isMain ? 'flex' : 'none';
             
             if (pushHistory) {
-                try {
-                    history.pushState({ view: finalViewId }, '', `#${finalViewId}`);
-                } catch(e) {
-                    console.warn("History pushState dinonaktifkan (Keamanan Iframe)");
-                }
+                try { history.pushState({ view: finalViewId }, '', `#${finalViewId}`); } catch(e) {}
             }
-
             try { lucide.createIcons(); } catch(e){}
         }
 
         window.backToMain = function() { window.resetAllForms(); window.openView('view-main'); }
+        window.backTo = function(viewId) { window.resetAllForms(); window.openView(viewId); }
         window.updateFileName = function(inputId, displayId) { const file = document.getElementById(inputId).files[0]; if (file) document.getElementById(displayId).innerText = file.name; }
 
-        // --- DASHBOARD SALES LOGIC (Revisi Tarikan Data Paralel) ---
+        // --- DASHBOARD SALES LOGIC ---
         let dashboardSalesData = []; 
         window.dashboardTrendData = []; 
 
         const formatRp = (angka) => { if(!angka || isNaN(angka)) return "Rp 0"; return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka); };
         const formatNum = (angka) => { if(!angka || isNaN(angka)) return "0"; return new Intl.NumberFormat('id-ID').format(angka); };
-        const formatPerc = (angka) => { if(angka === null || angka === undefined) return "0%"; if(Math.abs(angka) > 0 && Math.abs(angka) <= 2) return (angka * 100).toFixed(1) + "%"; return parseFloat(angka).toFixed(1) + "%"; };
         
-        // Pembulatan ERO Card (Hilangkan 3 digit ribuan & desimal) untuk cegah overlap
         const formatRpRounded = (angka) => { 
             if(!angka || isNaN(angka)) return "Rp 0"; 
             return "Rp " + new Intl.NumberFormat('id-ID').format(Math.floor(angka / 1000)); 
@@ -1526,7 +1356,7 @@
             window.setLocalStatus('status-dashboard-sales', 'Menarik data dari Spreadsheet...', 'loading');
             
             if (!window.currentStoreConfig || !window.currentStoreConfig.summary_report) {
-                window.setLocalStatus('status-dashboard-sales', 'Link Summary Report belum dikonfigurasi di database untuk toko ini.', 'error');
+                window.setLocalStatus('status-dashboard-sales', 'Link Summary Report belum dikonfigurasi di pengaturan.', 'error');
                 return;
             }
 
@@ -1535,7 +1365,7 @@
             const gidMatch = rawUrl.match(/[#&?]gid=([0-9]+)/);
 
             if (!sheetIdMatch) {
-                window.setLocalStatus('status-dashboard-sales', 'Format link Summary Report di database tidak valid.', 'error');
+                window.setLocalStatus('status-dashboard-sales', 'Format link Summary Report tidak valid.', 'error');
                 return;
             }
 
@@ -1543,7 +1373,6 @@
             const GID = gidMatch ? gidMatch[1] : '0';
             const urlMain = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${GID}&headers=1`;
             
-            // LOGIKA DINAMIS LINK TREND HARIAN (DARI SUPABASE)
             let urlTrend = null;
             if (window.currentStoreConfig.daily_sales) {
                 const trendRawUrl = window.currentStoreConfig.daily_sales;
@@ -1558,11 +1387,8 @@
             }
             
             try {
-                // FETCH PARALEL
                 const fetchPromises = [fetch(urlMain)];
-                if (urlTrend) {
-                    fetchPromises.push(fetch(urlTrend).catch(e => null)); 
-                }
+                if (urlTrend) fetchPromises.push(fetch(urlTrend).catch(e => null)); 
 
                 const responses = await Promise.all(fetchPromises);
                 const resMain = responses[0];
@@ -1621,9 +1447,7 @@
                                 let vStr = String(cell.v);
                                 if (vStr.startsWith('Date(')) {
                                     let m = vStr.match(/Date\((\d+),\s*(\d+),\s*(\d+)/);
-                                    if (m) {
-                                        return `${m[3]} ${["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Ags","Sep","Okt","Nov","Des"][parseInt(m[2])]}`;
-                                    }
+                                    if (m) return `${m[3]} ${["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Ags","Sep","Okt","Nov","Des"][parseInt(m[2])]}`;
                                 }
                                 return vStr.trim();
                             }
@@ -1660,7 +1484,6 @@
                     }
                 });
 
-                // --- EKSTRAKSI KHUSUS TAB DAILY TREND ---
                 window.dashboardTrendData = [];
                 if (resTrend && resTrend.ok) {
                     const textTrend = await resTrend.text();
@@ -1729,8 +1552,7 @@
                 const currentValue = filterSelect.value;
                 filterSelect.innerHTML = '<option value="All">Semua Bulan</option>';
                 Array.from(uniqueMonths).sort().forEach(m => {
-                    const opt = document.createElement('option'); opt.value = m; opt.innerText = m;
-                    filterSelect.appendChild(opt);
+                    const opt = document.createElement('option'); opt.value = m; opt.innerText = m; filterSelect.appendChild(opt);
                 });
                 if (uniqueMonths.has(currentValue)) filterSelect.value = currentValue;
 
@@ -1738,8 +1560,7 @@
                 const currentEroValue = filterEroSelect.value;
                 filterEroSelect.innerHTML = '<option value="All">Semua ERO</option>';
                 Array.from(uniqueEros).sort().forEach(e => {
-                    const opt = document.createElement('option'); opt.value = e; opt.innerText = e;
-                    filterEroSelect.appendChild(opt);
+                    const opt = document.createElement('option'); opt.value = e; opt.innerText = e; filterEroSelect.appendChild(opt);
                 });
                 if (uniqueEros.has(currentEroValue)) filterEroSelect.value = currentEroValue;
 
@@ -1748,8 +1569,7 @@
                 setTimeout(() => window.clearLocalStatus('status-dashboard-sales'), 3000);
 
             } catch (error) {
-                console.error(error);
-                window.setLocalStatus('status-dashboard-sales', 'Gagal menarik data. Cek akses Spreadsheet.', 'error');
+                window.setLocalStatus('status-dashboard-sales', 'Gagal menarik data.', 'error');
             }
         };
 
@@ -1783,9 +1603,7 @@
                 }
             }
 
-            if (filteredTrend.length === 0 && dashboardSalesData.length > 0) {
-                filteredTrend = filteredData;
-            }
+            if (filteredTrend.length === 0 && dashboardSalesData.length > 0) filteredTrend = filteredData;
             
             const timeMap = new Map();
             filteredTrend.forEach(t => {
@@ -1794,10 +1612,8 @@
                 timeMap.set(key, timeMap.get(key) + t.pencapaian);
             });
             
-            // Ekstraksi hanya angka tanggalnya saja untuk chart garis
             const trendLabels = Array.from(timeMap.keys()).map(dateStr => {
-                const match = dateStr.match(/\d+/);
-                return match ? match[0] : dateStr;
+                const match = dateStr.match(/\d+/); return match ? match[0] : dateStr;
             });
             const trendValues = Array.from(timeMap.values());
 
@@ -1807,14 +1623,10 @@
                     eroMap.set(d.nama, { ...d });
                 } else {
                     let e = eroMap.get(d.nama);
-                    e.allBisnis += d.allBisnis;
-                    e.targetAB = Math.max(e.targetAB, d.targetAB); 
-                    e.estimasiAB += d.estimasiAB;
-                    
+                    e.allBisnis += d.allBisnis; e.targetAB = Math.max(e.targetAB, d.targetAB); e.estimasiAB += d.estimasiAB;
                     e.devVal += d.devVal; e.devTarget = Math.max(e.devTarget, d.devTarget); e.devEst += d.devEst; e.devQty += d.devQty;
                     e.accVal += d.accVal; e.accTarget = Math.max(e.accTarget, d.accTarget); e.accEst += d.accEst; e.accQty += d.accQty;
                     e.boltVal += d.boltVal; e.boltTarget = Math.max(e.boltTarget, d.boltTarget); e.boltEst += d.boltEst; e.boltQty += d.boltQty;
-                    
                     e.isatVal += d.isatVal; e.xlVal += d.xlVal; e.tselVal += d.tselVal;
                     e.wicDeal += d.wicDeal; e.wicLoss += d.wicLoss; e.csi += d.csi; e.gRev += d.gRev;
                 }
@@ -1822,19 +1634,13 @@
             const leaderData = Array.from(eroMap.values());
             leaderData.sort((a, b) => b.allBisnis - a.allBisnis);
             
-            let totalTarget = 0, totalAktual = 0, totalEst = 0;
-            let tDevTgt = 0, tDevVal = 0, tDevEst = 0, tDevQty = 0;
-            let tAccTgt = 0, tAccVal = 0, tAccEst = 0, tAccQty = 0;
-            let tBoltTgt = 0, tBoltVal = 0, tBoltEst = 0, tBoltQty = 0;
-            let tIsatVal = 0, tXlVal = 0, tTselVal = 0;
-            let tWicDeal = 0, tWicLoss = 0, tCsi = 0, tGrev = 0;
+            let totalTarget = 0, totalAktual = 0, totalEst = 0, tDevTgt = 0, tDevVal = 0, tDevEst = 0, tDevQty = 0;
+            let tAccTgt = 0, tAccVal = 0, tAccEst = 0, tAccQty = 0, tBoltTgt = 0, tBoltVal = 0, tBoltEst = 0, tBoltQty = 0;
+            let tIsatVal = 0, tXlVal = 0, tTselVal = 0, tWicDeal = 0, tWicLoss = 0, tCsi = 0, tGrev = 0;
 
             if (leaderData.length > 0) {
                 leaderData.forEach((data) => {
-                    totalTarget += data.targetAB;
-                    totalAktual += data.allBisnis;
-                    totalEst += data.estimasiAB;
-                    
+                    totalTarget += data.targetAB; totalAktual += data.allBisnis; totalEst += data.estimasiAB;
                     tDevTgt += data.devTarget; tDevVal += data.devVal; tDevEst += data.devEst; tDevQty += data.devQty;
                     tAccTgt += data.accTarget; tAccVal += data.accVal; tAccEst += data.accEst; tAccQty += data.accQty;
                     tBoltTgt += data.boltTarget; tBoltVal += data.boltVal; tBoltEst += data.boltEst; tBoltQty += data.boltQty;
@@ -1854,7 +1660,6 @@
             const arBolt = tDevQty > 0 ? ((tBoltQty / tDevQty) * 100).toFixed(1) : 0;
             const sobBolt = tDevVal > 0 ? ((tBoltVal / tDevVal) * 100).toFixed(1) : 0;
 
-            // Memasukkan format bulat (/1000) ke ERO Card khusus Nominal Uang
             document.getElementById('dash-sum-target').innerText = formatRpRounded(totalTarget);
             document.getElementById('dash-sum-aktual').innerText = formatRpRounded(totalAktual);
             document.getElementById('dash-sum-ach').innerText = 'Avg Ach: ' + (totalTarget > 0 ? ((totalAktual / totalTarget) * 100).toFixed(1) : 0) + '%';
@@ -1880,13 +1685,11 @@
             document.getElementById('dash-sum-xl').innerText = formatRpRounded(tXlVal);
             document.getElementById('dash-sum-tsel').innerText = formatRpRounded(tTselVal);
 
-            // Traffic & Layanan tetap normal karena bukan nominal uang
             document.getElementById('dash-sum-wic').innerHTML = `${formatNum(tWicDeal)} <span style="color: #fda4af; font-size: 0.95rem;">/ ${formatNum(tWicLoss)}</span>`;
             document.getElementById('dash-sum-csi').innerText = formatNum(tCsi);
             document.getElementById('dash-sum-grev').innerText = formatNum(tGrev);
 
             renderCharts(trendLabels, trendValues, leaderData, tDevTgt, tDevVal, tAccTgt, tAccVal, tBoltTgt, tBoltVal, tIsatVal, tXlVal, tTselVal, tWicDeal, tWicLoss);
-
             lucide.createIcons();
         };
 
@@ -2039,14 +1842,8 @@
                         }
                     },
                     scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            ticks: { callback: function(val) { return formatCompact(val); } } 
-                        },
-                        x: { 
-                            grid: { display: false },
-                            ticks: { maxRotation: 0, minRotation: 0 }
-                        }
+                        y: { beginAtZero: true, ticks: { callback: function(val) { return formatCompact(val); } } },
+                        x: { grid: { display: false }, ticks: { maxRotation: 0, minRotation: 0 } }
                     }
                 }
             });
@@ -2069,13 +1866,7 @@
                     plugins: {
                         legend: { position: 'bottom', labels: { color: '#d1d5db', padding: 15, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } },
                         tooltip: { callbacks: { label: function(ctx) { return ' ' + ctx.label + ': ' + new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(ctx.parsed); } } },
-                        datalabels: {
-                            color: '#ffffff',
-                            font: { weight: '800', size: 10, family: "'Plus Jakarta Sans', sans-serif" },
-                            formatter: (value) => value > 0 ? formatCompact(value) : null,
-                            anchor: 'center',
-                            align: 'center'
-                        }
+                        datalabels: { color: '#ffffff', font: { weight: '800', size: 10, family: "'Plus Jakarta Sans', sans-serif" }, formatter: (value) => value > 0 ? formatCompact(value) : null, anchor: 'center', align: 'center' }
                     }
                 }
             });
@@ -2098,19 +1889,13 @@
                     plugins: {
                         legend: { position: 'bottom', labels: { color: '#d1d5db', padding: 15, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } },
                         tooltip: { callbacks: { label: function(ctx) { return ' ' + ctx.label + ': ' + formatNum(ctx.parsed) + ' Orang'; } } },
-                        datalabels: {
-                            color: '#ffffff',
-                            font: { weight: '800', size: 11, family: "'Plus Jakarta Sans', sans-serif" },
-                            formatter: (value) => value > 0 ? formatNum(value) : null,
-                            anchor: 'center',
-                            align: 'center'
-                        }
+                        datalabels: { color: '#ffffff', font: { weight: '800', size: 11, family: "'Plus Jakarta Sans', sans-serif" }, formatter: (value) => value > 0 ? formatNum(value) : null, anchor: 'center', align: 'center' }
                     }
                 }
             });
         }
 
-        // --- NEW: DATA REPORT ERO (TRACKING DATA ABSENSI) ---
+        // --- DATA REPORT ERO (TRACKING DATA ABSENSI) ---
         window.dataEroTracking = []; 
         window.monthEroList = {}; 
 
@@ -2127,13 +1912,11 @@
             const gidMatch = rawUrl.match(/[#&?]gid=([0-9]+)/);
 
             if (!sheetIdMatch) {
-                window.setLocalStatus('status-data-ero', 'Format link Rekap Report di database tidak valid.', 'error');
+                window.setLocalStatus('status-data-ero', 'Format link Rekap Report tidak valid.', 'error');
                 return;
             }
 
-            const SHEET_ID = sheetIdMatch[1];
-            const GID = gidMatch ? gidMatch[1] : '0';
-            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${GID}&headers=1`;
+            const url = `https://docs.google.com/spreadsheets/d/${sheetIdMatch[1]}/gviz/tq?tqx=out:json&gid=${gidMatch ? gidMatch[1] : '0'}&headers=1`;
 
             try {
                 const response = await fetch(url);
@@ -2143,23 +1926,10 @@
                 if (!jsonString || !jsonString[1]) throw new Error("Gagal membaca struktur data Spreadsheet Tracking.");
 
                 const data = JSON.parse(jsonString[1]);
-                
-                let allRows = [];
-                let headerRow = { c: [] };
-                data.table.cols.forEach(col => {
-                    headerRow.c.push({ v: col ? col.label : '' });
-                });
-                allRows.push(headerRow);
-                allRows.push(...data.table.rows);
+                let allRows = [{ c: data.table.cols.map(col => ({ v: col ? col.label : '' })) }, ...data.table.rows];
 
-                let currentMonth = "";
-                let currentHeaders = {}; 
-                let bulanIdx = -1;
-                let tglIdx = -1;
-
-                window.dataEroTracking = [];
-                window.monthEroList = {};
-                let uniqueMonths = new Set();
+                let currentMonth = "", currentHeaders = {}, bulanIdx = -1, tglIdx = -1;
+                window.dataEroTracking = []; window.monthEroList = {}; let uniqueMonths = new Set();
 
                 let firstRow = allRows[0];
                 if(firstRow && firstRow.c) {
@@ -2174,9 +1944,7 @@
                     firstRow.c.forEach((cell, idx) => {
                         if (idx !== bulanIdx && idx !== tglIdx && cell && cell.v !== null && cell.v !== undefined) {
                             let val = String(cell.v).trim();
-                            if (val !== '' && val.toLowerCase() !== 'null') {
-                                currentHeaders[idx] = val;
-                            }
+                            if (val !== '' && val.toLowerCase() !== 'null') currentHeaders[idx] = val;
                         }
                     });
                 }
@@ -2195,9 +1963,7 @@
                     });
 
                     if (isNewHeader) {
-                        let tempBulanIdx = bulanIdx; 
-                        let tempTglIdx = tglIdx; 
-
+                        let tempBulanIdx = bulanIdx, tempTglIdx = tglIdx; 
                         row.c.forEach((cell, idx) => {
                             if (cell && cell.v !== null && cell.v !== undefined) {
                                 let valLow = String(cell.v).trim().toLowerCase();
@@ -2205,17 +1971,12 @@
                                 else if (valLow === 'tanggal' || valLow === 'tgl') tempTglIdx = idx;
                             }
                         });
-
-                        bulanIdx = tempBulanIdx;
-                        tglIdx = tempTglIdx;
-                        currentHeaders = {};
+                        bulanIdx = tempBulanIdx; tglIdx = tempTglIdx; currentHeaders = {};
 
                         row.c.forEach((cell, idx) => {
                             if (idx !== bulanIdx && idx !== tglIdx && cell && cell.v !== null && cell.v !== undefined) {
                                 let val = String(cell.v).trim();
-                                if (val !== '' && val.toLowerCase() !== 'null') {
-                                    currentHeaders[idx] = val; 
-                                }
+                                if (val !== '' && val.toLowerCase() !== 'null') currentHeaders[idx] = val; 
                             }
                         });
                         return; 
@@ -2223,37 +1984,23 @@
 
                     if (bulanIdx === -1 || tglIdx === -1) return; 
 
-                    let cellBulan = row.c[bulanIdx];
-                    let bulan = '';
+                    let cellBulan = row.c[bulanIdx], bulan = '';
                     if (cellBulan && cellBulan.v !== null && cellBulan.v !== undefined) {
-                        if (cellBulan.f && isNaN(parseInt(cellBulan.f))) {
-                            bulan = String(cellBulan.f).trim(); 
-                        } else {
-                            let vStr = String(cellBulan.v);
-                            if (vStr.startsWith('Date')) {
-                                let m = vStr.match(/Date\((\d+),\s*(\d+)/);
-                                if (m) {
-                                    const mNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-                                    bulan = mNames[parseInt(m[2])]; 
-                                }
-                            } else {
-                                bulan = vStr.trim();
-                            }
+                        if (cellBulan.f && isNaN(parseInt(cellBulan.f))) bulan = String(cellBulan.f).trim(); 
+                        else {
+                            let vStr = String(cellBulan.v), m = vStr.match(/Date\((\d+),\s*(\d+)/);
+                            if (m) bulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"][parseInt(m[2])]; 
+                            else bulan = vStr.trim();
                         }
                     }
-                    
-                    if (bulan !== '' && bulan.toLowerCase() !== 'null') currentMonth = bulan;
-                    else bulan = currentMonth; 
+                    if (bulan !== '' && bulan.toLowerCase() !== 'null') currentMonth = bulan; else bulan = currentMonth; 
 
-                    let cellTgl = row.c[tglIdx];
-                    let tanggal = 0;
+                    let cellTgl = row.c[tglIdx], tanggal = 0;
                     if (cellTgl && cellTgl.v !== null && cellTgl.v !== undefined) {
-                        let vStr = String(cellTgl.v);
-                        let fStr = cellTgl.f ? String(cellTgl.f) : '';
+                        let vStr = String(cellTgl.v), fStr = cellTgl.f ? String(cellTgl.f) : '';
                         let dateMatch = vStr.match(/Date\((\d+),\s*(\d+),\s*(\d+)/);
-                        if (dateMatch) {
-                            tanggal = parseInt(dateMatch[3]); 
-                        } else {
+                        if (dateMatch) tanggal = parseInt(dateMatch[3]); 
+                        else {
                             let numMatch = (fStr || vStr).match(/^(\d+)/);
                             if (numMatch) tanggal = parseInt(numMatch[1]);
                             else tanggal = parseInt(vStr);
@@ -2261,55 +2008,35 @@
                     }
 
                     if (bulan && tanggal > 0) {
-                        if (!window.monthEroList[bulan]) {
-                            window.monthEroList[bulan] = new Set();
-                        }
-
+                        if (!window.monthEroList[bulan]) window.monthEroList[bulan] = new Set();
                         uniqueMonths.add(bulan);
                         let eroStatus = {};
-                        
                         for (let idx in currentHeaders) {
-                            let eroName = currentHeaders[idx];
-                            window.monthEroList[bulan].add(eroName);
-
+                            let eroName = currentHeaders[idx]; window.monthEroList[bulan].add(eroName);
                             let cellObj = row.c[idx];
                             let cellVal = (cellObj && cellObj.v !== null && cellObj.v !== undefined) ? String(cellObj.v).trim().toLowerCase() : '';
                             eroStatus[eroName] = (cellVal !== '' && cellVal !== 'null'); 
                         }
-                        
                         window.dataEroTracking.push({ bulan: bulan, tanggal: tanggal, status: eroStatus });
                     }
                 });
 
-                for (let b in window.monthEroList) {
-                    window.monthEroList[b] = Array.from(window.monthEroList[b]);
-                }
+                for (let b in window.monthEroList) window.monthEroList[b] = Array.from(window.monthEroList[b]);
 
                 const filterSelect = document.getElementById('data-ero-month-filter');
                 filterSelect.innerHTML = '<option value="">Pilih Bulan...</option>';
-                
                 Array.from(uniqueMonths).sort().forEach(m => {
-                    const opt = document.createElement('option');
-                    opt.value = m; opt.innerText = m;
-                    filterSelect.appendChild(opt);
+                    const opt = document.createElement('option'); opt.value = m; opt.innerText = m; filterSelect.appendChild(opt);
                 });
 
                 let currentMonthName = new Date().toLocaleString('id-ID', { month: 'long' });
-                if (uniqueMonths.has(currentMonthName)) {
-                    filterSelect.value = currentMonthName;
-                } else if (uniqueMonths.size > 0) {
-                    filterSelect.value = Array.from(uniqueMonths).sort()[0];
-                }
+                if (uniqueMonths.has(currentMonthName)) filterSelect.value = currentMonthName;
+                else if (uniqueMonths.size > 0) filterSelect.value = Array.from(uniqueMonths).sort()[0];
 
                 window.setLocalStatus('status-data-ero', 'Tracking Data Berhasil Dimuat!', 'success');
                 setTimeout(() => window.clearLocalStatus('status-data-ero'), 3000);
-
                 window.renderDataReportEro();
-
-            } catch (error) {
-                console.error(error);
-                window.setLocalStatus('status-data-ero', error.message || 'Koneksi ke Spreadsheet Gagal.', 'error');
-            }
+            } catch (error) { window.setLocalStatus('status-data-ero', error.message || 'Koneksi ke Spreadsheet Gagal.', 'error'); }
         };
 
         window.renderDataReportEro = function() {
@@ -2323,7 +2050,6 @@
             }
 
             const filteredData = window.dataEroTracking.filter(d => d.bulan.toLowerCase() === filterMonth.toLowerCase());
-            
             let actualMonthKey = Object.keys(window.monthEroList).find(k => k.toLowerCase() === filterMonth.toLowerCase());
             const activeEros = window.monthEroList[actualMonthKey] || [];
 
@@ -2334,34 +2060,20 @@
             
             const now = new Date();
             const monthNames = ["januari", "februari", "maret", "april", "mei", "juni", "juli", "agustus", "september", "oktober", "november", "desember"];
-            const currentMonthName = monthNames[now.getMonth()];
-            const isCurrentMonth = (currentMonthName === filterMonth.toLowerCase().trim());
+            const isCurrentMonth = (monthNames[now.getMonth()] === filterMonth.toLowerCase().trim());
             const todayDate = now.getDate();
 
             let statsPerEro = {};
-            activeEros.forEach(eroName => {
-                statsPerEro[eroName] = { 
-                    totalReport: 0, 
-                    totalMissed: 0, 
-                    missedDatesList: [] 
-                };
-            });
+            activeEros.forEach(eroName => { statsPerEro[eroName] = { totalReport: 0, totalMissed: 0, missedDatesList: [] }; });
 
             filteredData.forEach(row => {
                 let rowTgl = parseInt(row.tanggal);
-                
-                if (isCurrentMonth && !isNaN(rowTgl) && rowTgl > todayDate) {
-                    return; 
-                }
-
+                if (isCurrentMonth && !isNaN(rowTgl) && rowTgl > todayDate) return; 
                 activeEros.forEach(eroName => {
-                    if (row.status[eroName]) {
-                        statsPerEro[eroName].totalReport++;
-                    } else {
+                    if (row.status[eroName]) statsPerEro[eroName].totalReport++;
+                    else {
                         statsPerEro[eroName].totalMissed++;
-                        if (!statsPerEro[eroName].missedDatesList.includes(rowTgl)) {
-                            statsPerEro[eroName].missedDatesList.push(rowTgl);
-                        }
+                        if (!statsPerEro[eroName].missedDatesList.includes(rowTgl)) statsPerEro[eroName].missedDatesList.push(rowTgl);
                     }
                 });
             });
@@ -2379,7 +2091,7 @@
                     badgesHTML = '<span style="font-size:0.85rem; color: #16a34a; font-weight: 700; display:flex; align-items:center; gap:0.4rem;"><i data-lucide="check-circle" style="width:16px;"></i> Report Lengkap (Aman)</span>';
                 }
 
-                const cardHTML = `
+                grid.insertAdjacentHTML('beforeend', `
                     <div class="ero-track-card">
                         <div class="etc-header">
                             <div class="etc-avatar">${initial}</div>
@@ -2397,15 +2109,11 @@
                         </div>
                         <div class="etc-missed-section">
                             <div class="etc-missed-title"><i data-lucide="calendar-x" style="width:16px;"></i> Rincian Tanggal Belum Report:</div>
-                            <div class="etc-badges-container">
-                                ${badgesHTML}
-                            </div>
+                            <div class="etc-badges-container">${badgesHTML}</div>
                         </div>
                     </div>
-                `;
-                grid.insertAdjacentHTML('beforeend', cardHTML);
+                `);
             });
-
             lucide.createIcons();
         };
 
@@ -2415,8 +2123,7 @@
                 if (response.ok) {
                     const data = await response.json();
                     if (data && data.length > 0) {
-                        const dateObj = new Date(data[0].stock_date);
-                        lastStokUpdateDate = new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(dateObj);
+                        lastStokUpdateDate = new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(data[0].stock_date));
                         const timeEl = document.getElementById('last-upload-time');
                         if(timeEl) timeEl.innerText = lastStokUpdateDate;
                     } 
@@ -2449,7 +2156,7 @@
                 const data = await window.safeJsonParse(response);
                 if (!response.ok) throw new Error(data.message || `HTTP Error ${response.status}`);
                 if (data.error || data.status === 'error') throw new Error(data.message || data.error);
-                let raw = data.message || ""; let lines = raw.split('\n');
+                let raw = data.message || "", lines = raw.split('\n');
                 if (lines.length > 0 && raw !== "") {
                     tbody.innerHTML = '';
                     lines.forEach(line => {
@@ -2540,21 +2247,20 @@
             const tgl = document.getElementById('rep-tanggal').value;
             const nama = document.getElementById('rep-nama').value.trim();
             if (!tgl || !nama) { window.setLocalStatus('status-input-report', 'Wajib isi Tanggal & Pilih Nama ERO!', 'error'); return; }
-            const naratifText = document.getElementById('rep-naratif').value.trim();
-            const templateText = `Update Sales daily by Ero\nTanggal : ${formatBulanIndo(tgl)}\n\nNama : ${nama}\nAll bisnis : ${getVal('rep-allbisnis')}\nDevice qty : ${getVal('rep-dev-qty')}\nDevice value : ${getVal('rep-dev-val')}\nAcc qty : ${getVal('rep-acc-qty')}\nAcc value : ${getVal('rep-acc-val')}\nBoltech qty : ${getVal('rep-bolt-qty')}\nBoltech value : ${getVal('rep-bolt-val')}\nIndosat qty : ${getVal('rep-isat-qty')}\nIndosat value : ${getVal('rep-isat-val')}\nXL qty : ${getVal('rep-xl-qty')}\nXL value : ${getVal('rep-xl-val')}\nTsel qty : ${getVal('rep-tsel-qty')}\nTsel value : ${getVal('rep-tsel-val')}\n\nWic deal : ${getVal('rep-wic-deal')}\nWic loss : ${getVal('rep-wic-loss')}\n\nCnp : ${getVal('rep-cnp')}\nCsi : ${getVal('rep-csi')}\nG.Riview : ${getVal('rep-grev')}\n\nCatatan Harian:\n${naratifText}`;
+            const issueText = document.getElementById('rep-naratif').value.trim();
+            const templateText = `Update Sales daily by Ero\nTanggal : ${formatBulanIndo(tgl)}\n\nNama : ${nama}\nAll bisnis : ${getVal('rep-allbisnis')}\nDevice qty : ${getVal('rep-dev-qty')}\nDevice value : ${getVal('rep-dev-val')}\nAcc qty : ${getVal('rep-acc-qty')}\nAcc value : ${getVal('rep-acc-val')}\nBoltech qty : ${getVal('rep-bolt-qty')}\nBoltech value : ${getVal('rep-bolt-val')}\nIndosat qty : ${getVal('rep-isat-qty')}\nIndosat value : ${getVal('rep-isat-val')}\nXL qty : ${getVal('rep-xl-qty')}\nXL value : ${getVal('rep-xl-val')}\nTsel qty : ${getVal('rep-tsel-qty')}\nTsel value : ${getVal('rep-tsel-val')}\n\nWic deal : ${getVal('rep-wic-deal')}\nWic loss : ${getVal('rep-wic-loss')}\n\nCnp : ${getVal('rep-cnp')}\nCsi : ${getVal('rep-csi')}\nG.Riview : ${getVal('rep-grev')}\n\nIssue:\n${issueText}`;
             window.setLocalStatus('status-input-report', 'Mengirim data Report ERO...');
 
             try {
-                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ command: 'input_report', report_text: templateText, sap_code: window.currentStoreConfig.sap_code }) });
+                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ command: 'input_report', report_text: templateText, sap_code: window.currentStoreConfig.sap_code, issue: issueText }) });
                 const data = await window.safeJsonParse(response);
                 if (!response.ok) throw new Error(data.message || `HTTP Error ${response.status}`);
                 if (data.error || data.status === 'error') throw new Error(data.message || data.error);
-                
                 window.setLocalStatus('status-input-report', 'Laporan Berhasil Diterima Server!', 'success');
                 window.showModal('success', 'Berhasil!', 'Laporan harian ERO berhasil dikirim.');
                 setTimeout(window.resetAllForms, 3000);
             } catch (e) { 
-                window.setLocalStatus('status-input-report', 'Gagal mengirim: ' + (e.message || 'Koneksi terputus'), 'error'); 
+                window.setLocalStatus('status-input-report', 'Gagal mengirim.', 'error'); 
                 window.showModal('error', 'Gagal Mengirim', e.message || 'Terjadi kesalahan saat mengirim laporan.');
             }
         }
@@ -2575,15 +2281,11 @@
 
         window.addEventListener('popstate', function(event) {
             if (!window.currentStoreConfig) return; 
-            
             let viewToOpen = 'view-main';
-            if (event.state && event.state.view) {
-                viewToOpen = event.state.view;
-            } else {
+            if (event.state && event.state.view) viewToOpen = event.state.view;
+            else {
                 const hash = window.location.hash.substring(1);
-                if (hash && document.getElementById(hash) && document.getElementById(hash).classList.contains('view')) {
-                    viewToOpen = hash;
-                }
+                if (hash && document.getElementById(hash) && document.getElementById(hash).classList.contains('view')) viewToOpen = hash;
             }
             window.openView(viewToOpen, false);
         });
@@ -2594,7 +2296,7 @@
                 try {
                     window.currentStoreConfig = JSON.parse(savedConfig);
                     doLoginSuccess(window.currentStoreConfig.store_name);
-                } catch (e) { console.error('Sesi tidak valid', e); localStorage.removeItem('erafoneStoreConfig'); }
+                } catch (e) { localStorage.removeItem('erafoneStoreConfig'); }
             }
         });
     </script>
