@@ -97,10 +97,10 @@
         /* --- DASHBOARD LAYOUT --- */
         .container { width: 100%; max-width: 1100px; display: none; position: relative; }
         
-        /* DIPERBAIKI: Top Logout Container */
-        .logout-container { display: flex; justify-content: flex-end; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; width: 100%; position: relative; z-index: 50; }
+        /* DIPERBAIKI: Top Logout Container dengan Z-Index Ultra & Pointer Events */
+        .logout-container { display: flex; justify-content: flex-end; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; width: 100%; position: relative; z-index: 999; pointer-events: auto; }
         .btn-logout { padding: 0.6rem 1rem; background: var(--bg-primary); color: white; border-radius: var(--border-radius-md); font-weight: 700; font-size: 0.85rem; cursor: pointer; border: 1.5px solid var(--accent-primary) !important; display: flex; align-items: center; gap: 0.5rem; transition: var(--transition); }
-        .btn-logout:hover { background: var(--bg-dark); transform: translateY(-2px); }
+        .btn-logout:hover { background: var(--bg-dark); transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .btn-master { background: #2563eb; border-color: #1d4ed8 !important; }
 
         .header-wrapper { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 3rem; gap: 1.5rem; }
@@ -527,65 +527,74 @@
             </div>
         </div>
 
-        <!-- 2. VIEW: RECONCILE DATA -->
+        <!-- 2. VIEW: RECONCILE DATA (REVISI TAMPILAN PRESISI & RAPI) -->
         <div id="view-reconcile" class="view">
+            <!-- Canvas putih dikembalikan (hapus style transparent) -->
             <div class="detail-view">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <button class="back-btn" style="margin-bottom: 0;" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                    <a href="https://docs.google.com/spreadsheets/d/1CelOaKLiDc5bWYdkIQ5_RRyl3-BVKa7r/edit?usp=sharing&ouid=113833816706433632210&rtpof=true&sd=true" target="_blank" class="btn-base" style="background: #2563eb; color: white; border-color: #1d4ed8 !important; padding: 0.5rem 1rem; font-size: 0.85rem; text-decoration: none;">
-                        <i data-lucide="file-spreadsheet" style="width: 14px;"></i> Template Excel Recon
+                
+                <!-- HEADER NAVIGATION -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                    <button class="back-btn" style="margin-bottom: 0; color: var(--bg-primary); font-size: 1rem;" onclick="window.backToMain()">
+                        <i data-lucide="arrow-left" style="width: 18px;"></i> Kembali ke Dashboard
+                    </button>
+                    <a href="https://docs.google.com/spreadsheets/d/1CelOaKLiDc5bWYdkIQ5_RRyl3-BVKa7r/edit?usp=sharing&ouid=113833816706433632210&rtpof=true&sd=true" target="_blank" class="btn-base" style="background: #3b82f6; color: white; border: none !important; border-radius: 8px; padding: 0.6rem 1.25rem; font-size: 0.95rem; text-decoration: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <i data-lucide="file-spreadsheet" style="width: 18px;"></i> Template Excel Recon
                     </a>
                 </div>
-                <h2 style="margin-top: -0.5rem; margin-bottom: 1.5rem;">Rekonsiliasi Data</h2>
                 
-                <div class="recon-grid">
+                <h2 style="color: var(--bg-primary); font-size: 2.2rem; font-weight: 800; margin-bottom: 2rem; margin-top: 0;">Rekonsiliasi Data</h2>
+                
+                <div class="recon-grid" style="gap: 2.5rem; align-items: stretch;">
                     
-                    <!-- KOLOM KIRI: File Input (Compact) -->
+                    <!-- KOLOM KIRI: File Input (Gaya Neo-Brutalism) -->
                     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                        <div class="column-card" style="background: #f8fafc; padding: 1.25rem; border-radius: var(--border-radius-md); border: 1.5px solid var(--border-color); box-shadow: var(--shadow-sm);">
-                            <span class="column-title" style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
-                                <i data-lucide="file-text" style="width: 16px; color: var(--danger);"></i> 1. File PDF POS
+                        
+                        <!-- CARD 1: PDF -->
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 2px solid #000; box-shadow: 4px 4px 0 #000; display: flex; flex-direction: column; gap: 1rem;">
+                            <span style="font-weight: 800; font-size: 0.95rem; color: var(--bg-primary); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase;">
+                                <i data-lucide="file-text" style="width: 18px; color: var(--danger);"></i> 1. File PDF POS
                             </span>
-                            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                                <div class="upload-compact" onclick="document.getElementById('recon-pdf').click()" style="height: 48px; width: 100%; border: 1.5px dashed #cbd5e1 !important; background: white;">
-                                    <i data-lucide="upload-cloud" style="width: 16px; margin: 0; color: var(--text-muted);"></i>
-                                    <p id="pdf-name" style="margin: 0; font-size: 0.8rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pilih file PDF...</p>
-                                    <input type="file" id="recon-pdf" accept=".pdf" style="display:none" onchange="window.updateFileName('recon-pdf', 'pdf-name'); window.resetReconcileState('pdf')">
-                                </div>
-                                <button class="btn-base btn-process" id="btn-pdf-reconcile" onclick="window.processPdf()" style="width: 100%; padding: 0.6rem; font-size: 0.85rem;">Olah PDF</button>
+                            
+                            <div class="upload-compact" onclick="document.getElementById('recon-pdf').click()" style="height: 48px; width: 100%; border: 1.5px dashed #94a3b8 !important; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: flex-start; padding: 0 1rem; cursor: pointer;">
+                                <i data-lucide="upload-cloud" style="width: 18px; margin: 0 0.5rem 0 0; color: var(--text-muted);"></i>
+                                <p id="pdf-name" style="margin: 0; font-size: 0.85rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pilih file PDF...</p>
+                                <input type="file" id="recon-pdf" accept=".pdf" style="display:none" onchange="window.updateFileName('recon-pdf', 'pdf-name'); window.resetReconcileState('pdf')">
                             </div>
-                            <div id="status-pdf" class="local-status" style="margin-top: 0.75rem;"></div>
+                            
+                            <button class="btn-base" id="btn-pdf-reconcile" onclick="window.processPdf()" style="width: 100%; padding: 0.75rem; font-size: 0.95rem; background: var(--bg-primary); color: white; border: 1.5px solid #000 !important; border-radius: 8px; font-weight: 800; cursor: pointer; transition: transform 0.1s;">
+                                Olah PDF
+                            </button>
+                            <div id="status-pdf" class="local-status" style="margin-top: 0;"></div>
                         </div>
 
-                        <div class="column-card" style="background: #f8fafc; padding: 1.25rem; border-radius: var(--border-radius-md); border: 1.5px solid var(--border-color); box-shadow: var(--shadow-sm);">
-                            <span class="column-title" style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
-                                <i data-lucide="file-spreadsheet" style="width: 16px; color: var(--success);"></i> 2. File Excel
+                        <!-- CARD 2: EXCEL -->
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 2px solid #000; box-shadow: 4px 4px 0 #000; display: flex; flex-direction: column; gap: 1rem;">
+                            <span style="font-weight: 800; font-size: 0.95rem; color: var(--bg-primary); display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase;">
+                                <i data-lucide="file-spreadsheet" style="width: 18px; color: var(--success);"></i> 2. File Excel
                             </span>
-                            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                                <div class="upload-compact" onclick="document.getElementById('recon-excel').click()" style="height: 48px; width: 100%; border: 1.5px dashed #cbd5e1 !important; background: white;">
-                                    <i data-lucide="upload-cloud" style="width: 16px; margin: 0; color: var(--text-muted);"></i>
-                                    <p id="excel-name" style="margin: 0; font-size: 0.8rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pilih file Excel...</p>
-                                    <input type="file" id="recon-excel" accept=".xlsx, .xls" style="display:none" onchange="window.updateFileName('recon-excel', 'excel-name'); window.resetReconcileState('excel')">
-                                </div>
-                                <button class="btn-base btn-process" id="btn-excel-reconcile" onclick="window.processExcel()" style="width: 100%; padding: 0.6rem; font-size: 0.85rem;">Olah Excel</button>
+                            
+                            <div class="upload-compact" onclick="document.getElementById('recon-excel').click()" style="height: 48px; width: 100%; border: 1.5px dashed #94a3b8 !important; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: flex-start; padding: 0 1rem; cursor: pointer;">
+                                <i data-lucide="upload-cloud" style="width: 18px; margin: 0 0.5rem 0 0; color: var(--text-muted);"></i>
+                                <p id="excel-name" style="margin: 0; font-size: 0.85rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pilih file Excel...</p>
+                                <input type="file" id="recon-excel" accept=".xlsx, .xls" style="display:none" onchange="window.updateFileName('recon-excel', 'excel-name'); window.resetReconcileState('excel')">
                             </div>
-                            <div id="status-excel" class="local-status" style="margin-top: 0.75rem;"></div>
+                            
+                            <button class="btn-base" id="btn-excel-reconcile" onclick="window.processExcel()" style="width: 100%; padding: 0.75rem; font-size: 0.95rem; background: var(--bg-primary); color: white; border: 1.5px solid #000 !important; border-radius: 8px; font-weight: 800; cursor: pointer; transition: transform 0.1s;">
+                                Olah Excel
+                            </button>
+                            <div id="status-excel" class="local-status" style="margin-top: 0;"></div>
                         </div>
                     </div>
 
-                    <!-- KOLOM KANAN: Textarea Ekstra Luas -->
-                    <div class="column-card" style="height: 100%; display: flex; flex-direction: column;">
-                        <span class="column-title" style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
-                            <i data-lucide="mail" style="width: 18px; color: var(--accent-primary);"></i> 3. Tindakan Lanjutan
-                        </span>
-                        <textarea id="email-body-textarea" class="custom-input" placeholder="Respon sistem dan draft email rekonsiliasi akan muncul secara utuh di sini..." style="flex: 1; min-height: 350px; font-family: monospace; font-size: 0.85rem; line-height: 1.6; resize: vertical; padding: 1.25rem;"></textarea>
+                    <!-- KOLOM KANAN: Textarea & Send Button (Teks Label Dihilangkan) -->
+                    <div style="height: 100%; display: flex; flex-direction: column;">
                         
-                        <div style="margin-top: 1rem;">
-                            <button class="btn-base btn-send" id="btn-send-email" onclick="window.sendEmail()" disabled style="width: 100%; padding: 1rem; font-size: 1rem;">
-                                <i data-lucide="send" style="width: 18px;"></i> Kirim Laporan via Email
-                            </button>
-                            <div id="status-send-email" class="local-status" style="margin-top: 0.75rem;"></div>
-                        </div>
+                        <textarea id="email-body-textarea" placeholder="Respon sistem dan draft email rekonsiliasi akan muncul secara utuh di sini..." style="flex: 1; min-height: 250px; border: 2px solid #000; border-radius: 12px; padding: 1.5rem; font-family: monospace; font-size: 0.9rem; line-height: 1.6; resize: vertical; outline: none; background: white; margin-bottom: 1.5rem; box-shadow: 4px 4px 0 rgba(0,0,0,0.05);"></textarea>
+                        
+                        <button class="btn-base" id="btn-send-email" onclick="window.sendEmail()" disabled style="width: 100%; padding: 1.2rem; font-size: 1.1rem; background: var(--accent-primary); color: var(--text-main); border: 2px solid #000 !important; border-radius: 12px; box-shadow: 4px 4px 0 #000; font-weight: 800; cursor: pointer; transition: transform 0.1s; display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
+                            <i data-lucide="send" style="width: 20px;"></i> Kirim Laporan via Email
+                        </button>
+                        <div id="status-send-email" class="local-status" style="margin-top: 0.75rem;"></div>
                     </div>
 
                 </div>
@@ -975,7 +984,7 @@
                     </div>
 
                     <div class="input-group">
-                        <label>Catatan Naratif / Penjelasan Harian</label>
+                        <label>issue daily</label>
                         <textarea id="rep-naratif" class="custom-input" style="height: 100px;" placeholder="Tuliskan kendala, laporan, atau penjelasan tambahan di sini..."></textarea>
                     </div>
 
@@ -1150,20 +1159,32 @@
                 initialView = hash;
             }
             
-            // Set base history state jika belum ada
-            if (!history.state) {
-                history.replaceState({ view: initialView }, '', `#${initialView}`);
-            }
+            // Set base history state jika belum ada (DIBUNGKUS TRY CATCH AGAR TIDAK ERROR DI IFRAME)
+            try {
+                if (!history.state) {
+                    history.replaceState({ view: initialView }, '', `#${initialView}`);
+                }
+            } catch(e) { console.warn("History API diblokir oleh lingkungan browser."); }
             
             window.openView(initialView, false); 
             window.fetchLatestStockDate();
         }
 
         window.handleLogout = function() {
-            window.currentStoreConfig = null;
-            localStorage.removeItem('erafoneStoreConfig');
-            history.replaceState(null, '', window.location.pathname);
-            location.reload();
+            try {
+                window.currentStoreConfig = null;
+                localStorage.removeItem('erafoneStoreConfig');
+                
+                // Hapus URL hash dengan aman
+                try { history.replaceState(null, '', window.location.pathname); } catch(e){}
+                
+                // Segarkan halaman untuk memutus sesi UI
+                window.location.reload();
+            } catch(err) {
+                console.error("Kesalahan saat logout: ", err);
+                // Fallback jika reload standar gagal
+                window.location.href = window.location.pathname;
+            }
         }
 
         // --- FUNGSI PENGATURAN AKUN (DINAMIS - SMART AUTO-FILL) ---
@@ -1445,7 +1466,7 @@
             }
         }
 
-        // --- PEMBARUAN FUNGSI OPEN VIEW ---
+        // --- PEMBARUAN FUNGSI OPEN VIEW (DIAMANKAN DARI ERROR HISTORY API) ---
         window.openView = function(viewId, pushHistory = true) { 
             const views = document.querySelectorAll('.view');
             views.forEach(v => v.classList.remove('active')); 
@@ -1474,10 +1495,14 @@
             document.getElementById('top-logout').style.display = isMain ? 'flex' : 'none';
             
             if (pushHistory) {
-                history.pushState({ view: finalViewId }, '', `#${finalViewId}`);
+                try {
+                    history.pushState({ view: finalViewId }, '', `#${finalViewId}`);
+                } catch(e) {
+                    console.warn("History pushState dinonaktifkan (Keamanan Iframe)");
+                }
             }
 
-            lucide.createIcons();
+            try { lucide.createIcons(); } catch(e){}
         }
 
         window.backToMain = function() { window.resetAllForms(); window.openView('view-main'); }
