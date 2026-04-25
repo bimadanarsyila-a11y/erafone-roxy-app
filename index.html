@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Erafone and more ruko roxy - Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* --- TEMA & WARNA UTAMA --- */
         :root {
@@ -28,7 +29,7 @@
             --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
 
         body {
             background: var(--bg-gradient);
@@ -91,16 +92,19 @@
 
         /* --- DASHBOARD LAYOUT --- */
         .container { width: 100%; max-width: 1100px; display: none; position: relative; }
+        
+        /* DIPERBAIKI: Top Logout Container */
+        .logout-container { display: flex; justify-content: flex-end; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; width: 100%; position: relative; z-index: 50; }
+        .btn-logout { padding: 0.6rem 1rem; background: var(--bg-primary); color: white; border-radius: var(--border-radius-md); font-weight: 700; font-size: 0.85rem; cursor: pointer; border: 1.5px solid var(--accent-primary) !important; display: flex; align-items: center; gap: 0.5rem; transition: var(--transition); }
+        .btn-logout:hover { background: var(--bg-dark); transform: translateY(-2px); }
+        .btn-master { background: #2563eb; border-color: #1d4ed8 !important; }
+
         .header-wrapper { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 3rem; gap: 1.5rem; }
         header { text-align: left; flex: 1; color: var(--text-white); }
         header h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 0.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
         header p { color: rgba(255, 255, 255, 0.85); font-size: 1.1rem; font-weight: 400; }
         .logo-container { width: 160px; flex-shrink: 0; }
         .logo-container img { width: 100%; height: auto; display: block; }
-        .logout-container { position: absolute; top: -10px; right: 0; z-index: 100; display: flex; gap: 0.5rem; }
-        .btn-logout { padding: 0.5rem 1rem; background: var(--bg-primary); color: white; border-radius: var(--border-radius-md); font-weight: 700; font-size: 0.8rem; cursor: pointer; border: 1.5px solid var(--accent-primary) !important; display: flex; align-items: center; gap: 0.5rem; transition: var(--transition); }
-        .btn-logout:hover { background: var(--bg-dark); }
-        .btn-master { background: #2563eb; border-color: #1d4ed8 !important; }
 
         /* --- VIEW CONTROLLERS & GRID --- */
         .view { display: none; animation: slideUp 0.4s ease-out forwards; opacity: 0; transform: translateY(15px); }
@@ -158,19 +162,19 @@
         .filter-select { padding: 0.6rem 1rem; border-radius: 8px; border: 1.5px solid var(--border-color); font-weight: 700; font-size: 0.9rem; outline: none; background: white; color: var(--text-main); cursor: pointer; min-width: 150px; }
         
         /* UNIFIED SUMMARY WIDGETS */
-        .summary-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.25rem; margin-bottom: 2rem; }
-        .summary-card { padding: 1.25rem; border-radius: var(--border-radius-md); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: flex; flex-direction: column; color: white; border: 1.5px solid var(--border-color); transition: var(--transition); position: relative; overflow: hidden; }
+        .summary-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; margin-bottom: 2rem; }
+        .summary-card { padding: 1.5rem; border-radius: var(--border-radius-md); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: flex; flex-direction: column; color: white; border: 1.5px solid var(--border-color); transition: var(--transition); position: relative; overflow: hidden; }
         .summary-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-sm); }
         .summary-card::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: linear-gradient(to bottom right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%); pointer-events: none; }
         
-        .sc-header { font-size: 0.95rem; font-weight: 800; color: rgba(255,255,255,0.95); text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; border-bottom: 1px dashed rgba(255,255,255,0.4); padding-bottom: 0.75rem; letter-spacing: 0.5px; z-index: 1; }
-        .sc-body { display: flex; flex-direction: column; gap: 0.6rem; z-index: 1; }
-        .sc-row { display: flex; justify-content: space-between; align-items: flex-end; font-size: 0.85rem; color: rgba(255,255,255,0.9); font-weight: 500; margin-bottom: 0.25rem; }
-        .sc-row span:first-child { flex-shrink: 0; margin-right: 0.5rem; padding-bottom: 0.1rem; }
-        .sc-row span:last-child { font-weight: 800; color: #ffffff; font-size: 1.1rem; text-align: right; line-height: 1.2; word-wrap: break-word; }
-        .sc-row.highlight span:last-child { color: var(--accent-primary); font-size: 1.25rem; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+        .sc-header { font-size: 1rem; font-weight: 800; color: rgba(255,255,255,0.95); text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; border-bottom: 1px dashed rgba(255,255,255,0.4); padding-bottom: 0.75rem; letter-spacing: 0.5px; z-index: 1; }
+        .sc-body { display: flex; flex-direction: column; gap: 0.75rem; z-index: 1; }
+        .sc-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; font-size: 0.9rem; color: rgba(255,255,255,0.9); font-weight: 500; margin-bottom: 0.25rem; }
+        .sc-row span:first-child { flex-shrink: 0; padding-top: 0.2rem; }
+        .sc-row span:last-child { font-weight: 800; color: #ffffff; font-size: 1.1rem; text-align: right; line-height: 1.3; word-break: break-word; }
+        .sc-row.highlight span:last-child { color: var(--accent-primary); font-size: 1.3rem; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
         .sc-row.small-row { margin-top: 0.2rem; }
-        .sc-row.small-row span:last-child { font-size: 0.95rem; color: #fde047; font-weight: 700; }
+        .sc-row.small-row span:last-child { font-size: 1rem; color: #fde047; font-weight: 700; }
         
         .sc-footer { border-top: 1px dashed rgba(255,255,255,0.4); margin-top: 0.75rem; padding-top: 0.75rem; display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: #f8fafc; z-index: 1; }
         .sc-footer strong { font-size: 1.05rem; color: #fff; margin-left: 4px; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
@@ -183,26 +187,55 @@
         .progress-fill-yellow { background: var(--accent-hover); }
         .progress-fill-green { background: var(--success); }
 
-        .sales-detailed-card { background: white; border-radius: var(--border-radius-lg); padding: 1.5rem; border: 1.5px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 1.5rem; transition: var(--transition); }
-        .sdc-header { display: flex; flex-direction: column; gap: 1rem; padding-bottom: 1.5rem; border-bottom: 2px dashed #cbd5e1; margin-bottom: 1.5rem; }
-        .sdc-profile-row { display: flex; justify-content: space-between; align-items: center; }
-        .sdc-name-box { display: flex; align-items: center; gap: 0.75rem; font-size: 1.25rem; font-weight: 800; color: var(--bg-primary); }
-        .sdc-avatar { width: 44px; height: 44px; background: var(--bg-primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .sdc-month-badge { font-size: 0.8rem; font-weight: 800; color: var(--bg-primary); background: #fef2f2; padding: 0.4rem 0.75rem; border-radius: 6px; border: 1.5px solid var(--bg-primary); }
-        .sdc-main-kpi { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: var(--border-radius-md); padding: 1rem; }
-        .sdc-main-kpi-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
-        .sdc-main-title { font-size: 1rem; font-weight: 800; color: var(--text-main); }
-        .sdc-main-ach { font-size: 1.2rem; font-weight: 800; color: var(--bg-primary); }
-        .sdc-main-target { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); }
-        .sdc-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
-        .kpi-group-box { background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
-        .kpi-group-head { background: #f1f5f9; padding: 0.5rem 1rem; font-weight: 800; font-size: 0.85rem; color: var(--bg-primary); border-bottom: 1.5px solid #e2e8f0; display: flex; align-items: center; gap: 0.5rem; }
-        .kpi-group-body { padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem; }
-        .kpi-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #e2e8f0; padding-bottom: 0.4rem; }
-        .kpi-row:last-child { border-bottom: none; padding-bottom: 0; }
-        .kpi-label { color: var(--text-muted); font-weight: 600; }
-        .kpi-val { color: var(--text-main); font-weight: 800; }
-        .kpi-val.highlight { color: var(--success); }
+        /* --- DARK DASHBOARD VISUALIZATION (PREMIUM EXCEL/UI) --- */
+        .dark-dash-wrapper { background: #151521; padding: 1.5rem; border-radius: 16px; margin-top: 1.5rem; color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); }
+        .dd-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .dd-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 1.5rem; }
+        .dd-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 1.5rem; }
+        
+        .dd-card { background: #1e1e2d; border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        
+        /* Tema Border Kartu (New) */
+        .theme-orange { border: 1px solid rgba(249, 115, 22, 0.2); border-top: 4px solid #f97316; }
+        .theme-silver { border: 1px solid rgba(203, 213, 225, 0.2); border-top: 4px solid #cbd5e1; }
+        .theme-yellow { border: 1px solid rgba(234, 179, 8, 0.2); border-top: 4px solid #eab308; }
+        .theme-green { border: 1px solid rgba(16, 185, 129, 0.2); border-top: 4px solid #10b981; }
+        .theme-blue { border: 1px solid rgba(59, 130, 246, 0.2); border-top: 4px solid #3b82f6; }
+        .theme-pink { border: 1px solid rgba(236, 72, 153, 0.2); border-top: 4px solid #ec4899; }
+
+        .dd-header { font-size: 1rem; font-weight: 700; color: #ffffff; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start; letter-spacing: 0.5px; }
+        .dd-chart-box { flex: 1; position: relative; min-height: 250px; width: 100%; }
+        
+        /* Leaderboard Table di Dark Mode (Revisi Tabel Anti-Overlay) */
+        .dd-leaderboard-wrapper { overflow-y: auto; overflow-x: auto; max-height: 280px; padding-right: 0.25rem; }
+        .dd-leaderboard-wrapper::-webkit-scrollbar { width: 4px; height: 4px; }
+        .dd-leaderboard-wrapper::-webkit-scrollbar-track { background: #1e1e2d; }
+        .dd-leaderboard-wrapper::-webkit-scrollbar-thumb { background: #3f3f5a; border-radius: 4px; }
+        
+        .dd-lb-grid-4 { display: grid; grid-template-columns: minmax(110px, 2fr) minmax(70px, 1fr) minmax(70px, 1fr) minmax(40px, 0.6fr); gap: 0.75rem; align-items: center; }
+        .dd-lb-grid-bolt { display: grid; grid-template-columns: minmax(110px, 2fr) minmax(70px, 1fr) minmax(45px, 0.8fr) minmax(45px, 0.8fr); gap: 0.75rem; align-items: center; }
+        .dd-lb-header-row { color: #8b92a5; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; border-bottom: 1px solid #2d2d3f; padding-bottom: 0.75rem; margin-bottom: 0.25rem; }
+        .dd-lb-data-row { border-bottom: 1px solid #2d2d3f; padding: 0.75rem 0; transition: background 0.2s; }
+        .dd-lb-data-row:hover { background: rgba(255,255,255,0.02); }
+        .dd-lb-data-row:last-child { border-bottom: none; }
+
+        .dd-avatar { width: 28px; height: 28px; border-radius: 50%; background: #f97316; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; color: white; flex-shrink: 0; box-shadow: 0 2px 4px rgba(249, 115, 22, 0.4); }
+        .dd-name-truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; width: 100%; color: #ffffff; font-size: 0.8rem; font-weight: 600; }
+        .dd-perc-green { color: #10b981; }
+        .dd-perc-red { color: #ef4444; }
+        .dd-perc-yellow { color: #f59e0b; }
+        
+        /* Category Progress Bars */
+        .dd-progress-group { margin-bottom: 1.25rem; }
+        .dd-progress-group:last-child { margin-bottom: 0; }
+        .dd-pg-head { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: #e5e7eb; }
+        .dd-pg-bar-bg { width: 100%; height: 8px; background: #2d2d3f; border-radius: 4px; overflow: hidden; }
+        .dd-pg-bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease-in-out; }
+
+        @media (max-width: 1024px) {
+            .dd-grid-3 { grid-template-columns: 1fr; }
+            .dd-grid-2 { grid-template-columns: 1fr; }
+        }
 
         /* --- INPUT REPORT TABS & LAYOUT --- */
         .reconcile-top-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-bottom: 1.5rem; }
@@ -259,13 +292,14 @@
 
         @media (max-width: 900px) {
             .header-wrapper { flex-direction: column-reverse; align-items: center; text-align: center; }
-            .logout-container { top: -35px; right: 0; }
+            .logout-container { justify-content: center; flex-wrap: wrap; }
             header { text-align: center; }
             .reconcile-top-row { grid-template-columns: 1fr; }
             .action-row { flex-direction: column; height: auto; }
             .btn-action-compact { width: 100%; height: 48px; }
             .upload-compact, .search-input { height: 48px; }
             .grid-automation { grid-template-columns: repeat(2, 1fr); }
+            .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
         }
         @media (max-width: 600px) { .grid-automation { grid-template-columns: 1fr; } }
     </style>
@@ -312,7 +346,6 @@
         </div>
 
         <div id="register-canvas">
-            <!-- (Konten Registrasi Sama Seperti Sebelumnya) -->
             <div class="reg-header">
                 <div class="reg-header-title">
                     <div class="reg-icon-box"><i data-lucide="user-plus"></i></div>
@@ -413,11 +446,11 @@
     <!-- MAIN DASHBOARD CONTENT -->
     <div class="container" id="main-container">
         
+        <!-- DIPERBAIKI: Top Logout Container yang terbebas dari bug overlay CSS -->
         <div class="logout-container" id="top-logout">
             <button class="btn-logout btn-master" onclick="window.openMasterSheet()">
                 <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Master Spreadsheet Store
             </button>
-            <!-- TOMBOL PENGATURAN (NEW) -->
             <button class="btn-logout" onclick="window.openSettings()" style="background: #475569; border-color: #334155 !important;">
                 <i data-lucide="settings" style="width: 14px; height: 14px;"></i> Pengaturan
             </button>
@@ -559,14 +592,12 @@
         <div id="view-cek-stok" class="view">
             <div class="detail-view">
                 
-                <!-- HEADER & UPDATE SECTION COMPACT (TOP RIGHT) -->
                 <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1.5rem; border-bottom: 2px dashed #cbd5e1; padding-bottom: 1.5rem;">
                     <div>
                         <button class="back-btn" onclick="window.backToMain()" style="margin-bottom: 1rem;"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
                         <h2 style="margin: 0;">Cek Stok Area</h2>
                     </div>
                     
-                    <!-- Form Update Master Kecil di Pojok Kanan -->
                     <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; width: 100%; max-width: 400px;">
                         <div class="last-update-box" style="font-size: 0.75rem; padding: 0.25rem 0.6rem; margin: 0;">
                             <span style="font-weight: 700; color: var(--bg-primary); margin-right: 4px;">Last Update:</span>
@@ -587,7 +618,6 @@
                     </div>
                 </div>
 
-                <!-- SEARCH SECTION (LARGE & WIDE) -->
                 <div class="column-card" style="gap: 1.5rem;">
                     <div class="action-row" style="height: 56px;">
                         <input type="text" id="search-stok-input" class="search-input" placeholder="Ketik nama, tipe, atau kode barang untuk mencari stok..." onkeypress="if(event.key === 'Enter') window.processSearchStok()" style="font-size: 1.05rem; padding: 0 1.5rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
@@ -625,7 +655,7 @@
         <div id="view-dashboard-sales" class="view">
             <div class="detail-view">
                 <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
-                <h2>Dashboard Sales ERO</h2>
+                <h2>Dashboard Sales</h2>
                 
                 <div class="filter-bar">
                     <div class="filter-bar-left">
@@ -645,204 +675,300 @@
 
                 <div id="status-dashboard-sales" class="local-status" style="margin-bottom: 1.5rem; justify-content: center;"></div>
 
-                <!-- UNIFIED SUMMARY WIDGETS (ALL IN ONE GRID) -->
-                <div class="summary-dashboard">
-                    <!-- ALL BISNIS -->
-                    <div class="summary-card" style="background: linear-gradient(135deg, #8b0000 0%, #5d0000 100%);">
-                        <div class="sc-header"><i data-lucide="briefcase" style="width: 16px;"></i> ALL BISNIS</div>
-                        <div class="sc-body">
-                            <div class="sc-row"><span>Target</span><span id="dash-sum-target">Rp 0</span></div>
-                            <div class="sc-row highlight">
-                                <span style="display: flex; flex-direction: column;">
-                                    Pencapaian <small id="dash-sum-ach" style="font-size: 0.75rem; color: rgba(255,255,255,0.8); font-weight: normal; margin-top: 3px;">Avg Ach: 0%</small>
-                                </span>
-                                <span id="dash-sum-aktual">Rp 0</span>
+                <!-- TABS DASHBOARD SALES -->
+                <div class="tab-container" style="max-width: 450px; margin-bottom: 1.5rem;">
+                    <button class="tab-btn active" id="tab-sales-chart" onclick="window.switchSalesTab('chart')"><i data-lucide="pie-chart" style="width:16px; margin-right: 6px; vertical-align: -3px;"></i> Visualisasi Dashboard</button>
+                    <button class="tab-btn" id="tab-sales-card" onclick="window.switchSalesTab('card')"><i data-lucide="layout-grid" style="width:16px; margin-right: 6px; vertical-align: -3px;"></i> Tampilan Kartu</button>
+                </div>
+
+                <!-- TAMPILAN KARTU (HANYA SUMMARY) -->
+                <div id="sales-performance-card-wrapper" style="display: none;">
+                    <div class="summary-dashboard">
+                        <!-- ALL BISNIS -->
+                        <div class="summary-card" style="background: linear-gradient(135deg, #8b0000 0%, #5d0000 100%);">
+                            <div class="sc-header"><i data-lucide="briefcase" style="width: 16px;"></i> ALL BISNIS</div>
+                            <div class="sc-body">
+                                <div class="sc-row"><span>Target</span><span id="dash-sum-target">Rp 0</span></div>
+                                <div class="sc-row highlight">
+                                    <span style="display: flex; flex-direction: column; padding-top: 0;">
+                                        Pencapaian <small id="dash-sum-ach" style="font-size: 0.8rem; color: rgba(255,255,255,0.8); font-weight: normal; margin-top: 3px;">Avg Ach: 0%</small>
+                                    </span>
+                                    <span id="dash-sum-aktual">Rp 0</span>
+                                </div>
+                                <div class="sc-row small-row"><span>Estimasi</span><span id="dash-sum-est">Rp 0 (0%)</span></div>
                             </div>
-                            <div class="sc-row small-row"><span>Estimasi</span><span id="dash-sum-est">Rp 0 (0%)</span></div>
                         </div>
-                    </div>
-                    <!-- DEVICE -->
-                    <div class="summary-card" style="background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);">
-                        <div class="sc-header"><i data-lucide="smartphone" style="width: 16px;"></i> DEVICE</div>
-                        <div class="sc-body">
-                            <div class="sc-row"><span>Target</span><span id="dash-tgt-dev">Rp 0</span></div>
-                            <div class="sc-row highlight"><span>Pencapaian</span><span id="dash-sum-dev">Rp 0</span></div>
-                            <div class="sc-row small-row"><span>Estimasi</span><span id="dash-est-dev">Rp 0 (0%)</span></div>
+                        <!-- DEVICE -->
+                        <div class="summary-card" style="background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);">
+                            <div class="sc-header"><i data-lucide="smartphone" style="width: 16px;"></i> DEVICE</div>
+                            <div class="sc-body">
+                                <div class="sc-row"><span>Target</span><span id="dash-tgt-dev">Rp 0</span></div>
+                                <div class="sc-row highlight"><span>Pencapaian</span><span id="dash-sum-dev">Rp 0</span></div>
+                                <div class="sc-row small-row"><span>Estimasi</span><span id="dash-est-dev">Rp 0 (0%)</span></div>
+                            </div>
                         </div>
-                    </div>
-                    <!-- ACCESSORIES -->
-                    <div class="summary-card" style="background: linear-gradient(135deg, #8b5cf6 0%, #5b21b6 100%);">
-                        <div class="sc-header"><i data-lucide="headphones" style="width: 16px;"></i> ACCESSORIES</div>
-                        <div class="sc-body">
-                            <div class="sc-row"><span>Target</span><span id="dash-tgt-acc">Rp 0</span></div>
-                            <div class="sc-row highlight"><span>Pencapaian</span><span id="dash-sum-acc">Rp 0</span></div>
-                            <div class="sc-row small-row"><span>Estimasi</span><span id="dash-est-acc">Rp 0 (0%)</span></div>
+                        <!-- ACCESSORIES -->
+                        <div class="summary-card" style="background: linear-gradient(135deg, #8b5cf6 0%, #5b21b6 100%);">
+                            <div class="sc-header"><i data-lucide="headphones" style="width: 16px;"></i> ACCESSORIES</div>
+                            <div class="sc-body">
+                                <div class="sc-row"><span>Target</span><span id="dash-tgt-acc">Rp 0</span></div>
+                                <div class="sc-row highlight"><span>Pencapaian</span><span id="dash-sum-acc">Rp 0</span></div>
+                                <div class="sc-row small-row"><span>Estimasi</span><span id="dash-est-acc">Rp 0 (0%)</span></div>
+                            </div>
+                            <div class="sc-footer">
+                                <span>AR: <strong id="dash-ar-acc">0%</strong></span>
+                                <span>SOB: <strong id="dash-sob-acc">0%</strong></span>
+                            </div>
                         </div>
-                        <div class="sc-footer">
-                            <span>AR: <strong id="dash-ar-acc">0%</strong></span>
-                            <span>SOB: <strong id="dash-sob-acc">0%</strong></span>
+                        <!-- BOLTECH -->
+                        <div class="summary-card" style="background: linear-gradient(135deg, #10b981 0%, #047857 100%);">
+                            <div class="sc-header"><i data-lucide="shield-check" style="width: 16px;"></i> BOLTECH</div>
+                            <div class="sc-body">
+                                <div class="sc-row"><span>Target</span><span id="dash-tgt-bolt">Rp 0</span></div>
+                                <div class="sc-row highlight"><span>Pencapaian</span><span id="dash-sum-bolt">Rp 0</span></div>
+                                <div class="sc-row small-row"><span>Estimasi</span><span id="dash-est-bolt">Rp 0 (0%)</span></div>
+                            </div>
+                            <div class="sc-footer">
+                                <span>AR: <strong id="dash-ar-bolt">0%</strong></span>
+                                <span>SOB: <strong id="dash-sob-bolt">0%</strong></span>
+                            </div>
                         </div>
-                    </div>
-                    <!-- BOLTECH -->
-                    <div class="summary-card" style="background: linear-gradient(135deg, #10b981 0%, #047857 100%);">
-                        <div class="sc-header"><i data-lucide="shield-check" style="width: 16px;"></i> BOLTECH</div>
-                        <div class="sc-body">
-                            <div class="sc-row"><span>Target</span><span id="dash-tgt-bolt">Rp 0</span></div>
-                            <div class="sc-row highlight"><span>Pencapaian</span><span id="dash-sum-bolt">Rp 0</span></div>
-                            <div class="sc-row small-row"><span>Estimasi</span><span id="dash-est-bolt">Rp 0 (0%)</span></div>
+                        <!-- OPERATOR -->
+                        <div class="summary-card" style="background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);">
+                            <div class="sc-header"><i data-lucide="radio" style="width: 16px;"></i> OPERATOR</div>
+                            <div class="sc-body">
+                                <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">Indosat</span><span id="dash-sum-isat" style="color: white;">Rp 0</span></div>
+                                <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">XL</span><span id="dash-sum-xl" style="color: white;">Rp 0</span></div>
+                                <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">Telkomsel</span><span id="dash-sum-tsel" style="color: white;">Rp 0</span></div>
+                            </div>
                         </div>
-                        <div class="sc-footer">
-                            <span>AR: <strong id="dash-ar-bolt">0%</strong></span>
-                            <span>SOB: <strong id="dash-sob-bolt">0%</strong></span>
-                        </div>
-                    </div>
-                    <!-- OPERATOR -->
-                    <div class="summary-card" style="background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);">
-                        <div class="sc-header"><i data-lucide="radio" style="width: 16px;"></i> OPERATOR</div>
-                        <div class="sc-body">
-                            <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">Indosat</span><span id="dash-sum-isat" style="color: white;">Rp 0</span></div>
-                            <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">XL</span><span id="dash-sum-xl" style="color: white;">Rp 0</span></div>
-                            <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">Telkomsel</span><span id="dash-sum-tsel" style="color: white;">Rp 0</span></div>
-                        </div>
-                    </div>
-                    <!-- TRAFFIC & LAYANAN (NEW) -->
-                    <div class="summary-card" style="background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);">
-                        <div class="sc-header"><i data-lucide="users" style="width: 16px;"></i> TRAFFIC & LAYANAN</div>
-                        <div class="sc-body">
-                            <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">WIC (Deal/Loss)</span><span id="dash-sum-wic" style="color: white;">0 / 0</span></div>
-                            <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">CSI</span><span id="dash-sum-csi" style="color: white;">0</span></div>
-                            <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">G. Review</span><span id="dash-sum-grev" style="color: white;">0</span></div>
+                        <!-- TRAFFIC & LAYANAN (NEW) -->
+                        <div class="summary-card" style="background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);">
+                            <div class="sc-header"><i data-lucide="users" style="width: 16px;"></i> TRAFFIC & LAYANAN</div>
+                            <div class="sc-body">
+                                <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">WIC (Deal/Loss)</span><span id="dash-sum-wic" style="color: white;">0 / 0</span></div>
+                                <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">CSI</span><span id="dash-sum-csi" style="color: white;">0</span></div>
+                                <div class="sc-row highlight"><span style="color: white; font-weight: 500; text-shadow: none; font-size: 0.9rem;">G. Review</span><span id="dash-sum-grev" style="color: white;">0</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div id="sales-performance-grid">
-                    <!-- Data sales di-render disini -->
+                <!-- VISUALISASI DASHBOARD CHART -->
+                <div id="sales-performance-chart-wrapper" style="display: block;">
+                    <div class="dark-dash-wrapper">
+                        <!-- Top Row: Line Chart Full Width -->
+                        <div class="dd-grid">
+                            <div class="dd-card theme-orange">
+                                <div class="dd-header">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i data-lucide="trending-up" style="color:#f97316; width:20px;"></i>
+                                        Trend Pencapaian All Bisnis
+                                    </div>
+                                    <span style="font-size: 0.8rem; color: #8b92a5; font-weight:normal; text-align: right;">Total Penjualan Harian/Periode (All ERO)</span>
+                                </div>
+                                <div class="dd-chart-box" style="min-height: 280px;"><canvas id="dd-chart-main"></canvas></div>
+                            </div>
+                        </div>
+
+                        <!-- Middle Row 1: Salesman & Categories -->
+                        <div class="dd-grid-2">
+                            <div class="dd-card theme-orange">
+                                <div class="dd-header">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i data-lucide="award" style="color:#f97316; width:20px;"></i>
+                                        Salesman Performance
+                                    </div>
+                                </div>
+                                <div class="dd-leaderboard-wrapper">
+                                    <div class="dd-lb-grid-4 dd-lb-header-row">
+                                        <div>Salesman</div>
+                                        <div style="text-align: right;">Target</div>
+                                        <div style="text-align: right;">Achieve</div>
+                                        <div style="text-align: right;">(%)</div>
+                                    </div>
+                                    <div id="dd-leaderboard-tbody" style="display: flex; flex-direction: column;">
+                                        <!-- Dynamic rows -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dd-card theme-silver">
+                                <div class="dd-header">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i data-lucide="bar-chart-2" style="color:#cbd5e1; width:20px;"></i>
+                                        Category Achievement
+                                    </div>
+                                </div>
+                                <div id="dd-category-container" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+                                    <!-- Dynamic progress bars -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Middle Row 2: Accessories & Boltech -->
+                        <div class="dd-grid-2">
+                            <div class="dd-card theme-yellow">
+                                <div class="dd-header">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i data-lucide="headphones" style="color:#eab308; width:20px;"></i>
+                                        Accessories Performance
+                                    </div>
+                                </div>
+                                <div class="dd-leaderboard-wrapper">
+                                    <div class="dd-lb-grid-bolt dd-lb-header-row">
+                                        <div>Salesman</div>
+                                        <div style="text-align: right;">Achieve</div>
+                                        <div style="text-align: right; color:#10b981;">AR</div>
+                                        <div style="text-align: right; color:#3b82f6;">SOB</div>
+                                    </div>
+                                    <div id="dd-acc-tbody" style="display: flex; flex-direction: column;">
+                                        <!-- Dynamic rows -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dd-card theme-green">
+                                <div class="dd-header">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i data-lucide="shield-check" style="color:#10b981; width:20px;"></i>
+                                        Boltech Performance
+                                    </div>
+                                </div>
+                                <div class="dd-leaderboard-wrapper">
+                                    <div class="dd-lb-grid-bolt dd-lb-header-row">
+                                        <div>Salesman</div>
+                                        <div style="text-align: right;">Achieve</div>
+                                        <div style="text-align: right; color:#10b981;">AR</div>
+                                        <div style="text-align: right; color:#3b82f6;">SOB</div>
+                                    </div>
+                                    <div id="dd-boltech-tbody" style="display: flex; flex-direction: column;">
+                                        <!-- Dynamic rows -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Row: Operator, Traffic -->
+                        <div class="dd-grid-2">
+                            <div class="dd-card theme-blue">
+                                <div class="dd-header">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i data-lucide="radio" style="color:#3b82f6; width:20px;"></i>
+                                        Market Share Operator
+                                    </div>
+                                </div>
+                                <div class="dd-chart-box"><canvas id="dd-chart-operator"></canvas></div>
+                            </div>
+                            <div class="dd-card theme-pink">
+                                <div class="dd-header">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i data-lucide="users" style="color:#ec4899; width:20px;"></i>
+                                        Trafik WIC (Deal vs Loss)
+                                    </div>
+                                </div>
+                                <div class="dd-chart-box"><canvas id="dd-chart-wic"></canvas></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </div>
 
-        <!-- 6. VIEW: INPUT REPORT BY ERO (NEW LOGIC) -->
+        <!-- 6. VIEW: INPUT REPORT BY ERO (DIPULIHKAN SEPENUHNYA) -->
         <div id="view-input-report" class="view">
             <div class="detail-view">
                 <button class="back-btn" onclick="window.backToMain()"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Dashboard</button>
                 <h2>Daily Report ERO</h2>
                 
-                <!-- TAB NAVIGASI -->
-                <div class="tab-container" style="max-width: 500px; margin-bottom: 2rem;">
-                    <button class="tab-btn active" id="tab-ero" onclick="window.switchReportTab('ero')"><i data-lucide="edit" style="width:16px; margin-right: 6px; vertical-align: -3px;"></i> Form Laporan ERO</button>
-                    <button class="tab-btn" id="tab-data-ero" onclick="window.switchReportTab('data-ero')"><i data-lucide="list-checks" style="width:16px; margin-right: 6px; vertical-align: -3px;"></i> Data Report ERO (Tracking)</button>
+                <div class="tab-container" style="max-width: 400px;">
+                    <button class="tab-btn active" id="tab-ero" onclick="window.switchReportTab('ero')"><i data-lucide="edit-3" style="width: 16px; margin-right: 6px;"></i> Input Report</button>
+                    <button class="tab-btn" id="tab-data-ero" onclick="window.switchReportTab('data-ero')"><i data-lucide="database" style="width: 16px; margin-right: 6px;"></i> Tracking Data</button>
                 </div>
 
-                <!-- FORM SECTION: Laporan ERO (Original) -->
-                <div id="form-section-ero" style="width: 100%; max-width: 800px; margin: 0 auto;">
-                    <div class="column-card">
-                        <div class="flex-row-align" style="margin-bottom: 0.5rem;">
-                            <span class="column-title">Formulir Laporan Harian</span>
+                <!-- FORM INPUT REPORT -->
+                <div id="form-section-ero" class="report-form-container">
+                    <div class="form-grid-2">
+                        <div class="input-group">
+                            <label>Tanggal Report</label>
+                            <input type="date" id="rep-tanggal" class="custom-input">
                         </div>
-                        
-                        <div class="report-form-container" id="manual-report-form" style="max-height: none; overflow: visible;">
-                            <h4 class="section-title">Informasi Dasar</h4>
-                            <div class="input-group">
-                                <label>Tanggal Laporan</label>
-                                <input type="date" id="rep-tanggal" class="custom-input">
-                            </div>
-                            <div class="input-group">
-                                <label>Nama ERO</label>
-                                <select id="rep-nama" class="custom-input">
-                                    <option value="">Pilih Nama ERO...</option>
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label>Total All Bisnis (Rp)</label>
-                                <input type="text" id="rep-allbisnis" class="custom-input" placeholder="Contoh: 24.794.004" inputmode="numeric">
-                            </div>
-
-                            <h4 class="section-title">Device & Accesories</h4>
-                            <div class="form-grid-2">
-                                <div class="input-group"><label>Device Qty</label><input type="number" id="rep-dev-qty" class="custom-input" placeholder="0"></div>
-                                <div class="input-group"><label>Device Value</label><input type="text" id="rep-dev-val" class="custom-input" placeholder="0" inputmode="numeric"></div>
-                            </div>
-                            <div class="form-grid-2">
-                                <div class="input-group"><label>Acc Qty</label><input type="number" id="rep-acc-qty" class="custom-input" placeholder="0"></div>
-                                <div class="input-group"><label>Acc Value</label><input type="text" id="rep-acc-val" class="custom-input" placeholder="0" inputmode="numeric"></div>
-                            </div>
-
-                            <h4 class="section-title">Perlindungan & Layanan</h4>
-                            <div class="form-grid-2">
-                                <div class="input-group"><label>Boltech Qty</label><input type="number" id="rep-bolt-qty" class="custom-input" placeholder="0"></div>
-                                <div class="input-group"><label>Boltech Value</label><input type="text" id="rep-bolt-val" class="custom-input" placeholder="0" inputmode="numeric"></div>
-                            </div>
-
-                            <h4 class="section-title">Kategori Operator</h4>
-                            <div class="form-grid-2">
-                                <div class="input-group"><label>Indosat Qty</label><input type="number" id="rep-isat-qty" class="custom-input" placeholder="0"></div>
-                                <div class="input-group"><label>Indosat Value</label><input type="text" id="rep-isat-val" class="custom-input" placeholder="0" inputmode="numeric"></div>
-                            </div>
-                            <div class="form-grid-2">
-                                <div class="input-group"><label>XL Qty</label><input type="number" id="rep-xl-qty" class="custom-input" placeholder="0"></div>
-                                <div class="input-group"><label>XL Value</label><input type="text" id="rep-xl-val" class="custom-input" placeholder="0" inputmode="numeric"></div>
-                            </div>
-                            <div class="form-grid-2">
-                                <div class="input-group"><label>Telkomsel Qty</label><input type="number" id="rep-tsel-qty" class="custom-input" placeholder="0"></div>
-                                <div class="input-group"><label>Telkomsel Value</label><input type="text" id="rep-tsel-val" class="custom-input" placeholder="0" inputmode="numeric"></div>
-                            </div>
-
-                            <h4 class="section-title">Walk-In Customer (WIC)</h4>
-                            <div class="form-grid-2">
-                                <div class="input-group"><label>WIC Deal</label><input type="number" id="rep-wic-deal" class="custom-input" placeholder="0"></div>
-                                <div class="input-group"><label>WIC Loss</label><input type="number" id="rep-wic-loss" class="custom-input" placeholder="0"></div>
-                            </div>
-
-                            <h4 class="section-title">Indikator Lainnya</h4>
-                            <div class="form-grid-3">
-                                <div class="input-group"><label>CNP</label><input type="number" id="rep-cnp" class="custom-input" placeholder="0"></div>
-                                <div class="input-group"><label>CSI</label><input type="number" id="rep-csi" class="custom-input" placeholder="0"></div>
-                                <div class="input-group"><label>G. Review</label><input type="number" id="rep-grev" class="custom-input" placeholder="0"></div>
-                            </div>
-
-                            <h4 class="section-title">Catatan Harian</h4>
-                            <textarea id="rep-naratif" class="custom-input" style="height: 120px; margin-bottom: 1.5rem;" placeholder="Tuliskan evaluasi atau kendala di lapangan..."></textarea>
-                            
-                            <button class="btn-base btn-process btn-large" id="btn-submit-report" onclick="window.processInputReport()" style="width: 100%; font-size: 1rem; padding: 1rem;">
-                                <i data-lucide="send" style="width:18px;"></i> Submit Laporan
-                            </button>
+                        <div class="input-group">
+                            <label>Nama ERO</label>
+                            <select id="rep-nama" class="custom-input">
+                                <option value="">Pilih Nama ERO...</option>
+                                <!-- Dynamic options -->
+                            </select>
                         </div>
                     </div>
-                </div>
-                
-                <div id="status-input-report" class="local-status" style="justify-content: center;"></div>
 
-                <!-- FORM SECTION: Data Report ERO (Tracking) (NEW) -->
-                <div id="form-section-data-ero" style="display:none; width: 100%;">
+                    <div class="section-divider" style="margin: 1.5rem 0;"></div>
                     
-                    <div class="filter-bar" style="margin-bottom: 1.5rem;">
+                    <div class="input-group">
+                        <label>All Bisnis (Total)</label>
+                        <input type="number" id="rep-allbisnis" class="custom-input" placeholder="Total Pendapatan Rp">
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="input-group"><label>Device Qty</label><input type="number" id="rep-dev-qty" class="custom-input" placeholder="0"></div>
+                        <div class="input-group"><label>Device Value</label><input type="number" id="rep-dev-val" class="custom-input" placeholder="Rp"></div>
+                        
+                        <div class="input-group"><label>Accessories Qty</label><input type="number" id="rep-acc-qty" class="custom-input" placeholder="0"></div>
+                        <div class="input-group"><label>Accessories Value</label><input type="number" id="rep-acc-val" class="custom-input" placeholder="Rp"></div>
+                        
+                        <div class="input-group"><label>Boltech Qty</label><input type="number" id="rep-bolt-qty" class="custom-input" placeholder="0"></div>
+                        <div class="input-group"><label>Boltech Value</label><input type="number" id="rep-bolt-val" class="custom-input" placeholder="Rp"></div>
+                        
+                        <div class="input-group"><label>Indosat Qty</label><input type="number" id="rep-isat-qty" class="custom-input" placeholder="0"></div>
+                        <div class="input-group"><label>Indosat Value</label><input type="number" id="rep-isat-val" class="custom-input" placeholder="Rp"></div>
+                        
+                        <div class="input-group"><label>XL Qty</label><input type="number" id="rep-xl-qty" class="custom-input" placeholder="0"></div>
+                        <div class="input-group"><label>XL Value</label><input type="number" id="rep-xl-val" class="custom-input" placeholder="Rp"></div>
+                        
+                        <div class="input-group"><label>Telkomsel Qty</label><input type="number" id="rep-tsel-qty" class="custom-input" placeholder="0"></div>
+                        <div class="input-group"><label>Telkomsel Value</label><input type="number" id="rep-tsel-val" class="custom-input" placeholder="Rp"></div>
+                    </div>
+
+                    <div class="section-divider" style="margin: 1.5rem 0;"></div>
+
+                    <div class="form-grid-2">
+                        <div class="input-group"><label>WIC Deal</label><input type="number" id="rep-wic-deal" class="custom-input" placeholder="0"></div>
+                        <div class="input-group"><label>WIC Loss</label><input type="number" id="rep-wic-loss" class="custom-input" placeholder="0"></div>
+                    </div>
+                    <div class="form-grid-3">
+                        <div class="input-group"><label>CNP</label><input type="number" id="rep-cnp" class="custom-input" placeholder="0"></div>
+                        <div class="input-group"><label>CSI</label><input type="number" id="rep-csi" class="custom-input" placeholder="0"></div>
+                        <div class="input-group"><label>G. Review</label><input type="number" id="rep-grev" class="custom-input" placeholder="0"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Catatan Naratif / Penjelasan Harian</label>
+                        <textarea id="rep-naratif" class="custom-input" style="height: 100px;" placeholder="Tuliskan kendala, laporan, atau penjelasan tambahan di sini..."></textarea>
+                    </div>
+
+                    <button class="btn-base btn-process btn-large" onclick="window.processInputReport()" style="margin-top: 1rem;"><i data-lucide="send"></i> Kirim Laporan Harian</button>
+                    <div id="status-input-report" class="local-status"></div>
+                </div>
+
+                <!-- TAB TRACKING DATA ERO -->
+                <div id="form-section-data-ero" style="display: none;">
+                    <div class="filter-bar" style="margin-bottom: 0;">
                         <div class="filter-bar-left">
                             <i data-lucide="calendar" style="color: var(--bg-primary);"></i>
-                            <span style="font-weight: 800; font-size: 0.9rem; color: var(--bg-primary);">Filter Bulan Tracking:</span>
+                            <span style="font-weight: 800; font-size: 0.9rem; color: var(--bg-primary);">Pilih Bulan:</span>
                             <select id="data-ero-month-filter" class="filter-select" onchange="window.renderDataReportEro()">
-                                <option value="">Memuat...</option>
+                                <option value="">Pilih Bulan...</option>
                             </select>
                         </div>
                         <button class="btn-base btn-process" onclick="window.fetchDataReportEro()" style="padding: 0.6rem 1.25rem; font-size: 0.85rem;">
-                            <i data-lucide="refresh-cw" style="width: 16px;"></i> Sinkronisasi Data Tracking
+                            <i data-lucide="refresh-cw" style="width: 16px;"></i> Sinkronisasi
                         </button>
                     </div>
-                    <div id="status-data-ero" class="local-status" style="margin-bottom: 1.5rem; justify-content: center;"></div>
-                    
-                    <!-- Keterangan Cerdas -->
-                    <div style="background: #f0fdf4; border: 1.5px solid #16a34a; border-radius: 8px; padding: 1rem; font-size: 0.85rem; color: #166534; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
-                        <i data-lucide="info" style="width: 20px; color: #16a34a;"></i>
-                        <span>Sistem otomatis menghitung absensi report hanya sampai tanggal hari ini (jika memantau bulan berjalan). Tanggal yang akan datang tidak dihitung sebagai "Belum Report".</span>
-                    </div>
+                    <div id="status-data-ero" class="local-status" style="justify-content: center; margin-top: 1rem;"></div>
 
-                    <!-- Tempat render card ERO -->
                     <div class="ero-track-grid" id="ero-tracking-grid">
-                        <!-- Cards akan masuk kesini -->
+                        <!-- Kartu tracking ERO di-render disini -->
                     </div>
-
                 </div>
-
             </div>
         </div>
 
@@ -995,19 +1121,18 @@
                 history.replaceState({ view: initialView }, '', `#${initialView}`);
             }
             
-            window.openView(initialView, false); // Buka view tanpa perlu push history baru
+            window.openView(initialView, false); 
             window.fetchLatestStockDate();
         }
 
         window.handleLogout = function() {
             window.currentStoreConfig = null;
             localStorage.removeItem('erafoneStoreConfig');
-            // Bersihkan hash saat logout
             history.replaceState(null, '', window.location.pathname);
             location.reload();
         }
 
-        // --- FUNGSI PENGATURAN AKUN (DINAMIS - NEW) ---
+        // --- FUNGSI PENGATURAN AKUN (DINAMIS - SMART AUTO-FILL) ---
         window.openSettings = function() {
             if (!window.currentStoreConfig) return;
             
@@ -1023,16 +1148,24 @@
                 'ero_list': { label: 'Daftar Nama ERO <span style="text-transform: none; color: var(--text-muted); font-weight: 500;">(Pisahkan dengan koma)</span>', type: 'textarea', placeholder: 'Contoh: Andi, Budi, Citra' },
                 'link_master': { label: 'Link Master Spreadsheet', type: 'text', placeholder: 'https://docs.google.com/spreadsheets/d/...' },
                 'summary_report': { label: 'Link Summary Report (Dashboard Sales)', type: 'text', placeholder: 'https://docs.google.com/spreadsheets/d/...' },
+                'daily_sales': { label: 'Link Daily Sales (Trend Chart Harian)', type: 'text', placeholder: 'https://docs.google.com/spreadsheets/d/...' },
                 'rekap_report': { label: 'Link Rekap Report (Tracking ERO)', type: 'text', placeholder: 'https://docs.google.com/spreadsheets/d/...' }
             };
 
             // 2. Kolom yang dilarang diedit oleh user
             const excludeFields = ['sap_code', 'store_name', 'password', 'id', 'created_at', 'updated_at'];
             
-            // 3. Menentukan urutan render untuk kolom yang kita ketahui
-            const orderedKeys = ['ero_list', 'link_master', 'summary_report', 'rekap_report'];
+            // 3. Menentukan urutan render
+            const orderedKeys = ['ero_list', 'link_master', 'summary_report', 'daily_sales', 'rekap_report'];
             
-            // Ambil semua kolom yang MEMANG ADA di database saat ini
+            // BUG FIX: Paksa tambahkan keys standar ke config jika sebelumnya toko belum punya kolom ini di database-nya
+            orderedKeys.forEach(k => {
+                if (window.currentStoreConfig[k] === undefined) {
+                    window.currentStoreConfig[k] = '';
+                }
+            });
+
+            // Ambil semua kolom yang MEMANG ADA di config saat ini
             const allKeys = Object.keys(window.currentStoreConfig);
             
             // Saring kolom yang tidak boleh diedit
@@ -1048,7 +1181,7 @@
             fieldsToRender.forEach(key => {
                 const val = window.currentStoreConfig[key] || '';
                 
-                // Buat label otomatis jika kolom tersebut baru/asing (cth: "target_bulanan" -> "Target Bulanan")
+                // Buat label otomatis jika kolom tersebut baru/asing
                 const autoLabel = key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
                 const config = fieldConfig[key] || { label: autoLabel, type: 'text', placeholder: `Masukkan ${autoLabel}` };
 
@@ -1116,14 +1249,13 @@
             }
 
             try {
-                // Menggunakan method PATCH untuk update data di Supabase berdasarkan sap_code
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/store_config?sap_code=eq.${window.currentStoreConfig.sap_code}`, {
                     method: 'PATCH',
                     headers: { 
                         'apikey': SUPABASE_ANON_KEY, 
                         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 
                         'Content-Type': 'application/json',
-                        'Prefer': 'return=representation' // Meminta Supabase mengembalikan data terbaru
+                        'Prefer': 'return=representation' 
                     },
                     body: JSON.stringify(payload)
                 });
@@ -1132,11 +1264,9 @@
                 
                 const data = await response.json();
                 if (data && data.length > 0) {
-                    // Update state lokal dan localStorage
                     window.currentStoreConfig = data[0];
                     localStorage.setItem('erafoneStoreConfig', JSON.stringify(data[0]));
                     
-                    // Update dropdown Nama ERO secara otomatis
                     const eroSelect = document.getElementById('rep-nama');
                     if (data[0].ero_list && eroSelect) {
                         eroSelect.innerHTML = '<option value="">Pilih Nama ERO...</option>';
@@ -1201,7 +1331,24 @@
             window.checkReconcileStatus();
         }
 
-        // TABS REPORT ERO (Baru)
+        // TABS DASHBOARD SALES 
+        window.switchSalesTab = function(tab) {
+            document.getElementById('tab-sales-chart').classList.remove('active');
+            document.getElementById('tab-sales-card').classList.remove('active');
+            
+            document.getElementById('sales-performance-chart-wrapper').style.display = 'none';
+            document.getElementById('sales-performance-card-wrapper').style.display = 'none';
+
+            if(tab === 'chart') {
+                document.getElementById('tab-sales-chart').classList.add('active');
+                document.getElementById('sales-performance-chart-wrapper').style.display = 'block'; 
+            } else if (tab === 'card') {
+                document.getElementById('tab-sales-card').classList.add('active');
+                document.getElementById('sales-performance-card-wrapper').style.display = 'block';
+            }
+        }
+
+        // TABS REPORT ERO
         window.switchReportTab = function(tab) {
             if(tab === 'ero') {
                 document.getElementById('tab-ero').classList.add('active');
@@ -1214,14 +1361,13 @@
                 document.getElementById('form-section-data-ero').style.display = 'block';
                 document.getElementById('form-section-ero').style.display = 'none';
                 
-                // Fetch data pertama kali dibuka
                 if (!window.dataEroTracking || window.dataEroTracking.length === 0) {
                     window.fetchDataReportEro();
                 }
             }
         }
 
-        // --- PEMBARUAN FUNGSI OPEN VIEW (DUKUNGAN TOMBOL KEMBALI & HISTORY) ---
+        // --- PEMBARUAN FUNGSI OPEN VIEW ---
         window.openView = function(viewId, pushHistory = true) { 
             const views = document.querySelectorAll('.view');
             views.forEach(v => v.classList.remove('active')); 
@@ -1240,6 +1386,7 @@
                 if(tglInput && !tglInput.value) tglInput.value = new Date().toISOString().split('T')[0];
                 window.switchReportTab('ero'); 
             } else if(finalViewId === 'view-dashboard-sales') {
+                window.switchSalesTab('chart'); 
                 window.fetchDashboardSalesData();
             }
             window.scrollTo({ top: 0, behavior: 'smooth' }); 
@@ -1248,7 +1395,6 @@
             document.getElementById('top-header').style.display = isMain ? 'flex' : 'none';
             document.getElementById('top-logout').style.display = isMain ? 'flex' : 'none';
             
-            // Catat ke History Browser agar tombol 'Back' bisa bekerja
             if (pushHistory) {
                 history.pushState({ view: finalViewId }, '', `#${finalViewId}`);
             }
@@ -1259,8 +1405,10 @@
         window.backToMain = function() { window.resetAllForms(); window.openView('view-main'); }
         window.updateFileName = function(inputId, displayId) { const file = document.getElementById(inputId).files[0]; if (file) document.getElementById(displayId).innerText = file.name; }
 
-        // --- DASHBOARD SALES LOGIC (Sudah Oke Sebelumnya) ---
+        // --- DASHBOARD SALES LOGIC (Revisi Tarikan Data Paralel) ---
         let dashboardSalesData = []; 
+        window.dashboardTrendData = []; 
+
         const formatRp = (angka) => { if(!angka || isNaN(angka)) return "Rp 0"; return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka); };
         const formatNum = (angka) => { if(!angka || isNaN(angka)) return "0"; return new Intl.NumberFormat('id-ID').format(angka); };
         const formatPerc = (angka) => { if(angka === null || angka === undefined) return "0%"; if(Math.abs(angka) > 0 && Math.abs(angka) <= 2) return (angka * 100).toFixed(1) + "%"; return parseFloat(angka).toFixed(1) + "%"; };
@@ -1268,14 +1416,12 @@
         window.fetchDashboardSalesData = async function() {
             window.setLocalStatus('status-dashboard-sales', 'Menarik data dari Spreadsheet...', 'loading');
             
-            // CEK LINK SPREADSHEET MULTI-AKUN (summary_report)
             if (!window.currentStoreConfig || !window.currentStoreConfig.summary_report) {
                 window.setLocalStatus('status-dashboard-sales', 'Link Summary Report belum dikonfigurasi di database untuk toko ini.', 'error');
                 return;
             }
 
             const rawUrl = window.currentStoreConfig.summary_report;
-            // Ekstrak otomatis Sheet ID dan GID dari URL
             const sheetIdMatch = rawUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
             const gidMatch = rawUrl.match(/[#&?]gid=([0-9]+)/);
 
@@ -1286,13 +1432,36 @@
 
             const SHEET_ID = sheetIdMatch[1];
             const GID = gidMatch ? gidMatch[1] : '0';
-            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${GID}&headers=1`;
+            const urlMain = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${GID}&headers=1`;
+            
+            // LOGIKA DINAMIS LINK TREND HARIAN (DARI SUPABASE)
+            let urlTrend = null;
+            if (window.currentStoreConfig.daily_sales) {
+                const trendRawUrl = window.currentStoreConfig.daily_sales;
+                const tSheetIdMatch = trendRawUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
+                const tGidMatch = trendRawUrl.match(/[#&?]gid=([0-9]+)/);
+                
+                if (tSheetIdMatch) {
+                    const T_SHEET_ID = tSheetIdMatch[1];
+                    const T_GID = tGidMatch ? tGidMatch[1] : '0';
+                    urlTrend = `https://docs.google.com/spreadsheets/d/${T_SHEET_ID}/gviz/tq?tqx=out:json&gid=${T_GID}&headers=1`;
+                }
+            }
             
             try {
-                const response = await fetch(url);
-                const textData = await response.text();
+                // FETCH PARALEL
+                const fetchPromises = [fetch(urlMain)];
+                if (urlTrend) {
+                    fetchPromises.push(fetch(urlTrend).catch(e => null)); 
+                }
+
+                const responses = await Promise.all(fetchPromises);
+                const resMain = responses[0];
+                const resTrend = responses.length > 1 ? responses[1] : null;
+
+                const textData = await resMain.text();
                 const jsonString = textData.match(/google\.visualization\.Query\.setResponse\(([\s\S\w]+)\)/);
-                if (!jsonString || !jsonString[1]) throw new Error("Gagal membaca struktur data Spreadsheet.");
+                if (!jsonString || !jsonString[1]) throw new Error("Gagal membaca struktur data Spreadsheet Utama.");
 
                 const data = JSON.parse(jsonString[1]);
                 let colMap = {};
@@ -1333,21 +1502,45 @@
                     return ''; 
                 };
 
+                const getStrOrFormatted = (row, ...possibleNames) => {
+                    for (let name of possibleNames) {
+                        const idx = colMap[name.toLowerCase().trim()];
+                        if (idx !== undefined && row.c[idx]) {
+                            let cell = row.c[idx];
+                            if (cell.f) return String(cell.f).trim();
+                            if (cell.v !== null && cell.v !== undefined) {
+                                let vStr = String(cell.v);
+                                if (vStr.startsWith('Date(')) {
+                                    let m = vStr.match(/Date\((\d+),\s*(\d+),\s*(\d+)/);
+                                    if (m) {
+                                        return `${m[3]} ${["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Ags","Sep","Okt","Nov","Des"][parseInt(m[2])]}`;
+                                    }
+                                }
+                                return vStr.trim();
+                            }
+                        }
+                    }
+                    return '';
+                };
+
                 dashboardSalesData = [];
                 let uniqueMonths = new Set();
                 let uniqueEros = new Set();
                 
                 rows.forEach(row => {
-                    let bulan = getS(row, 'bulan', 'month', 'tanggal', 'periode');
+                    let bulan = getStrOrFormatted(row, 'bulan', 'month', 'periode');
+                    let tanggal = getStrOrFormatted(row, 'tanggal', 'tgl', 'hari', 'date');
                     let nama = getS(row, 'nama', 'nama sales', 'ero', 'nama ero', 'sales', 'pic');
+                    
                     if (!bulan) bulan = "Bulan Tidak Terdeteksi";
+                    if (!tanggal) tanggal = bulan; 
                     if (!nama) nama = "ERO Tidak Diketahui";
                     
                     if (getV(row, 'all bisnis') > 0 || getV(row, 'target ab') > 0 || nama !== "ERO Tidak Diketahui") {
                         uniqueMonths.add(bulan);
                         uniqueEros.add(nama);
                         dashboardSalesData.push({
-                            bulan, nama,
+                            bulan, tanggal, nama,
                             allBisnis: getV(row, 'all bisnis'), targetAB: getV(row, 'target ab'), estimasiAB: getV(row, 'estimasi ab'),
                             devTarget: getV(row, 'target dvc'), devVal: getV(row, 'device value'), devQty: getV(row, 'device qty'), devEst: getV(row, 'estimasi dvc'),
                             accTarget: getV(row, 'target acc'), accVal: getV(row, 'acc value'), accQty: getV(row, 'acc qty'), accEst: getV(row, 'estimasi acc'), arAcc: getV(row, 'ar acc'), sobAcc: getV(row, 'sob acc'),
@@ -1357,6 +1550,71 @@
                         });
                     }
                 });
+
+                // --- EKSTRAKSI KHUSUS TAB DAILY TREND ---
+                window.dashboardTrendData = [];
+                if (resTrend && resTrend.ok) {
+                    const textTrend = await resTrend.text();
+                    const jsonTrendString = textTrend.match(/google\.visualization\.Query\.setResponse\(([\s\S\w]+)\)/);
+                    if (jsonTrendString && jsonTrendString[1]) {
+                        const dataTrend = JSON.parse(jsonTrendString[1]);
+                        let tColMap = {};
+                        if(dataTrend.table.cols) {
+                            dataTrend.table.cols.forEach((col, index) => {
+                                if (col && col.label) tColMap[col.label.toLowerCase().trim()] = index;
+                            });
+                        }
+                        
+                        const getTV = (row, ...names) => {
+                            for (let n of names) {
+                                const idx = tColMap[n.toLowerCase().trim()];
+                                if (idx !== undefined && row.c[idx]) {
+                                    let val = row.c[idx].v;
+                                    if (typeof val === 'number') return val;
+                                    if (typeof val === 'string') return parseFloat(val.replace(/[^0-9.-]+/g,"")) || 0;
+                                }
+                            }
+                            return 0;
+                        };
+                        const getTStr = (row, ...names) => {
+                            for (let n of names) {
+                                const idx = tColMap[n.toLowerCase().trim()];
+                                if (idx !== undefined && row.c[idx]) {
+                                    let cell = row.c[idx];
+                                    if (cell.f) return String(cell.f).trim();
+                                    if (cell.v !== null && cell.v !== undefined) {
+                                        let vStr = String(cell.v);
+                                        if (vStr.startsWith('Date(')) {
+                                            let m = vStr.match(/Date\((\d+),\s*(\d+),\s*(\d+)/);
+                                            if (m) return `${m[3]} ${["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Ags","Sep","Okt","Nov","Des"][parseInt(m[2])]}`;
+                                        }
+                                        return vStr.trim();
+                                    }
+                                }
+                            }
+                            return '';
+                        };
+
+                        dataTrend.table.rows.forEach(row => {
+                            let tanggal = getTStr(row, 'tanggal', 'tgl', 'date', 'hari');
+                            let bulan = getTStr(row, 'bulan', 'month', 'periode');
+                            let namaEro = getTStr(row, 'nama', 'ero', 'salesman', 'pic', 'nama sales');
+                            let pencapaian = getTV(row, 'pencapaian', 'all bisnis', 'all_bisnis', 'total', 'actual', 'sales', 'value', 'grand total');
+                            
+                            if (!bulan && tanggal) {
+                                const mNames = ["januari", "februari", "maret", "april", "mei", "juni", "juli", "agustus", "september", "oktober", "november", "desember"];
+                                let tLow = tanggal.toLowerCase();
+                                mNames.forEach(m => {
+                                    if (tLow.includes(m)) bulan = m.charAt(0).toUpperCase() + m.slice(1);
+                                });
+                            }
+
+                            if (tanggal && pencapaian > 0) {
+                                window.dashboardTrendData.push({ tanggal, bulan, namaEro, pencapaian });
+                            }
+                        });
+                    }
+                }
 
                 const filterSelect = document.getElementById('dash-month-filter');
                 const currentValue = filterSelect.value;
@@ -1386,10 +1644,11 @@
             }
         };
 
+        window.chartInstances = {};
+
         window.renderDashboardSales = function() {
             const filterMonth = document.getElementById('dash-month-filter').value;
             const filterEro = document.getElementById('dash-ero-filter').value;
-            const grid = document.getElementById('sales-performance-grid');
             
             const filteredData = dashboardSalesData.filter(d => {
                 const matchMonth = (filterMonth === 'All') || (d.bulan === filterMonth);
@@ -1397,196 +1656,335 @@
                 return matchMonth && matchEro;
             });
 
-            grid.innerHTML = ''; 
+            let filteredTrend = window.dashboardTrendData || [];
             
-            // Variabel Akumulasi All Bisnis
+            if (filterMonth !== 'All') {
+                filteredTrend = filteredTrend.filter(t => {
+                    let b = String(t.bulan || '').toLowerCase();
+                    let d = String(t.tanggal || '').toLowerCase();
+                    let fm = filterMonth.toLowerCase();
+                    return b === fm || b.includes(fm) || d.includes(fm);
+                });
+            }
+            
+            if (filterEro !== 'All') {
+                const hasSpecificEro = filteredTrend.some(t => String(t.namaEro || '').toLowerCase() === filterEro.toLowerCase());
+                if (hasSpecificEro) {
+                    filteredTrend = filteredTrend.filter(t => String(t.namaEro || '').toLowerCase() === filterEro.toLowerCase());
+                }
+            }
+
+            if (filteredTrend.length === 0 && dashboardSalesData.length > 0) {
+                filteredTrend = filteredData;
+            }
+            
+            const timeMap = new Map();
+            filteredTrend.forEach(t => {
+                let key = t.tanggal;
+                if(!timeMap.has(key)) timeMap.set(key, 0);
+                timeMap.set(key, timeMap.get(key) + t.pencapaian);
+            });
+            const trendLabels = Array.from(timeMap.keys());
+            const trendValues = Array.from(timeMap.values());
+
+            const eroMap = new Map();
+            filteredData.forEach(d => {
+                if (!eroMap.has(d.nama)) {
+                    eroMap.set(d.nama, { ...d });
+                } else {
+                    let e = eroMap.get(d.nama);
+                    e.allBisnis += d.allBisnis;
+                    e.targetAB = Math.max(e.targetAB, d.targetAB); 
+                    e.estimasiAB += d.estimasiAB;
+                    
+                    e.devVal += d.devVal; e.devTarget = Math.max(e.devTarget, d.devTarget); e.devEst += d.devEst; e.devQty += d.devQty;
+                    e.accVal += d.accVal; e.accTarget = Math.max(e.accTarget, d.accTarget); e.accEst += d.accEst; e.accQty += d.accQty;
+                    e.boltVal += d.boltVal; e.boltTarget = Math.max(e.boltTarget, d.boltTarget); e.boltEst += d.boltEst; e.boltQty += d.boltQty;
+                    
+                    e.isatVal += d.isatVal; e.xlVal += d.xlVal; e.tselVal += d.tselVal;
+                    e.wicDeal += d.wicDeal; e.wicLoss += d.wicLoss; e.csi += d.csi; e.gRev += d.gRev;
+                }
+            });
+            const leaderData = Array.from(eroMap.values());
+            leaderData.sort((a, b) => b.allBisnis - a.allBisnis);
+            
             let totalTarget = 0, totalAktual = 0, totalEst = 0;
-            
-            // Variabel Akumulasi Kategori
             let tDevTgt = 0, tDevVal = 0, tDevEst = 0, tDevQty = 0;
             let tAccTgt = 0, tAccVal = 0, tAccEst = 0, tAccQty = 0;
             let tBoltTgt = 0, tBoltVal = 0, tBoltEst = 0, tBoltQty = 0;
             let tIsatVal = 0, tXlVal = 0, tTselVal = 0;
             let tWicDeal = 0, tWicLoss = 0, tCsi = 0, tGrev = 0;
 
-            if (filteredData.length === 0 && dashboardSalesData.length > 0) {
-                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-muted); border: 1.5px dashed var(--border-color); border-radius: 8px;">Tidak ada data untuk filter yang terpilih.</div>';
-            } else {
-                filteredData.forEach(data => {
-                    // Akumulasi Utama
+            if (leaderData.length > 0) {
+                leaderData.forEach((data) => {
                     totalTarget += data.targetAB;
                     totalAktual += data.allBisnis;
                     totalEst += data.estimasiAB;
                     
-                    // Akumulasi Kategori
-                    tDevTgt += data.devTarget;
-                    tDevVal += data.devVal;
-                    tDevEst += data.devEst;
-                    tDevQty += data.devQty;
-                    
-                    tAccTgt += data.accTarget;
-                    tAccVal += data.accVal;
-                    tAccEst += data.accEst;
-                    tAccQty += data.accQty;
-                    
-                    tBoltTgt += data.boltTarget;
-                    tBoltVal += data.boltVal;
-                    tBoltEst += data.boltEst;
-                    tBoltQty += data.boltQty;
-                    
-                    tIsatVal += data.isatVal;
-                    tXlVal += data.xlVal;
-                    tTselVal += data.tselVal;
-
-                    tWicDeal += data.wicDeal;
-                    tWicLoss += data.wicLoss;
-                    tCsi += data.csi;
-                    tGrev += data.gRev;
-
-                    let achPerc = data.targetAB > 0 ? (data.allBisnis / data.targetAB) * 100 : 0;
-                    const displayPerc = achPerc.toFixed(1);
-                    if (achPerc > 100) achPerc = 100;
-                    
-                    let barClass = 'progress-fill-red';
-                    if (achPerc >= 90) barClass = 'progress-fill-green';
-                    else if (achPerc >= 60) barClass = 'progress-fill-yellow';
-
-                    const initial = data.nama.charAt(0).toUpperCase();
-
-                    const cardHTML = `
-                        <div class="sales-detailed-card">
-                            <div class="sdc-header">
-                                <div class="sdc-profile-row">
-                                    <div class="sdc-name-box"><div class="sdc-avatar">${initial}</div>${data.nama}</div>
-                                    <div class="sdc-month-badge">${data.bulan}</div>
-                                </div>
-                                <div class="sdc-main-kpi">
-                                    <div class="sdc-main-kpi-row">
-                                        <div class="sdc-main-title">Pencapaian All Bisnis</div>
-                                        <div class="sdc-main-ach">${formatRp(data.allBisnis)} <span class="sdc-main-target">/ ${formatRp(data.targetAB)}</span></div>
-                                    </div>
-                                    <div class="progress-container">
-                                        <div class="progress-header"><span>Progress Keseluruhan</span><span style="color: var(--bg-primary);">${displayPerc}%</span></div>
-                                        <div class="progress-bar-bg"><div class="progress-bar-fill ${barClass}" style="width: ${achPerc}%"></div></div>
-                                    </div>
-                                    <div class="kpi-row" style="margin-top: 0.5rem; border: none;">
-                                        <span class="kpi-label" style="font-size:0.8rem;">Estimasi AB:</span>
-                                        <span class="kpi-val highlight" style="font-size:0.85rem;">${formatRp(data.estimasiAB)}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="sdc-groups">
-                                <div class="kpi-group-box">
-                                    <div class="kpi-group-head"><i data-lucide="smartphone" style="width:16px;"></i> DEVICE</div>
-                                    <div class="kpi-group-body">
-                                        <div class="kpi-row"><span class="kpi-label">Target</span> <span class="kpi-val">${formatRp(data.devTarget)}</span></div>
-                                        <div class="kpi-row"><span class="kpi-label">Pencapaian</span> <span class="kpi-val">${formatRp(data.devVal)} <span style="font-size:0.75rem; color:var(--text-muted);">(${formatNum(data.devQty)} Unit)</span></span></div>
-                                        <div class="kpi-row"><span class="kpi-label">Estimasi</span> <span class="kpi-val highlight">${formatRp(data.devEst)}</span></div>
-                                    </div>
-                                </div>
-                                <div class="kpi-group-box">
-                                    <div class="kpi-group-head"><i data-lucide="headphones" style="width:16px;"></i> ACCESSORIES</div>
-                                    <div class="kpi-group-body">
-                                        <div class="kpi-row"><span class="kpi-label">Target</span> <span class="kpi-val">${formatRp(data.accTarget)}</span></div>
-                                        <div class="kpi-row"><span class="kpi-label">Pencapaian</span> <span class="kpi-val">${formatRp(data.accVal)} <span style="font-size:0.75rem; color:var(--text-muted);">(${formatNum(data.accQty)} Unit)</span></span></div>
-                                        <div class="kpi-row"><span class="kpi-label">Estimasi</span> <span class="kpi-val highlight">${formatRp(data.accEst)}</span></div>
-                                        <div class="kpi-row" style="border-top:1px solid #e2e8f0; padding-top:0.4rem;"><span class="kpi-label">AR Acc</span> <span class="kpi-val">${formatPerc(data.arAcc)}</span></div>
-                                        <div class="kpi-row"><span class="kpi-label">SOB Acc</span> <span class="kpi-val">${formatPerc(data.sobAcc)}</span></div>
-                                    </div>
-                                </div>
-                                <div class="kpi-group-box">
-                                    <div class="kpi-group-head"><i data-lucide="shield-check" style="width:16px;"></i> BOLTECH</div>
-                                    <div class="kpi-group-body">
-                                        <div class="kpi-row"><span class="kpi-label">Target</span> <span class="kpi-val">${formatRp(data.boltTarget)}</span></div>
-                                        <div class="kpi-row"><span class="kpi-label">Pencapaian</span> <span class="kpi-val">${formatRp(data.boltVal)} <span style="font-size:0.75rem; color:var(--text-muted);">(${formatNum(data.boltQty)} Unit)</span></span></div>
-                                        <div class="kpi-row"><span class="kpi-label">Estimasi</span> <span class="kpi-val highlight">${formatRp(data.boltEst)}</span></div>
-                                        <div class="kpi-row" style="border-top:1px solid #e2e8f0; padding-top:0.4rem;"><span class="kpi-label">AR Boltech</span> <span class="kpi-val">${formatPerc(data.arBolt)}</span></div>
-                                        <div class="kpi-row"><span class="kpi-label">SOB Boltech</span> <span class="kpi-val">${formatPerc(data.sobBolt)}</span></div>
-                                    </div>
-                                </div>
-                                <div class="kpi-group-box">
-                                    <div class="kpi-group-head"><i data-lucide="radio" style="width:16px;"></i> OPERATOR</div>
-                                    <div class="kpi-group-body">
-                                        <div class="kpi-row"><span class="kpi-label">Indosat</span> <span class="kpi-val">${formatRp(data.isatVal)} <span style="font-size:0.75rem; color:var(--text-muted);">(${formatNum(data.isatQty)})</span></span></div>
-                                        <div class="kpi-row"><span class="kpi-label">XL</span> <span class="kpi-val">${formatRp(data.xlVal)} <span style="font-size:0.75rem; color:var(--text-muted);">(${formatNum(data.xlQty)})</span></span></div>
-                                        <div class="kpi-row"><span class="kpi-label">Telkomsel</span> <span class="kpi-val">${formatRp(data.tselVal)} <span style="font-size:0.75rem; color:var(--text-muted);">(${formatNum(data.tselQty)})</span></span></div>
-                                    </div>
-                                </div>
-                                <div class="kpi-group-box">
-                                    <div class="kpi-group-head"><i data-lucide="users" style="width:16px;"></i> TRAFIK & LAYANAN</div>
-                                    <div class="kpi-group-body">
-                                        <div class="kpi-row"><span class="kpi-label">WIC (Deal/Loss)</span> <span class="kpi-val">${formatNum(data.wicDeal)} / <span style="color:var(--danger);">${formatNum(data.wicLoss)}</span></span></div>
-                                        <div class="kpi-row"><span class="kpi-label">CNP</span> <span class="kpi-val">${formatNum(data.cnp)}</span></div>
-                                        <div class="kpi-row"><span class="kpi-label">CSI</span> <span class="kpi-val">${formatNum(data.csi)}</span></div>
-                                        <div class="kpi-row"><span class="kpi-label">G. Review</span> <span class="kpi-val">${formatNum(data.gRev)}</span></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    grid.insertAdjacentHTML('beforeend', cardHTML);
+                    tDevTgt += data.devTarget; tDevVal += data.devVal; tDevEst += data.devEst; tDevQty += data.devQty;
+                    tAccTgt += data.accTarget; tAccVal += data.accVal; tAccEst += data.accEst; tAccQty += data.accQty;
+                    tBoltTgt += data.boltTarget; tBoltVal += data.boltVal; tBoltEst += data.boltEst; tBoltQty += data.boltQty;
+                    tIsatVal += data.isatVal; tXlVal += data.xlVal; tTselVal += data.tselVal;
+                    tWicDeal += data.wicDeal; tWicLoss += data.wicLoss; tCsi += data.csi; tGrev += data.gRev;
                 });
             }
 
-            // Hitung Persentase Estimasi
             const calcP = (v, t) => t > 0 ? ((v / t) * 100).toFixed(1) : 0;
             const estPercAB = calcP(totalEst, totalTarget);
             const estPercDev = calcP(tDevEst, tDevTgt);
             const estPercAcc = calcP(tAccEst, tAccTgt);
             const estPercBolt = calcP(tBoltEst, tBoltTgt);
 
-            // Hitung AR & SOB Secara Global
             const arAcc = tDevQty > 0 ? ((tAccQty / tDevQty) * 100).toFixed(1) : 0;
             const sobAcc = tDevVal > 0 ? ((tAccVal / tDevVal) * 100).toFixed(1) : 0;
             const arBolt = tDevQty > 0 ? ((tBoltQty / tDevQty) * 100).toFixed(1) : 0;
             const sobBolt = tDevVal > 0 ? ((tBoltVal / tDevVal) * 100).toFixed(1) : 0;
 
-            // Render Nilai ke DOM (All Bisnis)
             document.getElementById('dash-sum-target').innerText = formatRp(totalTarget);
             document.getElementById('dash-sum-aktual').innerText = formatRp(totalAktual);
             document.getElementById('dash-sum-ach').innerText = 'Avg Ach: ' + (totalTarget > 0 ? ((totalAktual / totalTarget) * 100).toFixed(1) : 0) + '%';
             document.getElementById('dash-sum-est').innerText = `${formatRp(totalEst)} (${estPercAB}%)`;
             
-            // Render Nilai ke DOM (Device)
             document.getElementById('dash-tgt-dev').innerText = formatRp(tDevTgt);
             document.getElementById('dash-sum-dev').innerText = formatRp(tDevVal);
             document.getElementById('dash-est-dev').innerText = `${formatRp(tDevEst)} (${estPercDev}%)`;
             
-            // Render Nilai ke DOM (Acc)
             document.getElementById('dash-tgt-acc').innerText = formatRp(tAccTgt);
             document.getElementById('dash-sum-acc').innerText = formatRp(tAccVal);
             document.getElementById('dash-est-acc').innerText = `${formatRp(tAccEst)} (${estPercAcc}%)`;
             document.getElementById('dash-ar-acc').innerText = `${arAcc}%`;
             document.getElementById('dash-sob-acc').innerText = `${sobAcc}%`;
             
-            // Render Nilai ke DOM (Bolt)
             document.getElementById('dash-tgt-bolt').innerText = formatRp(tBoltTgt);
             document.getElementById('dash-sum-bolt').innerText = formatRp(tBoltVal);
             document.getElementById('dash-est-bolt').innerText = `${formatRp(tBoltEst)} (${estPercBolt}%)`;
             document.getElementById('dash-ar-bolt').innerText = `${arBolt}%`;
             document.getElementById('dash-sob-bolt').innerText = `${sobBolt}%`;
             
-            // Render Nilai ke DOM (Operator)
             document.getElementById('dash-sum-isat').innerText = formatRp(tIsatVal);
             document.getElementById('dash-sum-xl').innerText = formatRp(tXlVal);
             document.getElementById('dash-sum-tsel').innerText = formatRp(tTselVal);
 
-            // Render Nilai ke DOM (Traffic & Layanan)
             document.getElementById('dash-sum-wic').innerHTML = `${formatNum(tWicDeal)} <span style="color: #fda4af; font-size: 0.95rem;">/ ${formatNum(tWicLoss)}</span>`;
             document.getElementById('dash-sum-csi').innerText = formatNum(tCsi);
             document.getElementById('dash-sum-grev').innerText = formatNum(tGrev);
 
+            renderCharts(trendLabels, trendValues, leaderData, tDevTgt, tDevVal, tAccTgt, tAccVal, tBoltTgt, tBoltVal, tIsatVal, tXlVal, tTselVal, tWicDeal, tWicLoss);
+
             lucide.createIcons();
         };
 
+        function renderCharts(trendLabels, trendValues, leaderData, tDevTgt, tDevVal, tAccTgt, tAccVal, tBoltTgt, tBoltVal, tIsat, tXl, tTsel, tWicDeal, tWicLoss) {
+            Object.keys(window.chartInstances).forEach(key => {
+                if (window.chartInstances[key]) window.chartInstances[key].destroy();
+            });
+
+            if (leaderData.length === 0) return;
+
+            const formatCompact = (num) => {
+                if (!num || isNaN(num)) return '0';
+                if (num >= 1000000000) return (num / 1000000000).toFixed(1) + ' M';
+                if (num >= 1000000) return (num / 1000000).toFixed(1) + ' Jt';
+                if (num >= 1000) return (num / 1000).toFixed(1) + ' K';
+                return new Intl.NumberFormat('id-ID').format(num);
+            };
+
+            const tbody = document.getElementById('dd-leaderboard-tbody');
+            tbody.innerHTML = '';
+            leaderData.forEach(d => {
+                const initial = d.nama.charAt(0).toUpperCase();
+                let ach = d.targetAB > 0 ? ((d.allBisnis / d.targetAB) * 100) : 0;
+                let colorClass = 'dd-perc-red';
+                if(ach >= 90) colorClass = 'dd-perc-green';
+                else if(ach >= 60) colorClass = 'dd-perc-yellow';
+
+                tbody.innerHTML += `
+                    <div class="dd-lb-grid-4 dd-lb-data-row">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 0;">
+                            <div class="dd-avatar">${initial}</div>
+                            <span class="dd-name-truncate" title="${d.nama}">${d.nama}</span>
+                        </div>
+                        <div style="text-align: right; color: #8b92a5; font-size: 0.8rem; font-weight: 600; white-space: nowrap;">Rp ${formatCompact(d.targetAB)}</div>
+                        <div style="text-align: right; color: #fff; font-size: 0.8rem; font-weight: 600; white-space: nowrap;">Rp ${formatCompact(d.allBisnis)}</div>
+                        <div style="text-align: right; font-size: 0.8rem; font-weight: 600; white-space: nowrap;" class="${colorClass}">${ach.toFixed(1)}%</div>
+                    </div>
+                `;
+            });
+
+            const boltTbody = document.getElementById('dd-boltech-tbody');
+            boltTbody.innerHTML = '';
+            const boltechData = [...leaderData].sort((a, b) => b.boltVal - a.boltVal);
+            boltechData.forEach(d => {
+                const initial = d.nama.charAt(0).toUpperCase();
+                const ar = d.devQty > 0 ? ((d.boltQty / d.devQty) * 100).toFixed(1) : 0;
+                const sob = d.devVal > 0 ? ((d.boltVal / d.devVal) * 100).toFixed(1) : 0;
+                
+                boltTbody.innerHTML += `
+                    <div class="dd-lb-grid-bolt dd-lb-data-row">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 0;">
+                            <div class="dd-avatar" style="background:#10b981; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.4);">${initial}</div>
+                            <span class="dd-name-truncate" title="${d.nama}">${d.nama}</span>
+                        </div>
+                        <div style="text-align: right; color: #fff; font-size: 0.8rem; font-weight: 600; white-space: nowrap;">Rp ${formatCompact(d.boltVal)}</div>
+                        <div style="text-align: right; color: #10b981; font-size: 0.8rem; font-weight: 600; white-space: nowrap;">${ar}%</div>
+                        <div style="text-align: right; color: #3b82f6; font-size: 0.8rem; font-weight: 600; white-space: nowrap;">${sob}%</div>
+                    </div>
+                `;
+            });
+
+            const accTbody = document.getElementById('dd-acc-tbody');
+            accTbody.innerHTML = '';
+            const accData = [...leaderData].sort((a, b) => b.accVal - a.accVal);
+            accData.forEach(d => {
+                const initial = d.nama.charAt(0).toUpperCase();
+                const ar = d.devQty > 0 ? ((d.accQty / d.devQty) * 100).toFixed(1) : 0;
+                const sob = d.devVal > 0 ? ((d.accVal / d.devVal) * 100).toFixed(1) : 0;
+                
+                accTbody.innerHTML += `
+                    <div class="dd-lb-grid-bolt dd-lb-data-row">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 0;">
+                            <div class="dd-avatar" style="background:#eab308; box-shadow: 0 2px 4px rgba(234, 179, 8, 0.4);">${initial}</div>
+                            <span class="dd-name-truncate" title="${d.nama}">${d.nama}</span>
+                        </div>
+                        <div style="text-align: right; color: #fff; font-size: 0.8rem; font-weight: 600; white-space: nowrap;">Rp ${formatCompact(d.accVal)}</div>
+                        <div style="text-align: right; color: #10b981; font-size: 0.8rem; font-weight: 600; white-space: nowrap;">${ar}%</div>
+                        <div style="text-align: right; color: #3b82f6; font-size: 0.8rem; font-weight: 600; white-space: nowrap;">${sob}%</div>
+                    </div>
+                `;
+            });
+
+            const catContainer = document.getElementById('dd-category-container');
+            const calcAch = (val, tgt) => tgt > 0 ? (val/tgt)*100 : 0;
+            
+            const categories = [
+                { name: 'Device', val: tDevVal, tgt: tDevTgt, color: '#f97316' }, 
+                { name: 'Accessories', val: tAccVal, tgt: tAccTgt, color: '#facc15' },
+                { name: 'Boltech', val: tBoltVal, tgt: tBoltTgt, color: '#3b82f6' } 
+            ];
+
+            catContainer.innerHTML = '';
+            categories.forEach(c => {
+                let p = calcAch(c.val, c.tgt);
+                let pDisplay = p > 100 ? 100 : p;
+                catContainer.innerHTML += `
+                    <div class="dd-progress-group">
+                        <div style="display:flex; flex-direction:column; gap:6px; margin-bottom: 6px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                               <span style="color:white; font-weight:700; font-size:0.85rem;">${c.name}</span>
+                               <span style="font-weight:700; color:${c.color}; font-size:0.85rem;">${pDisplay.toFixed(1)}%</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#8b92a5; font-weight:600;">
+                               <span style="white-space: nowrap;">Ach: Rp ${formatCompact(c.val)}</span>
+                               <span style="white-space: nowrap;">Tgt: Rp ${formatCompact(c.tgt)}</span>
+                            </div>
+                        </div>
+                        <div class="dd-pg-bar-bg">
+                            <div class="dd-pg-bar-fill" style="width: ${pDisplay}%; background: ${c.color};"></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            Chart.defaults.color = '#8b92a5';
+            Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+            Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+
+            const ctxMain = document.getElementById('dd-chart-main').getContext('2d');
+            let gradient = ctxMain.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(249, 115, 22, 0.4)'); 
+            gradient.addColorStop(1, 'rgba(249, 115, 22, 0.0)');
+
+            window.chartInstances['main'] = new Chart(ctxMain, {
+                type: 'line',
+                data: {
+                    labels: trendLabels,
+                    datasets: [{
+                        label: 'Pencapaian All Bisnis',
+                        data: trendValues,
+                        borderColor: '#f97316',
+                        backgroundColor: gradient,
+                        borderWidth: 2,
+                        pointBackgroundColor: '#1e1e2d',
+                        pointBorderColor: '#f97316',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        tension: 0.3 
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(0,0,0,0.8)', titleColor: '#fff', bodyColor: '#fff', padding: 12, cornerRadius: 8,
+                            callbacks: { label: function(context) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(context.parsed.y); } }
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            ticks: { callback: function(val) { return formatCompact(val); } } 
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: { maxRotation: 45, minRotation: 0 }
+                        }
+                    }
+                }
+            });
+
+            const ctxOp = document.getElementById('dd-chart-operator').getContext('2d');
+            window.chartInstances['operator'] = new Chart(ctxOp, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Indosat', 'XL', 'Telkomsel'],
+                    datasets: [{
+                        data: [tIsat, tXl, tTsel],
+                        backgroundColor: ['#facc15', '#3b82f6', '#ef4444'],
+                        borderWidth: 0,
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '75%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#d1d5db', padding: 20, usePointStyle: true, pointStyle: 'circle' } },
+                        tooltip: { callbacks: { label: function(ctx) { return ' ' + ctx.label + ': ' + new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(ctx.parsed); } } }
+                    }
+                }
+            });
+
+            const ctxWic = document.getElementById('dd-chart-wic').getContext('2d');
+            window.chartInstances['wic'] = new Chart(ctxWic, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Deal', 'Loss'],
+                    datasets: [{
+                        data: [tWicDeal, tWicLoss],
+                        backgroundColor: ['#10b981', '#f43f5e'],
+                        borderWidth: 0,
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '75%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#d1d5db', padding: 20, usePointStyle: true, pointStyle: 'circle' } },
+                        tooltip: { callbacks: { label: function(ctx) { return ' ' + ctx.label + ': ' + formatNum(ctx.parsed) + ' Orang'; } } }
+                    }
+                }
+            });
+        }
+
         // --- NEW: DATA REPORT ERO (TRACKING DATA ABSENSI) ---
-        window.dataEroTracking = []; // Simpan list data absen per hari
-        window.monthEroList = {}; // Simpan list nama ERO dinamis KHUSUS PER BULAN
+        window.dataEroTracking = []; 
+        window.monthEroList = {}; 
 
         window.fetchDataReportEro = async function() {
             window.setLocalStatus('status-data-ero', 'Menganalisa rekam jejak report ERO...', 'loading');
             
-            // CEK LINK SPREADSHEET MULTI-AKUN (rekap_report)
             if (!window.currentStoreConfig || !window.currentStoreConfig.rekap_report) {
                 window.setLocalStatus('status-data-ero', 'Link Rekap Report belum dikonfigurasi di database untuk toko ini.', 'error');
                 return;
@@ -1614,7 +2012,6 @@
 
                 const data = JSON.parse(jsonString[1]);
                 
-                // Ambil semua data dan gabungkan header asli dari gviz ke baris pertama agar dibaca seragam
                 let allRows = [];
                 let headerRow = { c: [] };
                 data.table.cols.forEach(col => {
@@ -1632,10 +2029,8 @@
                 window.monthEroList = {};
                 let uniqueMonths = new Set();
 
-                // Ambil Header paling awal sebagai patokan pertama
                 let firstRow = allRows[0];
                 if(firstRow && firstRow.c) {
-                    // Tahap 1: Temukan index kolom Bulan dan Tanggal
                     firstRow.c.forEach((cell, idx) => {
                         if (cell && cell.v !== null && cell.v !== undefined) {
                             let valLow = String(cell.v).trim().toLowerCase();
@@ -1644,7 +2039,6 @@
                         }
                     });
                     
-                    // Tahap 2: Ekstrak sisa kolom sebagai nama ERO
                     firstRow.c.forEach((cell, idx) => {
                         if (idx !== bulanIdx && idx !== tglIdx && cell && cell.v !== null && cell.v !== undefined) {
                             let val = String(cell.v).trim();
@@ -1654,17 +2048,13 @@
                         }
                     });
                 }
-                allRows.shift(); // Hapus baris pertama yang sudah diolah
+                allRows.shift(); 
 
                 allRows.forEach(row => {
                     if (!row || !row.c) return;
-
-                    // Abaikan baris yang benar-benar kosong sepenuhnya
                     if (row.c.every(cell => !cell || cell.v === null || cell.v === undefined || String(cell.v).trim() === '')) return;
 
                     let isNewHeader = false;
-
-                    // Deteksi ketat baris header tabel baru (Mencari kata 'Tanggal' atau 'Bulan' di baris manapun)
                     row.c.forEach((cell) => {
                         if (cell && cell.v !== null && cell.v !== undefined) {
                             let val = String(cell.v).trim().toLowerCase();
@@ -1672,12 +2062,10 @@
                         }
                     });
 
-                    // Jika ketemu header baru, RESET nama ERO & hanya catat yang tertulis di bulan ini
                     if (isNewHeader) {
                         let tempBulanIdx = bulanIdx; 
                         let tempTglIdx = tglIdx; 
 
-                        // Update jika posisi kolom bergeser
                         row.c.forEach((cell, idx) => {
                             if (cell && cell.v !== null && cell.v !== undefined) {
                                 let valLow = String(cell.v).trim().toLowerCase();
@@ -1690,7 +2078,6 @@
                         tglIdx = tempTglIdx;
                         currentHeaders = {};
 
-                        // HANYA ambil nama ERO yang tertulis di sub-header ini (Abaikan kolom bulan & tanggal)
                         row.c.forEach((cell, idx) => {
                             if (idx !== bulanIdx && idx !== tglIdx && cell && cell.v !== null && cell.v !== undefined) {
                                 let val = String(cell.v).trim();
@@ -1699,12 +2086,11 @@
                                 }
                             }
                         });
-                        return; // Selesai proses baris header, lewati baris ini agar tidak dianggap sebagai data harian
+                        return; 
                     }
 
-                    if (bulanIdx === -1 || tglIdx === -1) return; // Abaikan data sebelum header pertama ditemukan
+                    if (bulanIdx === -1 || tglIdx === -1) return; 
 
-                    // Ekstraksi Bulan dengan carry-over logic
                     let cellBulan = row.c[bulanIdx];
                     let bulan = '';
                     if (cellBulan && cellBulan.v !== null && cellBulan.v !== undefined) {
@@ -1727,7 +2113,6 @@
                     if (bulan !== '' && bulan.toLowerCase() !== 'null') currentMonth = bulan;
                     else bulan = currentMonth; 
 
-                    // Ekstraksi Tanggal
                     let cellTgl = row.c[tglIdx];
                     let tanggal = 0;
                     if (cellTgl && cellTgl.v !== null && cellTgl.v !== undefined) {
@@ -1751,7 +2136,6 @@
                         uniqueMonths.add(bulan);
                         let eroStatus = {};
                         
-                        // Cek status KHUSUS untuk ERO yang aktif di tabel (currentHeaders) pada bulan ini
                         for (let idx in currentHeaders) {
                             let eroName = currentHeaders[idx];
                             window.monthEroList[bulan].add(eroName);
@@ -1765,7 +2149,6 @@
                     }
                 });
 
-                // Ubah format Set menjadi Array biasa
                 for (let b in window.monthEroList) {
                     window.monthEroList[b] = Array.from(window.monthEroList[b]);
                 }
@@ -1809,7 +2192,6 @@
 
             const filteredData = window.dataEroTracking.filter(d => d.bulan.toLowerCase() === filterMonth.toLowerCase());
             
-            // Mengambil daftar nama ERO khusus yang ada di bulan tersebut
             let actualMonthKey = Object.keys(window.monthEroList).find(k => k.toLowerCase() === filterMonth.toLowerCase());
             const activeEros = window.monthEroList[actualMonthKey] || [];
 
@@ -1836,7 +2218,6 @@
             filteredData.forEach(row => {
                 let rowTgl = parseInt(row.tanggal);
                 
-                // SKIPPING FUTURE DATES
                 if (isCurrentMonth && !isNaN(rowTgl) && rowTgl > todayDate) {
                     return; 
                 }
@@ -1896,7 +2277,6 @@
             lucide.createIcons();
         };
 
-        // --- SISTEM DAN API BAWAAN (TETAP SAMA) ---
         window.fetchLatestStockDate = async function() {
             try {
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/daily_stock?select=stock_date&order=stock_date.desc&limit=1`, { method: 'GET', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }});
@@ -2061,9 +2441,7 @@
         window.copyText = function(id) { const el = document.getElementById(id); el.select(); document.execCommand('copy'); }
         window.copySalesText = function() { const el = document.getElementById('sales-textarea'); el.select(); document.execCommand('copy'); }
 
-        // --- SISTEM PENANGKAP TOMBOL KEMBALI (BACK BUTTON LISTENER) ---
         window.addEventListener('popstate', function(event) {
-            // Jika belum login, jangan lakukan apa-apa
             if (!window.currentStoreConfig) return; 
             
             let viewToOpen = 'view-main';
@@ -2075,7 +2453,6 @@
                     viewToOpen = hash;
                 }
             }
-            // Panggil openView tanpa pushHistory agar tidak infinite loop
             window.openView(viewToOpen, false);
         });
 
