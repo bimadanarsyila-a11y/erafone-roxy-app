@@ -7,6 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Library html2canvas untuk fitur Download Gambar -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         /* --- TEMA & WARNA UTAMA --- */
         :root {
@@ -675,10 +677,17 @@
 
                 <div id="status-dashboard-sales" class="local-status" style="margin-bottom: 1.5rem; justify-content: center;"></div>
 
-                <!-- TABS DASHBOARD SALES -->
-                <div class="tab-container" style="max-width: 450px; margin-bottom: 1.5rem;">
-                    <button class="tab-btn active" id="tab-sales-chart" onclick="window.switchSalesTab('chart')"><i data-lucide="pie-chart" style="width:16px; margin-right: 6px; vertical-align: -3px;"></i> Visualisasi Dashboard</button>
-                    <button class="tab-btn" id="tab-sales-card" onclick="window.switchSalesTab('card')"><i data-lucide="layout-grid" style="width:16px; margin-right: 6px; vertical-align: -3px;"></i> Tampilan Kartu</button>
+                <!-- TABS DASHBOARD SALES & ACTION BUTTONS -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <div class="tab-container" style="max-width: 450px; margin-bottom: 0;">
+                        <button class="tab-btn active" id="tab-sales-chart" onclick="window.switchSalesTab('chart')"><i data-lucide="pie-chart" style="width:16px; margin-right: 6px; vertical-align: -3px;"></i> Visualisasi Dashboard</button>
+                        <button class="tab-btn" id="tab-sales-card" onclick="window.switchSalesTab('card')"><i data-lucide="layout-grid" style="width:16px; margin-right: 6px; vertical-align: -3px;"></i> Tampilan Kartu</button>
+                    </div>
+                    
+                    <!-- Tombol Download Gambar (Hanya muncul di Visualisasi) -->
+                    <button class="btn-base btn-process" id="btn-download-dash" onclick="window.downloadDashboardImage()" style="background: #10b981; border-color: #059669 !important; padding: 0.6rem 1.25rem;">
+                        <i data-lucide="download" style="width: 16px;"></i> Download PNG
+                    </button>
                 </div>
 
                 <!-- TAMPILAN KARTU (HANYA SUMMARY) -->
@@ -1331,6 +1340,43 @@
             window.checkReconcileStatus();
         }
 
+        // --- FUNGSI DOWNLOAD GAMBAR DASHBOARD ---
+        window.downloadDashboardImage = async function() {
+            const element = document.querySelector('.dark-dash-wrapper');
+            if (!element) return;
+            
+            const btn = document.getElementById('btn-download-dash');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="spin-icon" style="width: 16px;"></i> Memproses...';
+            btn.disabled = true;
+            lucide.createIcons();
+
+            try {
+                // Html2canvas memotret elemen dark-dash-wrapper dengan skala resolusi 2x lipat
+                const canvas = await html2canvas(element, {
+                    scale: 2, 
+                    backgroundColor: '#151521', 
+                    useCORS: true, 
+                    logging: false
+                });
+
+                // Buat link download semu dan panggil klik
+                const link = document.createElement('a');
+                link.download = `Dashboard_Sales_Erafone_${new Date().toISOString().split('T')[0]}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                window.showModal('success', 'Berhasil Download!', 'Gambar visualisasi dashboard telah berhasil diunduh ke perangkat Anda.');
+            } catch (err) {
+                console.error('Error generating image:', err);
+                window.showModal('error', 'Gagal Download', 'Terjadi kesalahan saat memproses gambar PNG.');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                lucide.createIcons();
+            }
+        }
+
         // TABS DASHBOARD SALES 
         window.switchSalesTab = function(tab) {
             document.getElementById('tab-sales-chart').classList.remove('active');
@@ -1338,13 +1384,17 @@
             
             document.getElementById('sales-performance-chart-wrapper').style.display = 'none';
             document.getElementById('sales-performance-card-wrapper').style.display = 'none';
+            
+            const btnDownload = document.getElementById('btn-download-dash');
 
             if(tab === 'chart') {
                 document.getElementById('tab-sales-chart').classList.add('active');
                 document.getElementById('sales-performance-chart-wrapper').style.display = 'block'; 
+                if(btnDownload) btnDownload.style.display = 'inline-flex'; // Munculkan tombol download
             } else if (tab === 'card') {
                 document.getElementById('tab-sales-card').classList.add('active');
                 document.getElementById('sales-performance-card-wrapper').style.display = 'block';
+                if(btnDownload) btnDownload.style.display = 'none'; // Sembunyikan tombol download
             }
         }
 
