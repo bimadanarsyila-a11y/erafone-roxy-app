@@ -858,7 +858,8 @@
                                         Market Share Operator
                                     </div>
                                 </div>
-                                <div class="dd-chart-box"><canvas id="dd-chart-operator"></canvas></div>
+                                <div class="dd-chart-box" style="min-height: 180px;"><canvas id="dd-chart-operator"></canvas></div>
+                                <div id="dd-operator-summary" style="margin-top: auto; padding-top: 1.5rem; border-top: 1px dashed rgba(255,255,255,0.15);"></div>
                             </div>
                             <div class="dd-card theme-pink">
                                 <div class="dd-header">
@@ -867,7 +868,8 @@
                                         Trafik WIC (Deal vs Loss)
                                     </div>
                                 </div>
-                                <div class="dd-chart-box"><canvas id="dd-chart-wic"></canvas></div>
+                                <div class="dd-chart-box" style="min-height: 180px;"><canvas id="dd-chart-wic"></canvas></div>
+                                <div id="dd-wic-summary" style="margin-top: auto; padding-top: 1.5rem; border-top: 1px dashed rgba(255,255,255,0.15);"></div>
                             </div>
                         </div>
                     </div>
@@ -944,9 +946,14 @@
                                 <option value="">Pilih Bulan...</option>
                             </select>
                         </div>
-                        <button class="btn-base btn-process" onclick="window.fetchDataReportEro()" style="padding: 0.6rem 1.25rem; font-size: 0.85rem;">
-                            <i data-lucide="refresh-cw" style="width: 16px;"></i> Sinkronisasi
-                        </button>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" id="tracking-action-buttons">
+                            <button class="btn-base btn-process" onclick="window.fetchDataReportEro()" style="padding: 0.6rem 1.25rem; font-size: 0.85rem;">
+                                <i data-lucide="refresh-cw" style="width: 16px;"></i> Sinkronisasi
+                            </button>
+                            <button class="btn-base btn-process" id="btn-download-tracking" onclick="window.downloadTrackingImage()" style="background: #10b981; border-color: #059669 !important; padding: 0.6rem 1.25rem; font-size: 0.85rem;">
+                                <i data-lucide="download" style="width: 16px;"></i> Download PNG
+                            </button>
+                        </div>
                     </div>
                     <div id="status-data-ero" class="local-status" style="justify-content: center; margin-top: 1rem;"></div>
 
@@ -1285,6 +1292,41 @@
                 window.showModal('success', 'Berhasil Download!', 'Gambar visualisasi dashboard telah berhasil diunduh ke perangkat Anda.');
             } catch (err) { window.showModal('error', 'Gagal Download', 'Terjadi kesalahan saat memproses gambar PNG.'); } 
             finally { btn.innerHTML = originalText; btn.disabled = false; lucide.createIcons(); }
+        }
+
+        window.downloadTrackingImage = async function() {
+            const element = document.getElementById('form-section-data-ero');
+            if (!element) return;
+            
+            const btn = document.getElementById('btn-download-tracking');
+            const actionButtons = document.getElementById('tracking-action-buttons');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '<i data-lucide="loader-2" class="spin-icon" style="width: 16px;"></i> Memproses...';
+            btn.disabled = true;
+            lucide.createIcons();
+
+            try {
+                if(actionButtons) actionButtons.style.visibility = 'hidden';
+                
+                const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#f8fafc', useCORS: true, logging: false });
+                
+                if(actionButtons) actionButtons.style.visibility = 'visible';
+
+                const link = document.createElement('a');
+                link.download = `Tracking_Data_ERO_${new Date().toISOString().split('T')[0]}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                window.showModal('success', 'Berhasil Download!', 'Gambar Laporan Tracking ERO telah berhasil diunduh ke perangkat Anda.');
+            } catch (err) { 
+                if(actionButtons) actionButtons.style.visibility = 'visible';
+                window.showModal('error', 'Gagal Download', 'Terjadi kesalahan saat memproses gambar PNG.'); 
+            } 
+            finally { 
+                btn.innerHTML = originalText; 
+                btn.disabled = false; 
+                lucide.createIcons(); 
+            }
         }
 
         window.switchSalesTab = function(tab) {
@@ -1901,12 +1943,42 @@
                 options: {
                     responsive: true, maintainAspectRatio: false, cutout: '65%',
                     plugins: {
-                        legend: { position: 'bottom', labels: { color: '#d1d5db', padding: 15, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } },
+                        legend: { display: false },
                         tooltip: { callbacks: { label: function(ctx) { return ' ' + ctx.label + ': ' + new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(ctx.parsed); } } },
-                        datalabels: { color: '#ffffff', font: { weight: '800', size: 10, family: "'Plus Jakarta Sans', sans-serif" }, formatter: (value) => value > 0 ? formatCompact(value) : null, anchor: 'center', align: 'center' }
+                        datalabels: { 
+                            color: '#ffffff', 
+                            font: { weight: '800', size: 11, family: "'Plus Jakarta Sans', sans-serif" }, 
+                            formatter: (value, ctx) => {
+                                let sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                if (sum === 0 || value === 0) return null;
+                                return (value * 100 / sum).toFixed(1) + "%";
+                            }, 
+                            anchor: 'center', align: 'center' 
+                        }
                     }
                 }
             });
+
+            // UPDATE OPERATOR SUMMARY BOX
+            const opSummary = document.getElementById('dd-operator-summary');
+            if (opSummary) {
+                opSummary.innerHTML = `
+                    <div style="display: flex; justify-content: center; gap: 1.5rem; font-weight: 600; color: #d1d5db; font-size: 0.9rem; margin-top: 0.25rem; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 0.4rem;">
+                            <span style="width: 10px; height: 10px; background: #facc15; border-radius: 50%; display: inline-block;"></span>
+                            <span>Indosat: <span style="color: white; font-weight: 700;">Rp ${formatCompact(tIsat)}</span></span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.4rem;">
+                            <span style="width: 10px; height: 10px; background: #3b82f6; border-radius: 50%; display: inline-block;"></span>
+                            <span>XL: <span style="color: white; font-weight: 700;">Rp ${formatCompact(tXl)}</span></span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.4rem;">
+                            <span style="width: 10px; height: 10px; background: #ef4444; border-radius: 50%; display: inline-block;"></span>
+                            <span>Tsel: <span style="color: white; font-weight: 700;">Rp ${formatCompact(tTsel)}</span></span>
+                        </div>
+                    </div>
+                `;
+            }
 
             const ctxWic = document.getElementById('dd-chart-wic').getContext('2d');
             window.chartInstances['wic'] = new Chart(ctxWic, {
@@ -1924,12 +1996,38 @@
                 options: {
                     responsive: true, maintainAspectRatio: false, cutout: '65%',
                     plugins: {
-                        legend: { position: 'bottom', labels: { color: '#d1d5db', padding: 15, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } } },
+                        legend: { display: false },
                         tooltip: { callbacks: { label: function(ctx) { return ' ' + ctx.label + ': ' + formatNum(ctx.parsed) + ' Orang'; } } },
-                        datalabels: { color: '#ffffff', font: { weight: '800', size: 11, family: "'Plus Jakarta Sans', sans-serif" }, formatter: (value) => value > 0 ? formatNum(value) : null, anchor: 'center', align: 'center' }
+                        datalabels: { color: '#ffffff', font: { weight: '800', size: 11, family: "'Plus Jakarta Sans', sans-serif" }, formatter: (value, ctx) => {
+                                let sum = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                                if (sum === 0 || value === 0) return null;
+                                return (value * 100 / sum).toFixed(1) + "%";
+                            }, anchor: 'center', align: 'center' }
                     }
                 }
             });
+
+            // UPDATE WIC SUMMARY BOX
+            const totalWic = tWicDeal + tWicLoss;
+            const wicSummary = document.getElementById('dd-wic-summary');
+            if (wicSummary) {
+                wicSummary.innerHTML = `
+                    <div style="display: flex; justify-content: center; gap: 1.5rem; font-weight: 600; color: #d1d5db; font-size: 0.9rem; margin-top: 0.25rem; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 0.4rem;">
+                            <span style="width: 10px; height: 10px; background: var(--accent-primary); border-radius: 50%; display: inline-block;"></span>
+                            <span>Total: <span style="color: white; font-weight: 700;">${formatNum(totalWic)}</span></span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.4rem;">
+                            <span style="width: 10px; height: 10px; background: #10b981; border-radius: 50%; display: inline-block;"></span>
+                            <span>Deal: <span style="color: white; font-weight: 700;">${formatNum(tWicDeal)}</span></span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.4rem;">
+                            <span style="width: 10px; height: 10px; background: #f43f5e; border-radius: 50%; display: inline-block;"></span>
+                            <span>Loss: <span style="color: white; font-weight: 700;">${formatNum(tWicLoss)}</span></span>
+                        </div>
+                    </div>
+                `;
+            }
         }
 
         window.dataEroTracking = []; 
