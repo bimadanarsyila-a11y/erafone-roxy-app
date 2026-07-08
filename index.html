@@ -1034,6 +1034,32 @@
             } catch (e) { return { message: text }; }
         }
 
+        const STORE_CONFIG_SAFE_SELECT = 'id,created_at,store_name,spreadsheet_id,email_tsh,summary_report,sap_code,tsh_name,cc_email,link_master,ero_list,rekap_report,daily_sales';
+        const sanitizeStoreConfig = (config = {}) => {
+            const safeKeys = STORE_CONFIG_SAFE_SELECT.split(',');
+            return safeKeys.reduce((acc, key) => {
+                if (config[key] !== undefined) acc[key] = config[key];
+                return acc;
+            }, {});
+        };
+        const persistStoreConfig = (config) => {
+            const safeConfig = sanitizeStoreConfig(config);
+            window.currentStoreConfig = safeConfig;
+            localStorage.setItem('erafoneStoreConfig', JSON.stringify(safeConfig));
+            return safeConfig;
+        };
+        const buildStoreConfigUrl = (filters = {}, select = STORE_CONFIG_SAFE_SELECT) => {
+            const params = new URLSearchParams();
+            Object.entries(filters).forEach(([key, value]) => params.set(key, `eq.${value}`));
+            params.set('select', select);
+            return `${SUPABASE_URL}/rest/v1/store_config?${params.toString()}`;
+        };
+        const supabaseHeaders = (prefer) => {
+            const headers = { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' };
+            if (prefer) headers.Prefer = prefer;
+            return headers;
+        };
+
         window.handleLogin = async function() {
             const sapInput = document.getElementById('sap-code');
             const passInput = document.getElementById('login-pass');
@@ -1057,17 +1083,16 @@
             errorBox.style.display = 'none';
 
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/store_config?sap_code=eq.${sap}&password=eq.${pass}&select=*`, {
+                const response = await fetch(buildStoreConfigUrl({ sap_code: sap, password: pass }), {
                     method: 'GET',
-                    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }
+                    headers: supabaseHeaders()
                 });
 
                 if (response.ok) {
                     const data = await response.json();
                     if (data && data.length > 0) {
-                        window.currentStoreConfig = data[0]; 
-                        localStorage.setItem('erafoneStoreConfig', JSON.stringify(data[0]));
-                        doLoginSuccess(data[0].store_name);
+                        const safeConfig = persistStoreConfig(data[0]);
+                        doLoginSuccess(safeConfig.store_name);
                     } else { throw new Error("SAP Code atau Password salah!"); }
                 } else { throw new Error("Gagal terhubung ke database."); }
             } catch (err) {
@@ -1185,7 +1210,6 @@
             const newPass = document.getElementById('set-new-pass').value.trim();
 
             if (!currentPass) { window.showModal('error', 'Verifikasi Gagal', 'Harap masukkan Password Saat Ini.'); return; }
-            if (currentPass !== window.currentStoreConfig.password) { window.showModal('error', 'Verifikasi Gagal', 'Password Saat Ini salah!'); return; }
 
             const btn = document.getElementById('btn-save-settings');
             const originalText = btn.innerHTML;
@@ -1206,22 +1230,30 @@
             if (newPass !== '') payload.password = newPass;
 
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/store_config?sap_code=eq.${window.currentStoreConfig.sap_code}`, {
+                const verifyResponse = await fetch(buildStoreConfigUrl({ sap_code: window.currentStoreConfig.sap_code, password: currentPass }, 'sap_code'), {
+                    method: 'GET',
+                    headers: supabaseHeaders()
+                });
+                const verifyData = verifyResponse.ok ? await verifyResponse.json() : [];
+                if (!verifyResponse.ok || !verifyData || verifyData.length === 0) {
+                    throw new Error('Password Saat Ini salah!');
+                }
+
+                const response = await fetch(buildStoreConfigUrl({ sap_code: window.currentStoreConfig.sap_code }, STORE_CONFIG_SAFE_SELECT), {
                     method: 'PATCH',
-                    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+                    headers: supabaseHeaders('return=representation'),
                     body: JSON.stringify(payload)
                 });
 
                 if (!response.ok) throw new Error("Gagal mengupdate data di server.");
                 const data = await response.json();
                 if (data && data.length > 0) {
-                    window.currentStoreConfig = data[0];
-                    localStorage.setItem('erafoneStoreConfig', JSON.stringify(data[0]));
+                    const safeConfig = persistStoreConfig(data[0]);
                     
                     const eroSelect = document.getElementById('rep-nama');
-                    if (data[0].ero_list && eroSelect) {
+                    if (safeConfig.ero_list && eroSelect) {
                         eroSelect.innerHTML = '<option value="">Pilih Nama ERO...</option>';
-                        data[0].ero_list.split(',').forEach(name => {
+                        safeConfig.ero_list.split(',').forEach(name => {
                             const trimmedName = name.trim();
                             if(trimmedName) {
                                 const opt = document.createElement('option'); opt.value = trimmedName; opt.innerText = trimmedName; eroSelect.appendChild(opt);
@@ -2428,7 +2460,7 @@
             const savedConfig = localStorage.getItem('erafoneStoreConfig');
             if (savedConfig) {
                 try {
-                    window.currentStoreConfig = JSON.parse(savedConfig);
+                    window.currentStoreConfig = persistStoreConfig(JSON.parse(savedConfig));
                     doLoginSuccess(window.currentStoreConfig.store_name);
                 } catch (e) { localStorage.removeItem('erafoneStoreConfig'); }
             }
