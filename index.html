@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Erafone and more ruko roxy - Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@0.544.0/dist/umd/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
     <style>
@@ -1010,6 +1010,16 @@
             return headers;
         };
 
+        // --- Sesi login RPC (Postgres JWT, 12 jam) ---
+        let SUPA_SESSION_TOKEN = null;
+        const supaAuth = () => SUPA_SESSION_TOKEN || SUPABASE_ANON_KEY;
+        const supabaseAuthHeaders = (prefer) => {
+            const headers = { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${supaAuth()}`, 'Content-Type': 'application/json' };
+            if (prefer) headers.Prefer = prefer;
+            return headers;
+        };
+        const clearSession = () => { SUPA_SESSION_TOKEN = null; try { localStorage.removeItem('erafoneSession'); } catch(e) {} };
+
         window.handleLogin = async function() {
             const sapInput = document.getElementById('sap-code');
             const passInput = document.getElementById('login-pass');
@@ -1033,18 +1043,41 @@
             errorBox.style.display = 'none';
 
             try {
-                const response = await fetch(buildStoreConfigUrl({ sap_code: sap, password: pass }), {
-                    method: 'GET',
-                    headers: supabaseHeaders()
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
+                let response, res;
+                try {
+                    response = await fetch(`${SUPABASE_URL}/rpc/store_login`, {
+                        method: 'POST',
+                        headers: supabaseHeaders(),
+                        body: JSON.stringify({ p_sap_code: sap, p_password: pass })
+                    });
+                    res = response.ok ? await response.json() : null;
+                } catch (rpcErr) { response = null; res = undefined; }
+                if (response === null || (!response.ok && response.status === 404)) {
+                    // Fase transisi: RPC store_login belum terpasang di database.
+                    const legacy = await fetch(buildStoreConfigUrl({ sap_code: sap, password: pass }), {
+                        method: 'GET', headers: supabaseHeaders()
+                    });
+                    const data = legacy.ok ? await legacy.json() : [];
                     if (data && data.length > 0) {
                         const safeConfig = persistStoreConfig(data[0]);
                         doLoginSuccess(safeConfig.store_name);
-                    } else { throw new Error("SAP Code atau Password salah!"); }
-                } else { throw new Error("Gagal terhubung ke database."); }
+                        return;
+                    }
+                    throw new Error("SAP Code atau Password salah!");
+                }
+                if (res && res.ok && res.access_token) {
+                    SUPA_SESSION_TOKEN = res.access_token;
+                    try { localStorage.setItem('erafoneSession', JSON.stringify({ token: SUPA_SESSION_TOKEN, exp: Date.now() + 43000000 })); } catch(e) {}
+                    const cfgResp = await fetch(buildStoreConfigUrl({ id: res.user.id }), {
+                        method: 'GET',
+                        headers: supabaseAuthHeaders()
+                    });
+                    const cfg = cfgResp.ok ? await cfgResp.json() : [];
+                    if (cfg && cfg.length > 0) {
+                        const safeConfig = persistStoreConfig(cfg[0]);
+                        doLoginSuccess(safeConfig.store_name);
+                    } else { throw new Error("Gagal memuat konfigurasi toko."); }
+                } else { throw new Error((res && res.message) || "SAP Code atau Password salah!"); }
             } catch (err) {
                 errorText.innerText = err.message;
                 errorBox.style.display = 'flex';
@@ -1088,12 +1121,13 @@
             } catch(e) { console.warn("History API dinonaktifkan di iframe ini."); }
             
             window.openView(initialView, false); 
-            window.fetchLatestStockDate();
+            // fetchLatestStockDate dihapus (fitur Cek Stok Area lama sudah tidak ada)
         }
 
         window.handleLogout = function() {
             try {
                 window.currentStoreConfig = null;
+                clearSession();
                 localStorage.removeItem('erafoneStoreConfig');
                 try { history.replaceState(null, '', window.location.pathname); } catch(e){}
                 window.location.reload();
@@ -1180,18 +1214,22 @@
             if (newPass !== '') payload.password = newPass;
 
             try {
-                const verifyResponse = await fetch(buildStoreConfigUrl({ sap_code: window.currentStoreConfig.sap_code, password: currentPass }, 'sap_code'), {
-                    method: 'GET',
-                    headers: supabaseHeaders()
-                });
-                const verifyData = verifyResponse.ok ? await verifyResponse.json() : [];
-                if (!verifyResponse.ok || !verifyData || verifyData.length === 0) {
-                    throw new Error('Password Saat Ini salah!');
+                if (newPass !== '') {
+                    const verifyResponse = await fetch(`${SUPABASE_URL}/rpc/store_set_password`, {
+                        method: 'POST',
+                        headers: supabaseAuthHeaders(),
+                        body: JSON.stringify({ p_old_password: currentPass, p_new_password: newPass })
+                    });
+                    const vr = verifyResponse.ok ? await verifyResponse.json() : null;
+                    if (!vr || !vr.ok) {
+                        throw new Error((vr && vr.message) || 'Password Saat Ini salah!');
+                    }
+                    if (payload.password !== undefined) delete payload.password;
                 }
 
-                const response = await fetch(buildStoreConfigUrl({ sap_code: window.currentStoreConfig.sap_code }, STORE_CONFIG_SAFE_SELECT), {
+                const response = await fetch(buildStoreConfigUrl({ id: window.currentStoreConfig.id }, STORE_CONFIG_SAFE_SELECT), {
                     method: 'PATCH',
-                    headers: supabaseHeaders('return=representation'),
+                    headers: supabaseAuthHeaders('return=representation'),
                     body: JSON.stringify(payload)
                 });
 
@@ -1391,7 +1429,7 @@
             target.classList.add('active'); 
             
             if(finalViewId === 'view-main') {
-                window.fetchLatestStockDate(); 
+                
             } else if(finalViewId === 'view-input-report') {
                 const tglInput = document.getElementById('rep-tanggal');
                 if(tglInput && !tglInput.value) tglInput.value = new Date().toISOString().split('T')[0];
@@ -2386,6 +2424,11 @@
         });
 
         document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const saved = JSON.parse(localStorage.getItem('erafoneSession') || 'null');
+                if (saved && saved.token && saved.exp > Date.now()) SUPA_SESSION_TOKEN = saved.token;
+                else clearSession();
+            } catch(e) { clearSession(); }
             const savedConfig = localStorage.getItem('erafoneStoreConfig');
             if (savedConfig) {
                 try {
