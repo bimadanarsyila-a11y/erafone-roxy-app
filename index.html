@@ -1225,6 +1225,29 @@
                         throw new Error((vr && vr.message) || 'Password Saat Ini salah!');
                     }
                     if (payload.password !== undefined) delete payload.password;
+                } else {
+                    let okVerify = null;
+                    try {
+                        const vr = await fetch(`${SUPABASE_URL}/rpc/store_verify_password`, {
+                            method: 'POST',
+                            headers: supabaseAuthHeaders(),
+                            body: JSON.stringify({ p_password: currentPass })
+                        });
+                        if (vr.ok) okVerify = await vr.json();
+                        else if (vr.status === 404) okVerify = null;
+                        else okVerify = false;
+                    } catch(e) { okVerify = null; }
+                    if (okVerify === null) {
+                        // transisi: RPC belum ada di database, pakai verifikasi lama
+                        const legacyV = await fetch(buildStoreConfigUrl({ sap_code: window.currentStoreConfig.sap_code, password: currentPass }, 'sap_code'), {
+                            method: 'GET', headers: supabaseHeaders()
+                        });
+                        const ld = legacyV.ok ? await legacyV.json() : [];
+                        okVerify = !!(ld && ld.length > 0);
+                    }
+                    if (!okVerify) {
+                        throw new Error('Password Saat Ini salah!');
+                    }
                 }
 
                 const response = await fetch(buildStoreConfigUrl({ id: window.currentStoreConfig.id }, STORE_CONFIG_SAFE_SELECT), {
