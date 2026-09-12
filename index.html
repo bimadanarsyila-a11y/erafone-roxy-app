@@ -401,7 +401,7 @@
                     <div class="step-badge" style="background: var(--success);">4</div>
                     <h3 style="color: #166534;">Submit Formulir Pendaftaran</h3>
                     <p style="color: #15803d; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">Jika Anda sudah memiliki link salinan spreadsheet tersebut, silakan lengkapi formulir pendaftaran di bawah ini untuk mengaktifkan akun toko Anda.</p>
-                    <a href="https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/form/3c4e2e02-48c0-428c-9a48-334967fcc590" target="_blank" class="reg-submit-btn"><i data-lucide="check-square"></i> LENGKAPI FORMULIR PENDAFTARAN SEKARANG</a>
+                    <a href="https://n8n.erafonejakpus1.web.id/form/daftar-store-baru" target="_blank" class="reg-submit-btn"><i data-lucide="check-square"></i> LENGKAPI FORMULIR PENDAFTARAN SEKARANG</a>
                 </div>
             </div>
             <button onclick="window.toggleRegister(false)" class="reg-back-link"><i data-lucide="arrow-left" style="width: 16px;"></i> Kembali ke Login</button>
@@ -484,65 +484,11 @@
                 </button>
             </div>
 
-            <!-- CEK STOK AREA DI MENU UTAMA -->
-            <div class="detail-view" style="margin-top: 1rem;">
-                <div class="header-flex-wrap" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1.5rem; border-bottom: 2px dashed #cbd5e1; padding-bottom: 1.5rem;">
-                    <div>
-                        <h2 style="margin: 0; color: var(--bg-primary); display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="search" style="width: 24px; height: 24px;"></i> Cek Stok Area</h2>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem; font-weight: 500;">Pencarian cerdas ketersediaan unit barang di seluruh area secara instan.</p>
-                    </div>
-                    
-                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; width: 100%; max-width: 400px;">
-                        <div class="last-update-box" style="font-size: 0.75rem; padding: 0.25rem 0.6rem; margin: 0;">
-                            <span style="font-weight: 700; color: var(--bg-primary); margin-right: 4px;">Last Update:</span>
-                            <i data-lucide="clock" style="width: 12px; height: 12px;"></i>
-                            <span id="last-upload-time">Belum ada data</span>
-                        </div>
-                        <div class="cek-stok-upload-group" style="display: flex; gap: 0.5rem; width: 100%; height: 38px;">
-                            <div class="upload-compact" onclick="document.getElementById('stok-area-file').click()" style="height: 100%; padding: 0 0.75rem; border-radius: 6px; flex: 1;">
-                                <i data-lucide="file-spreadsheet" style="width: 16px; margin: 0;"></i>
-                                <p id="stok-area-file-name" style="margin: 0 0 0 0.5rem; font-size: 0.8rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Pilih file master...</p>
-                                <input type="file" id="stok-area-file" style="display:none" onchange="window.updateFileName('stok-area-file', 'stok-area-file-name')">
-                            </div>
-                            <button class="btn-base btn-process" id="btn-update-stok" onclick="window.processUpdateStokArea()" style="height: 100%; padding: 0 1rem; font-size: 0.8rem; border-radius: 6px; margin: 0;">
-                                <i data-lucide="upload-cloud" style="width: 14px;"></i> Update
-                            </button>
-                        </div>
-                        <div id="status-update-stok" class="local-status" style="margin-top: 0; padding: 0.25rem 0.5rem; font-size: 0.75rem;"></div>
-                    </div>
-                </div>
-
-                <div class="column-card" style="gap: 1.5rem;">
-                    <div class="action-row" style="height: 56px;">
-                        <input type="text" id="search-stok-input" class="search-input" placeholder="Ketik nama, tipe, atau kode barang untuk mencari stok..." onkeypress="if(event.key === 'Enter') window.processSearchStok()" style="font-size: 1.05rem; padding: 0 1.5rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
-                        <button class="btn-base btn-send" id="btn-search-stok" onclick="window.processSearchStok()" style="height: 100%; width: 180px; font-size: 1rem; border-radius: 8px; margin: 0;">
-                            <i data-lucide="search" style="width:20px;"></i> Cari Stok
-                        </button>
-                    </div>
-                    <div id="status-search-stok" class="local-status" style="margin-top: -0.5rem;"></div>
-                    
-                    <div class="table-wrapper-large" style="margin-top: 0; max-height: 50vh; min-height: 350px; overflow-x: auto;">
-                        <table class="data-table" id="stok-result-table">
-                            <thead>
-                                <tr>
-                                    <th style="font-size: 0.85rem;">Nama Lokasi / Store</th>
-                                    <th style="width: 150px; text-align: center; font-size: 0.85rem;">Qty Tersedia</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="2" style="text-align:center; padding:6rem 1rem; color:var(--text-muted); font-size: 1.1rem; font-weight: 500;">
-                                        <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; opacity: 0.6;">
-                                            <i data-lucide="package-search" style="width: 64px; height: 64px;"></i>
-                                            Ketik nama barang di atas lalu tekan Cari
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            <!-- STOKBOT WEB DI MENU UTAMA -->
+            <a class="control-card" href="https://stock.erafonejakpus1.web.id" target="_blank" rel="noopener noreferrer" style="margin-top:1rem;text-decoration:none;color:inherit;">
+                <div class="icon-box"><i data-lucide="package-search" style="width:28px;height:28px;"></i></div>
+                <div class="card-info"><h3>Stokbot Web</h3><p>Cari stok lengkap berdasarkan produk, Region, Territory, toko, dan gudang.</p></div>
+            </a>
         </div>
 
         <!-- VIEW SUB-MENU: OLAH DATA OTOMATIS -->
@@ -669,7 +615,8 @@
                 
                 <div style="margin-bottom: 1.25rem; width: 100%;">
                     <div class="tab-container" style="max-width: 100%; width: 100%; margin-bottom: 0; padding: 0.25rem; border-radius: 8px; display: flex;">
-                        <button class="tab-btn active" id="tab-sales-chart" onclick="window.switchSalesTab('chart')" style="padding: 0.5rem; font-size: 0.85rem;"><i data-lucide="pie-chart" style="width:14px; margin-right: 4px; vertical-align: -2px;"></i> Visualisasi Dashboard</button>
+                        <button class="tab-btn active" id="tab-sales-store-detail" onclick="window.switchSalesTab('store-detail')" style="padding: 0.5rem; font-size: 0.85rem;"><i data-lucide="store" style="width:14px; margin-right: 4px; vertical-align: -2px;"></i> Detail by Store</button>
+                        <button class="tab-btn" id="tab-sales-chart" onclick="window.switchSalesTab('chart')" style="padding: 0.5rem; font-size: 0.85rem;"><i data-lucide="pie-chart" style="width:14px; margin-right: 4px; vertical-align: -2px;"></i> Visualisasi Dashboard</button>
                         <button class="tab-btn" id="tab-sales-card" onclick="window.switchSalesTab('card')" style="padding: 0.5rem; font-size: 0.85rem;"><i data-lucide="layout-grid" style="width:14px; margin-right: 4px; vertical-align: -2px;"></i> ERO Card</button>
                         <button class="tab-btn" id="tab-ero" onclick="window.switchSalesTab('ero')" style="padding: 0.5rem; font-size: 0.85rem;"><i data-lucide="edit-3" style="width: 14px; margin-right: 4px; vertical-align: -2px;"></i> Input Report</button>
                         <button class="tab-btn" id="tab-data-ero" onclick="window.switchSalesTab('data-ero')" style="padding: 0.5rem; font-size: 0.85rem;"><i data-lucide="database" style="width: 14px; margin-right: 4px; vertical-align: -2px;"></i> Tracking Data</button>
@@ -765,7 +712,10 @@
                     </div>
                 </div>
 
-                <div id="sales-performance-chart-wrapper" style="display: block;">
+                <div id="sales-performance-store-detail-wrapper" style="display: none; margin-bottom: 1.25rem;">
+                    <iframe id="detail-store-iframe" title="Detail by Store" data-loaded="0" src="about:blank" style="width: 100%; min-height: 80vh; height: 1600px; border: 1.5px solid var(--border-color); border-radius: var(--border-radius-md); background: var(--card-bg);"></iframe>
+                </div>
+                <div id="sales-performance-chart-wrapper" style="display: none;">
                     <div class="dark-dash-wrapper">
                         <div class="dd-grid">
                             <div class="dd-card theme-orange">
@@ -969,7 +919,7 @@
     <script>
         lucide.createIcons();
 
-        const N8N_WEBHOOK_URL = 'https://n8n-mqgvwexuvnyu.stroberi.sumopod.my.id/webhook/erafone-roxy-automation';
+        const N8N_WEBHOOK_URL = 'https://n8n.erafonejakpus1.web.id/webhook/erafone-roxy-automation';
         const SUPABASE_URL = 'https://hgjyzhgpwcxwiqhaldhv.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhnanl6aGdwd2N4d2lxaGFsZGh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMDI5OTEsImV4cCI6MjA4NzY3ODk5MX0.ZVNOHbiuvs83QK-v8-XufA9QQ6cTTZ1rEWy2iy0_55g';
 
@@ -1361,12 +1311,36 @@
             }
         }
 
+        window.ensureDetailStoreFrame = function() {
+            const frame = document.getElementById('detail-store-iframe');
+            if (!frame) return;
+            const sap = (window.currentStoreConfig && window.currentStoreConfig.sap_code || '').trim().toUpperCase();
+            const url = '/detail-store/?store=' + encodeURIComponent(sap);
+            if (frame.getAttribute('data-loaded') !== '1' || frame.dataset.sap !== sap) {
+                frame.dataset.sap = sap;
+                frame.removeAttribute('data-loaded');
+                frame.onload = function() {
+                    frame.setAttribute('data-loaded','1');
+                    try {
+                        const doc = frame.contentDocument || frame.contentWindow.document;
+                        const fit = () => { frame.style.height = Math.max(800, doc.documentElement.scrollHeight + 40) + 'px'; };
+                        fit();
+                        setTimeout(fit, 1200);
+                        setTimeout(fit, 3000);
+                        if (window.ResizeObserver && doc.body) { new ResizeObserver(fit).observe(doc.body); }
+                    } catch(e) { frame.style.height = '1600px'; }
+                };
+                frame.src = url;
+            }
+        }
         window.switchSalesTab = function(tab) {
+            document.getElementById('tab-sales-store-detail').classList.remove('active');
             document.getElementById('tab-sales-chart').classList.remove('active');
             document.getElementById('tab-sales-card').classList.remove('active');
             document.getElementById('tab-ero').classList.remove('active');
             document.getElementById('tab-data-ero').classList.remove('active');
             
+            document.getElementById('sales-performance-store-detail-wrapper').style.display = 'none';
             document.getElementById('sales-performance-chart-wrapper').style.display = 'none';
             document.getElementById('sales-performance-card-wrapper').style.display = 'none';
             document.getElementById('form-section-ero').style.display = 'none';
@@ -1375,7 +1349,13 @@
             const btnDownload = document.getElementById('btn-download-dash');
             const mainFilterBar = document.getElementById('dash-main-filter-bar');
 
-            if(tab === 'chart') {
+            if(tab === 'store-detail') {
+                document.getElementById('tab-sales-store-detail').classList.add('active');
+                document.getElementById('sales-performance-store-detail-wrapper').style.display = 'block';
+                if(btnDownload) btnDownload.style.display = 'none'; 
+                if(mainFilterBar) mainFilterBar.style.display = 'none';
+                window.ensureDetailStoreFrame();
+            } else if(tab === 'chart') {
                 document.getElementById('tab-sales-chart').classList.add('active');
                 document.getElementById('sales-performance-chart-wrapper').style.display = 'block'; 
                 if(btnDownload) btnDownload.style.display = 'inline-flex'; 
@@ -1417,7 +1397,7 @@
                 if(tglInput && !tglInput.value) tglInput.value = new Date().toISOString().split('T')[0];
                 window.switchReportTab('ero'); 
             } else if(finalViewId === 'view-dashboard-sales') {
-                window.switchSalesTab('chart'); 
+                window.switchSalesTab('store-detail'); 
                 window.fetchDashboardSalesData();
             }
             window.scrollTo({ top: 0, behavior: 'smooth' }); 
@@ -2282,57 +2262,6 @@
             });
             lucide.createIcons();
         };
-
-        window.fetchLatestStockDate = async function() {
-            try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/daily_stock?select=stock_date&order=stock_date.desc&limit=1`, { method: 'GET', headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' }});
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data && data.length > 0) {
-                        lastStokUpdateDate = new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(data[0].stock_date));
-                        const timeEl = document.getElementById('last-upload-time');
-                        if(timeEl) timeEl.innerText = lastStokUpdateDate;
-                    } 
-                }
-            } catch (e) { console.error(e); }
-        };
-
-        window.processUpdateStokArea = async function() {
-            const file = document.getElementById('stok-area-file').files[0];
-            if (!file) return;
-            window.setLocalStatus('status-update-stok', 'Mengunggah data master...');
-            try {
-                const formData = new FormData(); formData.append('file', file); formData.append('command', 'update_stok_area'); formData.append('sap_code', window.currentStoreConfig.sap_code);
-                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', body: formData });
-                const data = await window.safeJsonParse(response);
-                if (!response.ok) throw new Error(data.message || `HTTP Error ${response.status}`);
-                if (data.error || data.status === 'error') throw new Error(data.message || data.error);
-                window.setLocalStatus('status-update-stok', 'Update Berhasil!', 'success');
-                window.fetchLatestStockDate();
-            } catch (e) { window.setLocalStatus('status-update-stok', 'Gagal: ' + (e.message || 'Server error'), 'error'); }
-        }
-
-        window.processSearchStok = async function() {
-            const searchInput = document.getElementById('search-stok-input').value;
-            const tbody = document.querySelector('#stok-result-table tbody');
-            if (!searchInput) return;
-            window.setLocalStatus('status-search-stok', 'Mencari...');
-            try {
-                const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ command: 'search_stok_area', search_query: searchInput, sap_code: window.currentStoreConfig.sap_code }) });
-                const data = await window.safeJsonParse(response);
-                if (!response.ok) throw new Error(data.message || `HTTP Error ${response.status}`);
-                if (data.error || data.status === 'error') throw new Error(data.message || data.error);
-                let raw = data.message || "", lines = raw.split('\n');
-                if (lines.length > 0 && raw !== "") {
-                    tbody.innerHTML = '';
-                    lines.forEach(line => {
-                        if (line.includes('📦')) tbody.innerHTML += `<tr><td colspan="2" class="table-category-header">${line.replace('📦','').trim()}</td></tr>`;
-                        else if (line.includes(':')) { let p = line.split(':'); tbody.innerHTML += `<tr><td>${p[0].trim()}</td><td style="font-weight:600; text-align:center;">${p[1].trim()}</td></tr>`; }
-                    });
-                    window.setLocalStatus('status-search-stok', 'Data ditemukan.', 'success');
-                } else { tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; padding:4rem;">Barang tidak ditemukan.</td></tr>'; window.setLocalStatus('status-search-stok', 'Nol hasil.', 'error'); }
-            } catch (e) { window.setLocalStatus('status-search-stok', 'Gagal: ' + (e.message || 'Koneksi error'), 'error'); }
-        }
 
         window.processSales = async function() {
             const file = document.getElementById('sales-file').files[0]; 
